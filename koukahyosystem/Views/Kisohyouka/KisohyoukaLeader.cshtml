@@ -1,0 +1,1655 @@
+﻿@model koukahyosystem.Models.KisohyoukaModel
+@using System.Data
+@{
+ViewBag.Title = "KisohyoukaLeader";
+Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <style>
+
+        tr.spaceUnder > td {
+            padding-bottom: 1em;
+        }
+
+        tr.spaceUnderH > td {
+            padding-top: 1em;
+            padding-bottom: 1em;
+        }
+
+        button {
+            color: black;
+            padding: 5px 5px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .scroll td {
+            border: 1px solid black;
+        }
+
+        input {
+            text-align: right;
+        }
+
+        .scroll thead th {
+            background-color: rgb(189, 233, 242);
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            border: 1px solid black;
+            background-clip: padding-box;
+        }
+
+        .first-col {
+            text-align:center;
+            width: 25px;
+            min-width:25px;
+            position: sticky;
+            position: -webkit-sticky;
+            left: 0;
+            background-color: #fff;
+            border: 1px solid black;
+            background-clip: padding-box;
+        }
+
+        .second-col {
+            position: sticky;
+            position: -webkit-sticky;
+            width: auto;
+            min-width: 172px;
+            max-width:300px;
+            word-wrap:break-word;
+            left: 20px;
+            background-color: #fff;
+            border: 1px solid black;
+            background-clip: padding-box;
+        }
+
+        .scroll thead th:nth-of-type(1) {
+            background-color: rgb(189, 233, 242);
+            left: 0;
+            z-index: 3;
+            border: 1px solid black;
+        }
+
+        .scroll thead th:nth-of-type(2) {
+            background-color: rgb(189, 233, 242);
+            left: 20px;
+            z-index: 3;
+            border: 1px solid black;
+        }
+        .mth_btn {
+            width: 50px;
+            text-align: center;
+        }
+        .btn_save {
+            text-align: center;
+            width: 70px;
+            height: 35px;
+            float: right;
+            margin-right: 28px;
+            background-color: #9dccf1;
+        }
+        .lbl_year {
+            font-weight: normal;
+            margin-left: 28px;
+            margin-right: 5px;
+        }
+        .table_div {
+            margin: 20px 10px;
+        }
+        .tab button {
+            background-color: #f1f1f1;
+            float: left;
+            border: none;
+            /*outline: none;*/
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+        }
+
+        .tabbtn {
+            background-color: #f1f1f1;
+            float: left;
+            border: none;
+            font-size: 17px;
+            padding: 14px 16px;
+            height: 40px;
+            margin: 1px;
+            text-align: center;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            outline: none;
+        }
+        .groupbtncss {
+            width:95%
+        }
+        #hyouka_table_year th, td {
+            width: 50px
+        }
+    </style>
+    <style>
+        @@media only screen and (max-width: 767px) {
+
+            .btn_save {
+                margin-left: 28px;
+                float: unset;
+            }
+            .second-col {
+                max-width: 172px;
+            }
+        }
+    </style>
+</head>
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+        <div align="center" id='divElement' class="panel panel-info">
+
+            @using (Html.BeginForm("KisohyoukaLeader", "Kisohyouka"))
+            {
+                var scolor = string.Empty;
+                var tabId = string.Empty;
+                //var r_count = 0;
+
+                //if (Model.shinsei_tableList_month != null)
+                //{
+                //    r_count = Model.shinsei_tableList_month.Count - 1;
+                //}
+                var r_count_mth = 0;
+
+                if (Model.shinsei_tableList_month != null)
+                {
+                    r_count_mth = Model.shinsei_tableList_month.Count - 1;
+                }
+                var r_count_yr = 0;
+                if (Model.shinsei_tableList_year != null)
+                {
+                    r_count_yr = Model.shinsei_tableList_year.Count - 1;
+                }
+                <div class="panel-heading" style="background-color: rgb(34, 148, 172);">
+                    <h4 style="color:White ; display: inline-block;">基礎評価確認</h4>
+                </div>
+
+                <div id="table_div">
+
+                    <div style="margin:10px" align="left">
+                        @Html.Label("年度", new { @class = "lbl_year" })
+                        <button id="btnPrevious" name="btnPrevious" value=@Model.year style="width:29px;height:29px;"> < </button>
+                        @Html.DropDownListFor(m => m.year, Model.yearList, new { @id = "year", style = "width:70px;Height:22px;", onchange = "return OnChanged()" })
+                        <button id="btnNext" name="btnNext" value=@Model.year style="width:29px;height:29px;"> > </button>
+                        <button id="btnSearch" name="btnSearch" value="add" style="position: absolute; visibility:hidden">add</button>
+                        @*@Html.TextBoxFor(model => model.txt_kijun, new { style = "width:50px;text-align:center;!important;background-color:white;color: black !important;" })
+            @Html.TextBoxFor(model => model.txt_mark, new { @id = "kijunMark", style = "width:50px;text-align:center;!important;background-color:white;color: black !important;" })*@
+
+                        <button type="submit" id="btn_hozone" name="btn_hozone" value="hozone" class="button btn_save" autofocus>一時保存</button>
+
+                    </div>
+
+                    @if (Model.showTab == "show")
+                    {
+                        <div @*class="container"*@ class="groupbtncss" align="left">
+                            <ul class="nav nav-tabs" role="tablist" id="ul_tab">
+                                <li>
+                                    @if (Model.showTab == "show")
+                                    {
+                                        for (int i = 0; i < Model.tabList.Count; i++)
+                                        {
+                                            tabId = Model.tabList[i].tabId;
+                                            if (Session["showColor"].ToString() == tabId)
+                                            {
+                                                scolor = "#90ee90";
+                                                <input id="tabName" name="tabName" type="text" value="@tabId" style="visibility:hidden;width:40px;position:absolute" />
+                                            }
+                                            else
+                                            {
+                                                scolor = "#f1f1f1";
+                                            }
+                                            <button name="tabButton" style=" background-color:@scolor;" class="tabbtn" id=@tabId value=@Model.tabList[i].tabId>@Model.tabList[i].tabName</button>
+                                        }
+                                    }
+                                </li>
+                            </ul>
+                            @Html.TextBoxFor(model => model.txt_kijun, new { @id = "kj_type", style = "width:50px;text-align:center;!important;background-color:white;color: black !important;visibility:hidden;position:absolute;" })
+                            @Html.TextBoxFor(model => model.txt_mark, new { @id = "kijunMark", style = "width:50px;text-align:center;!important;background-color:white;color: black !important;visibility:hidden;position:absolute;" })
+
+                        </div>
+
+
+                        <div class="tab-content" style="overflow:auto;margin:10px 10px;">
+                            @if (Model.txt_kijun == "月別")
+                            {
+                                <table id="hyouka_table" class="scroll" align="center">
+                                    <thead>
+                                        <tr>
+                                            <th class="sticky-col first-col"></th>
+                                            <th class="sticky-col second-col"></th>
+                                            <th style="display:none;"></th>
+                                            @foreach (var mth in Model.monthList)
+                                            {
+                                                <th style="text-align:center">@mth</th>
+                                            }
+                                            @*<th style="text-align:center">4月</th>
+                                            <th style="text-align:center">5月</th>
+                                            <th style="text-align:center">6月</th>
+                                            <th style="text-align:center">7月</th>
+                                            <th style="text-align:center">8月</th>
+                                            <th style="text-align:center">9月</th>
+                                            <th style="text-align:center">10月</th>
+                                            <th style="text-align:center">11月</th>
+                                            <th style="text-align:center">12月</th>
+                                            <th style="text-align:center">1月</th>
+                                            <th style="text-align:center">2月</th>
+                                            <th style="text-align:center">3月</th>*@
+                                            <th width="50px" style="text-align:center">小計</th>
+                                        </tr>
+
+                                    </thead>
+                                    <tbody>
+
+                                        @for (int i = 0; i < Model.shinsei_tableList_month.Count - 1; i++)
+                                        {
+                                            var rid = i + 1;
+                                        <tr>
+
+                                            <td class="sticky-col first-col">
+                                                @Model.shinsei_tableList_month[i].no_value
+                                            </td>
+
+                                            <td class="sticky-col second-col" style="text-align:left;width:300px;">@Model.shinsei_tableList_month[i].question</td>
+
+                                            <td class="no" style="display:none;">
+                                                @Html.TextBoxFor(model => model.shinsei_tableList_month[i].question_code, new { style = "width:25px;text-align:center;border:none!important;background-color:white;color: black !important;" })
+
+                                            </td>
+                                            @foreach (var mth in Model.monthList)
+                                            {
+                                                if (@mth == "1月")
+                                                {
+                                                    <td>
+                                                        @Html.TextBoxFor(model => model.shinsei_tableList_month[i].one,
+                                                        new
+                                                        {
+                                                            @class = "fullwidth_halfwidth",
+                                                            @type = "tel",
+                                                            @id = rid + "r_txt1",
+                                                            style = "ime-mode:inactive;width:100%",
+                                                            maxlength = 2,
+                                                            onkeyup = "sum(id)",
+                                                            onkeypress = "isSpecialKey(event)",
+                                                            oninput = "sum(id)"
+                                                        })
+                                                    </td>
+                                                }
+                                                if (@mth == "2月")
+                                                {
+                                                    <td>
+                                                        @Html.TextBoxFor(model => model.shinsei_tableList_month[i].two,
+                                                       new
+                                                       {
+                                                           @class = "fullwidth_halfwidth",
+                                                           @type = "tel",
+                                                           @id = rid + "r_txt2",
+                                                           style = "ime-mode:inactive;width:100%",
+                                                           maxlength = 2,
+                                                           onkeyup = "sum(id)",
+                                                           onkeypress = "isSpecialKey(event)",
+                                                           oninput = "sum(id)"
+                                                       })
+                                                    </td>
+                                                }
+                                                if (@mth == "3月")
+                                                {
+                                                    <td>
+                                                        @Html.TextBoxFor(model => model.shinsei_tableList_month[i].three,
+                                                       new
+                                                       {
+                                                           @class = "fullwidth_halfwidth",
+                                                           @type = "tel",
+                                                           @id = rid + "r_txt3",
+                                                           style = "ime-mode:inactive;width:100%",
+                                                           maxlength = 2,
+                                                           onkeyup = "sum(id)",
+                                                           onkeypress = "isSpecialKey(event)",
+                                                           oninput = "sum(id)"
+                                                       })
+                                                    </td>
+                                                }
+                                                if (@mth == "4月")
+                                                {
+                                                    <td>
+                                                        @Html.TextBoxFor(model => model.shinsei_tableList_month[i].four,
+                                                         new
+                                                         {
+                                                             @class = "fullwidth_halfwidth",
+                                                             @type = "tel",
+                                                             @id = rid + "r_txt4",
+                                                             style = "ime-mode:inactive;width:100%",
+                                                             maxlength = 2,
+                                                             onkeyup = "sum(id)",
+                                                             onkeypress = "isSpecialKey(event)",
+                                                             oninput = "sum(id)"
+                                                         })
+                                                    </td>
+                                                }
+                                                if (@mth == "5月")
+                                                {
+                                                    <td>
+                                                        @Html.TextBoxFor(model => model.shinsei_tableList_month[i].five,
+                                                         new
+                                                         {
+                                                             @class = "fullwidth_halfwidth",
+                                                             @type = "tel",
+                                                             @id = rid + "r_txt5",
+                                                             style = "ime-mode:inactive;width:100%",
+                                                             maxlength = 2,
+                                                             onkeyup = "sum(id)",
+                                                             onkeypress = "isSpecialKey(event)",
+                                                             oninput = "sum(id)"
+                                                         })
+                                                    </td>
+                                                }
+                                                if (@mth == "6月")
+                                                {
+                                                    <td>
+                                                        @Html.TextBoxFor(model => model.shinsei_tableList_month[i].six,
+                                                         new
+                                                         {
+                                                             @class = "fullwidth_halfwidth",
+                                                             @type = "tel",
+                                                             @id = rid + "r_txt6",
+                                                             style = "ime-mode:inactive;width:100%",
+                                                             maxlength = 2,
+                                                             onkeyup = "sum(id)",
+                                                             onkeypress = "isSpecialKey(event)",
+                                                             oninput = "sum(id)"
+                                                         })
+                                                    </td>
+                                                }
+                                                if (@mth == "7月")
+                                                {
+                                                    <td>
+                                                        @Html.TextBoxFor(model => model.shinsei_tableList_month[i].seven,
+                                                         new
+                                                         {
+                                                             @class = "fullwidth_halfwidth",
+                                                             @type = "tel",
+                                                             @id = rid + "r_txt7",
+                                                             style = "ime-mode:inactive;width:100%",
+                                                             maxlength = 2,
+                                                             onkeyup = "sum(id)",
+                                                             onkeypress = "isSpecialKey(event)",
+                                                             oninput = "sum(id)"
+                                                         })
+                                                    </td>
+                                                }
+                                                if (@mth == "8月")
+                                                {
+                                                    <td>
+                                                        @Html.TextBoxFor(model => model.shinsei_tableList_month[i].eight,
+                                                         new
+                                                         {
+                                                             @class = "fullwidth_halfwidth",
+                                                             @type = "tel",
+                                                             @id = rid + "r_txt8",
+                                                             style = "ime-mode:inactive;width:100%",
+                                                             maxlength = 2,
+                                                             onkeyup = "sum(id)",
+                                                             onkeypress = "isSpecialKey(event)",
+                                                             oninput = "sum(id)"
+                                                         })
+                                                    </td>
+                                                }
+                                                if (@mth == "9月")
+                                                {
+                                                    <td>
+                                                        @Html.TextBoxFor(model => model.shinsei_tableList_month[i].nine,
+                                                        new
+                                                        {
+                                                            @class = "fullwidth_halfwidth",
+                                                            @type = "tel",
+                                                            @id = rid + "r_txt9",
+                                                            style = "ime-mode:inactive;width:100%",
+                                                            maxlength = 2,
+                                                            onkeyup = "sum(id)",
+                                                            onkeypress = "isSpecialKey(event)",
+                                                            oninput = "sum(id)"
+                                                        })
+                                                    </td>
+                                                }
+                                                if (@mth == "10月")
+                                                {
+                                                    <td>
+                                                        @Html.TextBoxFor(model => model.shinsei_tableList_month[i].ten,
+                                                        new
+                                                        {
+                                                            @class = "fullwidth_halfwidth",
+                                                            @type = "tel",
+                                                            @id = rid + "r_txt10",
+                                                            style = "ime-mode:inactive;width:100%",
+                                                            maxlength = 2,
+                                                            onkeyup = "sum(id)",
+                                                            onkeypress = "isSpecialKey(event)",
+                                                            oninput = "sum(id)"
+                                                        })
+                                                    </td>
+                                                }
+                                                if (@mth == "11月")
+                                                {
+                                                    <td>
+                                                        @Html.TextBoxFor(model => model.shinsei_tableList_month[i].eleven,
+                                                        new
+                                                        {
+                                                            @class = "fullwidth_halfwidth",
+                                                            @type = "tel",
+                                                            @id = rid + "r_txt11",
+                                                            style = "ime-mode:inactive;width:100%",
+                                                            maxlength = 2,
+                                                            onkeyup = "sum(id)",
+                                                            onkeypress = "isSpecialKey(event)",
+                                                            oninput = "sum(id)"
+                                                        })
+                                                    </td>
+                                                }
+                                                if (@mth == "12月")
+                                                {
+                                                    <td>
+                                                        @Html.TextBoxFor(model => model.shinsei_tableList_month[i].twelve,
+                                                        new
+                                                        {
+                                                            @class = "fullwidth_halfwidth",
+                                                            @type = "tel",
+                                                            @id = rid + "r_txt12",
+                                                            style = "ime-mode:inactive;width:100%",
+                                                            maxlength = 2,
+                                                            onkeyup = "sum(id)",
+                                                            onkeypress = "isSpecialKey(event)",
+                                                            oninput = "sum(id)"
+                                                        })
+                                                    </td>
+                                                }
+                                            }
+
+                                            <td width="50px" style="text-align:right">
+
+                                                @Html.TextBoxFor(model => model.shinsei_tableList_month[i].total, new { @id = rid + "total_val", style = "ime-mode:disabled;width:100%;border:none!important;background-color:white;outline:none;", @readonly = "readonly", @tabIndex = "-1" })
+
+                                            </td>
+                                        </tr>
+                                        }
+
+                                        <tr>
+
+                                            <td class="sticky-col first-col" style="height:30px">@Model.shinsei_tableList_month[r_count_mth].no_value</td>
+
+                                            <td class="sticky-col second-col">@Model.shinsei_tableList_month[r_count_mth].question</td>
+
+                                            <td class="no" style="display:none;"></td>
+
+                                            @foreach (var mth in Model.monthList)
+                                            {
+                                                if (@mth == "1月")
+                                                {
+                                                    <td id="10col_id" style="text-align:right"> @Model.shinsei_tableList_month[r_count_mth].one </td>
+                                                }
+                                                if (@mth == "2月")
+                                                {
+                                                    <td id="11col_id" style="text-align:right"> @Model.shinsei_tableList_month[r_count_mth].two </td>
+                                                }
+                                                if (@mth == "3月")
+                                                {
+                                                    <td id="12col_id" style="text-align:right"> @Model.shinsei_tableList_month[r_count_mth].three </td>
+                                                }
+                                                if (@mth == "4月")
+                                                {
+                                                    <td id="1col_id" style="text-align:right"> @Model.shinsei_tableList_month[r_count_mth].four </td>
+                                                }
+                                                if (@mth == "5月")
+                                                {
+                                                    <td id="2col_id" style="text-align:right"> @Model.shinsei_tableList_month[r_count_mth].five </td>
+                                                }
+                                                if (@mth == "6月")
+                                                {
+                                                    <td id="3col_id" style="text-align:right"> @Model.shinsei_tableList_month[r_count_mth].six </td>
+                                                }
+                                                if (@mth == "7月")
+                                                {
+                                                    <td id="4col_id" style="text-align:right"> @Model.shinsei_tableList_month[r_count_mth].seven </td>
+                                                }
+                                                if (@mth == "8月")
+                                                {
+                                                    <td id="5col_id" style="text-align:right"> @Model.shinsei_tableList_month[r_count_mth].eight </td>
+                                                }
+                                                if (@mth == "9月")
+                                                {
+                                                    <td id="6col_id" style="text-align:right"> @Model.shinsei_tableList_month[r_count_mth].nine </td>
+                                                }
+                                                if (@mth == "10月")
+                                                {
+                                                    <td id="7col_id" style="text-align:right"> @Model.shinsei_tableList_month[r_count_mth].ten </td>
+                                                }
+                                                if (@mth == "11月")
+                                                {
+                                                    <td id="8col_id" style="text-align:right"> @Model.shinsei_tableList_month[r_count_mth].eleven </td>
+                                                }
+                                                if (@mth == "12月")
+                                                {
+                                                    <td id="9col_id" style="text-align:right"> @Model.shinsei_tableList_month[r_count_mth].twelve </td>
+                                                }
+                                            }
+
+                                            <td id="all_total" width="50px" style="text-align:right">@Model.shinsei_tableList_month[r_count_mth].total</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="sticky-col first-col"></td>
+
+                                            <td class="sticky-col second-col" style="text-align:center;">完了</td>
+
+                                            <td class="no" style="display:none;"></td>
+
+                                            @foreach (var mth in Model.monthList)
+                                            {
+                                                if (@mth == "1月")
+                                                {
+                                                    <td>
+                                                        <button id="btn_1" name="tableButton" value="1mth" type="submit" class="button mth_btn"></button>
+                                                    </td>
+                                                }
+                                                if (@mth == "2月")
+                                                {
+                                                    <td>
+                                                        <button id="btn_2" name="tableButton" value="2mth" type="submit" disabled class="button mth_btn"></button>
+                                                    </td>
+                                                }
+                                                if (@mth == "3月")
+                                                {
+                                                    <td>
+                                                        <button id="btn_3" name="tableButton" value="3mth" type="submit" class="button mth_btn"></button>
+                                                    </td>
+                                                }
+                                                if (@mth == "4月")
+                                                {
+                                                    <td>
+                                                        <button id="btn_4" name="tableButton" value="4mth" type="submit" class="button mth_btn"></button>
+                                                    </td>
+                                                }
+                                                if (@mth == "5月")
+                                                {
+                                                    <td>
+                                                        <button id="btn_5" name="tableButton" value="5mth" type="submit" class="button mth_btn"></button>
+                                                    </td>
+                                                }
+                                                if (@mth == "6月")
+                                                {
+                                                    <td>
+                                                        <button id="btn_6" name="tableButton" value="6mth" type="submit" class="button mth_btn"></button>
+                                                    </td>
+                                                }
+                                                if (@mth == "7月")
+                                                {
+                                                    <td>
+                                                        <button id="btn_7" name="tableButton" value="7mth" type="submit" class="button mth_btn"></button>
+                                                    </td>
+                                                }
+                                                if (@mth == "8月")
+                                                {
+                                                    <td>
+                                                        <button id="btn_8" name="tableButton" value="8mth" type="submit" class="button mth_btn"></button>
+                                                    </td>
+                                                }
+                                                if (@mth == "9月")
+                                                {
+                                                    <td>
+                                                        <button id="btn_9" name="tableButton" value="9mth" type="submit" class="button mth_btn"></button>
+                                                    </td>
+                                                }
+                                                if (@mth == "10月")
+                                                {
+                                                    <td>
+                                                        <button id="btn_10" name="tableButton" value="10mth" type="submit" class="button mth_btn"></button>
+                                                    </td>
+                                                }
+                                                if (@mth == "11月")
+                                                {
+                                                    <td>
+                                                        <button id="btn_11" name="tableButton" value="11mth" type="submit" class="button mth_btn"></button>
+                                                    </td>
+                                                }
+                                                if (@mth == "12月")
+                                                {
+                                                    <td>
+                                                        <button id="btn_12" name="tableButton" value="12mth" type="submit" class="button mth_btn"></button>
+                                                    </td>
+                                                }
+                                            }
+
+                                            <td width="50px"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            }
+                            else//year
+                            {
+                                <table id="hyouka_table_year" class="scroll">
+                                    <thead>
+                                        <tr>
+                                            <th class="sticky-col first-col" style="width:25px"></th>
+                                            <th class="sticky-col second-col"></th>
+                                            <th style="display:none;"></th>
+                                            <th style="text-align:center">点数</th>
+                                        </tr>
+
+                                    </thead>
+                                    <tbody>
+
+                                        @for (int i = 0; i < Model.shinsei_tableList_year.Count - 1; i++)
+                                        {
+                                            var rid = i + 1;
+
+                                            <tr>
+                                                <td class="sticky-col first-col">
+                                                    @Model.shinsei_tableList_year[i].no_value
+                                                </td>
+
+                                                <td class="sticky-col second-col" style="text-align:left;width:300px;">@Model.shinsei_tableList_year[i].question</td>
+
+                                                <td class="no" style="display:none;">
+                                                    @Html.TextBoxFor(model => model.shinsei_tableList_year[i].question_code, new { style = "width:25px;text-align:center;border:none!important;background-color:white;color: black !important;" })
+
+                                                </td>
+
+                                                <td>
+                                                    @*@Html.TextBoxFor(m => m.shinsei_tableList_year[i].year_value,
+                                        new {
+                                            @type = "tel",
+                                            @id = "txt_year"+rid,
+                                            style = "ime-mode:inactive;width:100%",
+                                            oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);if (this.value != '0' && this.value != '1' && this.value != '2' && this.value != '3') this.value = '';",
+                                            @class = "fullwidth-halfwidth",
+                                            @onkeyup = "sum()",
+                                            @onkeypress = "return isSpecialKey(event)", maxlength = 2 })*@
+
+                                                    @Html.TextBoxFor(model => model.shinsei_tableList_year[i].year_value, new
+                                                    {
+                                                     @class = "fullwidth_halfwidth",
+                                                     @type = "tel",
+                                                     @id = "txt_year"+rid,
+                                                     maxlength = 2,
+                                                     onkeyup = "edValueKeyPress(id)",
+                                                     onkeypress = "isSpecialKey(event)",
+                                                     oninput = "edValueKeyPress(id)",
+                                                     // oninput = "if (this.value != '') this.style.borderColor= '';(!validity.rangeOverflow||(value=999)) && (!validity.rangeUnderflow||(value=1)) &&(!validity.stepMismatch || (value = parseInt(this.value)));if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength)",
+                                                     style = "ime-mode:inactive;width:100%",
+                                                    })
+                                                </td>
+                                            </tr>
+                                        }
+
+                                        <tr>
+
+                                            <td class="sticky-col first-col" style="height:30px">@Model.shinsei_tableList_year[r_count_yr].no_value</td>
+
+                                            <td class="sticky-col second-col">@Model.shinsei_tableList_year[r_count_yr].question</td>
+
+                                            <td class="no" style="display:none;"></td>
+
+                                            <td id="yearTotal" style="text-align:right">@Model.shinsei_tableList_year[r_count_yr].year_value</td>
+
+                                        </tr>
+
+                                        <tr>
+
+                                            <td class="sticky-col first-col"></td>
+
+                                            <td class="sticky-col second-col" style="text-align:center;">完了</td>
+
+                                            <td class="no" style="display:none;"></td>
+                                            <td>
+                                                <button id="btn_yr" name="tableButton" value="btnyear" type="submit" class="button mth_btn"></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>}
+                        </div>
+
+                    }
+
+                </div>
+
+            }
+        </div>
+    }
+    <script src="@Url.Content("~/Scripts/jquery-1.12.4.min.js")"></script>
+
+    <script>
+        $(document).ready(function () {
+            if ('@Model.showTab' == "show") {
+                //alert("show");
+                var type = document.getElementById("kj_type").value;
+                //alert("type :" + type);
+                if (type == "月別") {
+                    if ('@Model.leaderKakutei_mth4' == "kakutei") {
+
+                        document.getElementById("btn_4").innerHTML = "済";
+                        document.getElementById("btn_4").disabled = true;
+                        document.getElementById("btn_4").tabIndex = "-1";
+                        document.getElementById("btn_4").style.opacity = "0.6";
+                        document.getElementById("btn_4").style.cursor = "not-allowed";
+                    }
+                    else {
+                        //alert("4");
+                        document.getElementById("btn_4").innerHTML = "確定";
+                        document.getElementById("btn_4").style.backgroundColor = "#C0E399";
+                    }
+                    if ('@Model.leaderKakutei_mth5' == "kakutei") {
+
+                        document.getElementById("btn_5").innerHTML = "済";
+                        document.getElementById("btn_5").disabled = true;
+                        document.getElementById("btn_5").tabIndex = "-1";
+                        document.getElementById("btn_5").style.opacity = "0.6";
+                        document.getElementById("btn_5").style.cursor = "not-allowed";
+                    }
+                    else {
+                        //alert("5");
+                        document.getElementById("btn_5").innerHTML = "確定";
+                        document.getElementById("btn_5").style.backgroundColor = "#C0E399";
+                    }
+                    if ('@Model.leaderKakutei_mth6' == "kakutei") {
+
+                        document.getElementById("btn_6").innerHTML = "済";
+                        document.getElementById("btn_6").disabled = true;
+                        document.getElementById("btn_6").tabIndex = "-1";
+                        document.getElementById("btn_6").style.opacity = "0.6";
+                        document.getElementById("btn_6").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_6").innerHTML = "確定";
+                        document.getElementById("btn_6").style.backgroundColor = "#C0E399";
+                    }
+                    if ('@Model.leaderKakutei_mth7' == "kakutei") {
+
+                        document.getElementById("btn_7").innerHTML = "済";
+                        document.getElementById("btn_7").disabled = true;
+                        document.getElementById("btn_7").tabIndex = "-1";
+                        document.getElementById("btn_7").style.opacity = "0.6";
+                        document.getElementById("btn_7").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_7").innerHTML = "確定";
+                        document.getElementById("btn_7").style.backgroundColor = "#C0E399";
+                    }
+                    if ('@Model.leaderKakutei_mth8' == "kakutei") {
+
+                        document.getElementById("btn_8").innerHTML = "済";
+                        document.getElementById("btn_8").disabled = true;
+                        document.getElementById("btn_8").tabIndex = "-1";
+                        document.getElementById("btn_8").style.opacity = "0.6";
+                        document.getElementById("btn_8").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_8").innerHTML = "確定";
+                        document.getElementById("btn_8").style.backgroundColor = "#C0E399";
+                    }
+                    if ('@Model.leaderKakutei_mth9' == "kakutei") {
+
+                        document.getElementById("btn_9").innerHTML = "済";
+                        document.getElementById("btn_9").disabled = true;
+                        document.getElementById("btn_9").tabIndex = "-1";
+                        document.getElementById("btn_9").style.opacity = "0.6";
+                        document.getElementById("btn_9").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_9").innerHTML = "確定";
+                        document.getElementById("btn_9").style.backgroundColor = "#C0E399";
+                    }
+                    if ('@Model.leaderKakutei_mth10' == "kakutei") {
+
+                        document.getElementById("btn_10").innerHTML = "済";
+                        document.getElementById("btn_10").disabled = true;
+                        document.getElementById("btn_10").tabIndex = "-1";
+                        document.getElementById("btn_10").style.opacity = "0.6";
+                        document.getElementById("btn_10").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_10").innerHTML = "確定";
+                        document.getElementById("btn_10").style.backgroundColor = "#C0E399";
+                    }
+                    if ('@Model.leaderKakutei_mth11' == "kakutei") {
+
+                        document.getElementById("btn_11").innerHTML = "済";
+                        document.getElementById("btn_11").disabled = true;
+                        document.getElementById("btn_11").tabIndex = "-1";
+                        document.getElementById("btn_11").style.opacity = "0.6";
+                        document.getElementById("btn_11").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_11").innerHTML = "確定";
+                        document.getElementById("btn_11").style.backgroundColor = "#C0E399";
+                    }
+                    if ('@Model.leaderKakutei_mth12' == "kakutei") {
+
+                        document.getElementById("btn_12").innerHTML = "済";
+                        document.getElementById("btn_12").disabled = true;
+                        document.getElementById("btn_12").tabIndex = "-1";
+                        document.getElementById("btn_12").style.opacity = "0.6";
+                        document.getElementById("btn_12").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_12").innerHTML = "確定";
+                        document.getElementById("btn_12").style.backgroundColor = "#C0E399";
+                    }
+                    if ('@Model.leaderKakutei_mth1' == "kakutei") {
+
+                        document.getElementById("btn_1").innerHTML = "済";
+                        document.getElementById("btn_1").disabled = true;
+                        document.getElementById("btn_1").tabIndex = "-1";
+                        document.getElementById("btn_1").style.opacity = "0.6";
+                        document.getElementById("btn_1").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_1").innerHTML = "確定";
+                        document.getElementById("btn_1").style.backgroundColor = "#C0E399";
+                    }
+                    if ('@Model.leaderKakutei_mth2' == "kakutei") {
+
+                        document.getElementById("btn_2").innerHTML = "済";
+                        document.getElementById("btn_2").disabled = true;
+                        document.getElementById("btn_2").tabIndex = "-1";
+                        document.getElementById("btn_2").style.opacity = "0.6";
+                        document.getElementById("btn_2").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_2").innerHTML = "確定";
+                        document.getElementById("btn_2").style.backgroundColor = "#C0E399";
+                    }
+                    if ('@Model.leaderKakutei_mth3' == "kakutei") {
+
+                        document.getElementById("btn_3").innerHTML = "済";
+                        document.getElementById("btn_3").disabled = true;
+                        document.getElementById("btn_3").tabIndex = "-1";
+                        document.getElementById("btn_3").style.opacity = "0.6";
+                        document.getElementById("btn_3").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_3").innerHTML = "確定";
+                        document.getElementById("btn_3").style.backgroundColor = "#C0E399";
+                    }
+
+                    var tr = document.getElementById("hyouka_table").rows.length - 2;
+
+                    if ('@Model.disable_mth4' == "disable") {
+                        for (i = 1; i < tr; i++) {
+                            document.getElementById(i + "r_txt4").readOnly = true;
+                            document.getElementById(i + "r_txt4").tabIndex = "-1";
+                            document.getElementById(i + "r_txt4").style.backgroundColor = "whitesmoke";
+                        }
+                        document.getElementById("btn_4").disabled = true;
+                        document.getElementById("btn_4").style.opacity = "0.6";
+                        document.getElementById("btn_4").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_4").disabled = false;
+                    }
+                    if ('@Model.disable_mth5' == "disable") {
+                        for (i = 1; i < tr; i++) {
+                            document.getElementById(i + "r_txt5").readOnly = true;
+                            document.getElementById(i + "r_txt5").tabIndex = "-1";
+                            document.getElementById(i + "r_txt5").style.backgroundColor = "whitesmoke";
+                        }
+                        document.getElementById("btn_5").disabled = true;
+                        document.getElementById("btn_5").style.opacity = "0.6";
+                        document.getElementById("btn_5").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_5").disabled = false;
+                    }
+                    if ('@Model.disable_mth6' == "disable") {
+                        for (i = 1; i < tr; i++) {
+                            document.getElementById(i + "r_txt6").readOnly = true;
+                            document.getElementById(i + "r_txt6").tabIndex = "-1";
+                            document.getElementById(i + "r_txt6").style.backgroundColor = "whitesmoke";
+                        }
+                        document.getElementById("btn_6").disabled = true;
+                        document.getElementById("btn_6").style.opacity = "0.6";
+                        document.getElementById("btn_6").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_6").disabled = false;
+                    }
+                    if ('@Model.disable_mth7' == "disable") {
+                        for (i = 1; i < tr; i++) {
+                            document.getElementById(i + "r_txt7").readOnly = true;
+                            document.getElementById(i + "r_txt7").tabIndex = "-1";
+                            document.getElementById(i + "r_txt7").style.backgroundColor = "whitesmoke";
+                        }
+                        document.getElementById("btn_7").disabled = true;
+                        document.getElementById("btn_7").style.opacity = "0.6";
+                        document.getElementById("btn_7").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_7").disabled = false;
+                    }
+                    if ('@Model.disable_mth8' == "disable") {
+                        for (i = 1; i < tr; i++) {
+                            document.getElementById(i + "r_txt8").readOnly = true;
+                            document.getElementById(i + "r_txt8").tabIndex = "-1";
+                            document.getElementById(i + "r_txt8").style.backgroundColor = "whitesmoke";
+                        }
+                        document.getElementById("btn_8").disabled = true;
+                        document.getElementById("btn_8").style.opacity = "0.6";
+                        document.getElementById("btn_8").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_8").disabled = false;
+                    }
+                    if ('@Model.disable_mth9' == "disable") {
+                        for (i = 1; i < tr; i++) {
+                            document.getElementById(i + "r_txt9").readOnly = true;
+                            document.getElementById(i + "r_txt9").tabIndex = "-1";
+                            document.getElementById(i + "r_txt9").style.backgroundColor = "whitesmoke";
+                        }
+                        document.getElementById("btn_9").disabled = true;
+                        document.getElementById("btn_9").style.opacity = "0.6";
+                        document.getElementById("btn_9").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_9").disabled = false;
+                    }
+                    if ('@Model.disable_mth10' == "disable") {
+                        for (i = 1; i < tr; i++) {
+                            document.getElementById(i + "r_txt10").readOnly = true;
+                            document.getElementById(i + "r_txt10").tabIndex = "-1";
+                            document.getElementById(i + "r_txt10").style.backgroundColor = "whitesmoke";
+                        }
+                        document.getElementById("btn_10").disabled = true;
+                        document.getElementById("btn_10").style.opacity = "0.6";
+                        document.getElementById("btn_10").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_10").disabled = false;
+                    }
+
+                    if ('@Model.disable_mth11' == "disable") {
+                        for (i = 1; i < tr; i++) {
+                            document.getElementById(i + "r_txt11").readOnly = true;
+                            document.getElementById(i + "r_txt11").tabIndex = "-1";
+                            document.getElementById(i + "r_txt11").style.backgroundColor = "whitesmoke";
+                        }
+                        document.getElementById("btn_11").disabled = true;
+                        document.getElementById("btn_11").style.opacity = "0.6";
+                        document.getElementById("btn_11").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_11").disabled = false;
+                    }
+                    if ('@Model.disable_mth12' == "disable") {
+                        for (i = 1; i < tr; i++) {
+                            document.getElementById(i + "r_txt12").readOnly = true;
+                            document.getElementById(i + "r_txt12").tabIndex = "-1";
+                            document.getElementById(i + "r_txt12").style.backgroundColor = "whitesmoke";
+                        }
+                        document.getElementById("btn_12").disabled = true;
+                        document.getElementById("btn_12").style.opacity = "0.6";
+                        document.getElementById("btn_12").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_12").disabled = false;
+                    }
+                    if ('@Model.disable_mth1' == "disable") {
+                        for (i = 1; i < tr; i++) {
+                            document.getElementById(i + "r_txt1").readOnly = true;
+                            document.getElementById(i + "r_txt1").tabIndex = "-1";
+                            document.getElementById(i + "r_txt1").style.backgroundColor = "whitesmoke";
+                        }
+                        document.getElementById("btn_1").disabled = true;
+                        document.getElementById("btn_1").style.opacity = "0.6";
+                        document.getElementById("btn_1").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_1").disabled = false;
+                    }
+                    if ('@Model.disable_mth2' == "disable") {
+                        for (i = 1; i < tr; i++) {
+                            document.getElementById(i + "r_txt2").readOnly = true;
+                            document.getElementById(i + "r_txt2").tabIndex = "-1";
+                            document.getElementById(i + "r_txt2").style.backgroundColor = "whitesmoke";
+                        }
+                        document.getElementById("btn_2").disabled = true;
+                        document.getElementById("btn_2").style.opacity = "0.6";
+                        document.getElementById("btn_2").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_2").disabled = false;
+                    }
+                    if ('@Model.disable_mth3' == "disable") {
+                        for (i = 1; i < tr; i++) {
+                            document.getElementById(i + "r_txt3").readOnly = true;
+                            document.getElementById(i + "r_txt3").tabIndex = "-1";
+                            document.getElementById(i + "r_txt3").style.backgroundColor = "whitesmoke";
+                        }
+                        document.getElementById("btn_3").disabled = true;
+                        document.getElementById("btn_3").style.opacity = "0.6";
+                        document.getElementById("btn_3").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_3").disabled = false;
+                    }
+                }
+                else {
+                    if ('@Model.leaderKakutei_txtyear' == "kakutei") {
+
+                        document.getElementById("btn_yr").innerHTML = "済";
+                        document.getElementById("btn_yr").disabled = true;
+                        document.getElementById("btn_yr").tabIndex = "-1";
+                        document.getElementById("btn_yr").style.opacity = "0.6";
+                        document.getElementById("btn_yr").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_yr").innerHTML = "確定";
+                        document.getElementById("btn_yr").style.backgroundColor = "#C0E399";
+                    }
+
+                    var tr = document.getElementById("hyouka_table_year").rows.length - 2;
+
+                    if ('@Model.disable_txtyear' == "disable") {
+                        for (i = 1; i < tr; i++) {
+                            document.getElementById("txt_year" + i).readOnly = true;
+                            document.getElementById("txt_year" + i).tabIndex = "-1";
+                            document.getElementById("txt_year" + i).style.backgroundColor = "whitesmoke";
+                        }
+                        document.getElementById("btn_yr").disabled = true;
+                        document.getElementById("btn_yr").style.opacity = "0.6";
+                        document.getElementById("btn_yr").style.cursor = "not-allowed";
+                    }
+                    else {
+                        document.getElementById("btn_yr").disabled = false;
+                    }
+                }
+            }
+            if ('@Model.savebtn_disable' == "disable") {
+                document.getElementById("btn_hozone").disabled = true;
+                document.getElementById("btn_hozone").style.opacity = "0.6";
+                document.getElementById("btn_hozone").style.cursor = "not-allowed";
+            }
+            else {
+                document.getElementById("btn_hozone").disabled = false;
+            }
+        });
+    </script>
+
+    <script>
+
+        function myFunction() {
+            $('#btnSearch').click();
+        }
+
+        function OnChanged(evt) {
+            $('#btnSearch').click();
+        }
+
+        function isSpecialKey(event) {
+
+            var regex = new RegExp("^[0-9]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+
+            if (!regex.test(key)) {
+
+                event.preventDefault();
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function edValueKeyPress(id) {
+
+            var val = document.getElementById(id).value;
+            var kijunmark = document.getElementById("kijunMark").value;
+
+            if (parseInt(val) > parseInt(kijunmark)) {
+
+                document.getElementById(id).value = kijunmark;
+                alert("基礎点数「" + kijunmark + "」をオーバーしています。調整してください。");
+                event.preventDefault();
+            }
+
+            var sum = 0;
+            var save_que_val = 0;
+            var n1 = document.getElementById("hyouka_table_year").rows.length;
+            for (var i = 1; i < n1; i++) {
+                save_que_val = document.getElementById("txt_year" + i).value;
+
+                if (save_que_val != "") {
+                    sum += parseInt(save_que_val);
+                }
+                document.getElementById("yearTotal").innerHTML = sum;
+                document.getElementById("yearTotal").style.textAlign = "right";
+            }
+        }
+
+        function sum(id) {
+            var val = document.getElementById(id).value;
+            var kijunmark = document.getElementById("kijunMark").value;
+
+            if (parseInt(val) > parseInt(kijunmark)) {
+
+                document.getElementById(id).value = kijunmark;
+                alert("基礎点数「" + kijunmark + "」をオーバーしています。調整してください。");
+                event.preventDefault();
+            }
+
+            var tabel = document.getElementById("hyouka_table");
+            //var rows = document.getElementsByTagName("table")[1].rows.length - 1;
+            var rows = document.getElementById("hyouka_table").rows.length - 1;
+            //var que_rows = document.getElementsByTagName("table")[1].rows.length - 3;
+            var que_rows = document.getElementById("hyouka_table").rows.length - 3;
+
+            var total_col_sum = 0;
+            var total_count = 0;
+            var length = 0;
+            var row_sum_inputval = 0;
+            var row_count = 0;
+            var col1_sum_inputval = 0;
+            var col1_count = 0;
+            var col2_sum_inputval = 0;
+            var col2_count = 0;
+            var col3_sum_inputval = 0;
+            var col3_count = 0;
+            var col4_sum_inputval = 0;
+            var col4_count = 0;
+            var col5_sum_inputval = 0;
+            var col5_count = 0;
+            var col6_sum_inputval = 0;
+            var col6_count = 0;
+            var col7_sum_inputval = 0;
+            var col7_count = 0;
+            var col8_sum_inputval = 0;
+            var col8_count = 0;
+            var col9_sum_inputval = 0;
+            var col9_count = 0;
+            var col10_sum_inputval = 0;
+            var col10_count = 0;
+            var col11_sum_inputval = 0;
+            var col11_count = 0;
+            var col12_sum_inputval = 0;
+            var col12_count = 0;
+
+            for (i = 1; i < rows; i++) {
+
+                /*for row sum start*/
+                row_count = 0;
+                row_sum_inputval = 0;
+                var r_tid4 = i + "r_txt4";
+                var r_tid4_val = document.getElementById(r_tid4).value;
+                var r_tid5 = i + "r_txt5";
+                var r_tid5_val = document.getElementById(r_tid5).value;
+                var r_tid6 = i + "r_txt6";
+                var r_tid6_val = document.getElementById(r_tid6).value;
+                var r_tid7 = i + "r_txt7";
+                var r_tid7_val = document.getElementById(r_tid7).value;
+                var r_tid8 = i + "r_txt8";
+                var r_tid8_val = document.getElementById(r_tid8).value;
+                var r_tid9 = i + "r_txt9";
+                var r_tid9_val = document.getElementById(r_tid9).value;
+                var r_tid10 = i + "r_txt10";
+                var r_tid10_val = document.getElementById(r_tid10).value;
+                var r_tid11 = i + "r_txt11";
+                var r_tid11_val = document.getElementById(r_tid11).value;
+                var r_tid12 = i + "r_txt12";
+                var r_tid12_val = document.getElementById(r_tid12).value;
+                var r_tid1 = i + "r_txt1";
+                var r_tid1_val = document.getElementById(r_tid1).value;
+                var r_tid2 = i + "r_txt2";
+                var r_tid2_val = document.getElementById(r_tid2).value;
+                var r_tid3 = i + "r_txt3";
+                var r_tid3_val = document.getElementById(r_tid3).value;
+                var r_tot_id = i + "total_val";
+
+                if (r_tid4_val != "") {
+                    row_sum_inputval += parseInt(r_tid4_val);
+                }
+                else {
+                    row_count++;
+                }
+                if (r_tid5_val != "") {
+                    row_sum_inputval += parseInt(r_tid5_val);
+                }
+                else {
+                    row_count++;
+                }
+                if (r_tid6_val != "") {
+                    row_sum_inputval += parseInt(r_tid6_val);
+                }
+                else {
+                    row_count++;
+                }
+                if (r_tid7_val != "") {
+                    row_sum_inputval += parseInt(r_tid7_val);
+                }
+                else {
+                    row_count++;
+                }
+                if (r_tid8_val != "") {
+                    row_sum_inputval += parseInt(r_tid8_val);
+                }
+                else {
+                    row_count++;
+                }
+                if (r_tid9_val != "") {
+                    row_sum_inputval += parseInt(r_tid9_val);
+                }
+                else {
+                    row_count++;
+                }
+                if (r_tid10_val != "") {
+                    row_sum_inputval += parseInt(r_tid10_val);
+                }
+                else {
+                    row_count++;
+                }
+                if (r_tid11_val != "") {
+                    row_sum_inputval += parseInt(r_tid11_val);
+                }
+                else {
+                    row_count++;
+                }
+                if (r_tid12_val != "") {
+                    row_sum_inputval += parseInt(r_tid12_val);
+                }
+                else {
+                    row_count++;
+                }
+                if (r_tid1_val != "") {
+                    row_sum_inputval += parseInt(r_tid1_val);
+                }
+                else {
+                    row_count++;
+                }
+                if (r_tid2_val != "") {
+                    row_sum_inputval += parseInt(r_tid2_val);
+                }
+                else {
+                    row_count++;
+                }
+                if (r_tid3_val != "") {
+                    row_sum_inputval += parseInt(r_tid3_val);
+                }
+                else {
+                    row_count++;
+                }
+                if (row_count == 12) {
+                    document.getElementById(r_tot_id).value = "";
+                }
+                else {
+                    document.getElementById(r_tot_id).value = row_sum_inputval;
+                }
+                /*for row sum end*/
+
+                /*for column sum start*/
+                //col1(April)
+                var tid1 = i + "r_txt4";
+                var c1_val = document.getElementById(tid1).value;
+                if (c1_val != "") {
+                    col1_sum_inputval += parseInt(c1_val);
+                }
+                else {
+                    col1_count++;
+                }
+                if (col1_count == que_rows) {
+                    document.getElementById("1col_id").innerHTML = "";
+                }
+                else {
+                    document.getElementById("1col_id").innerHTML = col1_sum_inputval;
+                }
+                document.getElementById("1col_id").style.textAlign = "right";
+
+                //col2(May)
+                var tid2 = i + "r_txt5";
+                var c2_val = document.getElementById(tid2).value;
+
+                if (c2_val != "") {
+                    col2_sum_inputval += parseInt(c2_val);
+                }
+                else {
+                    col2_count++;
+                }
+                if (col2_count == que_rows) {
+                    document.getElementById("2col_id").innerHTML = "";
+                }
+                else {
+                    document.getElementById("2col_id").innerHTML = col2_sum_inputval;
+                }
+                document.getElementById("2col_id").style.textAlign = "right";
+
+                //col3(Jun)
+                var tid3 = i + "r_txt6";
+                var c3_val = document.getElementById(tid3).value;
+
+                if (c3_val != "") {
+                    col3_sum_inputval += parseInt(c3_val);
+                }
+                else {
+                    col3_count++;
+                }
+                if (col3_count == que_rows) {
+                    document.getElementById("3col_id").innerHTML = "";
+                }
+                else {
+                    document.getElementById("3col_id").innerHTML = col3_sum_inputval;
+                }
+                document.getElementById("3col_id").style.textAlign = "right";
+
+                //col4(July)
+                var tid4 = i + "r_txt7";
+                var c4_val = document.getElementById(tid4).value;
+
+                if (c4_val != "") {
+                    col4_sum_inputval += parseInt(c4_val);
+                }
+                else {
+                    col4_count++;
+                }
+                if (col4_count == que_rows) {
+                    document.getElementById("4col_id").innerHTML = "";
+                }
+                else {
+                    document.getElementById("4col_id").innerHTML = col4_sum_inputval;
+                }
+                document.getElementById("4col_id").style.textAlign = "right";
+
+                //col5(August)
+                var tid5 = i + "r_txt8";
+                var c5_val = document.getElementById(tid5).value;
+
+                if (c5_val != "") {
+                    col5_sum_inputval += parseInt(c5_val);
+                }
+                else {
+                    col5_count++;
+                }
+                if (col5_count == que_rows) {
+                    document.getElementById("5col_id").innerHTML = "";
+                }
+                else {
+                    document.getElementById("5col_id").innerHTML = col5_sum_inputval;
+                }
+                document.getElementById("5col_id").style.textAlign = "right";
+
+                //col6(September)
+                var tid6 = i + "r_txt9";
+                var c6_val = document.getElementById(tid6).value;
+
+                if (c6_val != "") {
+                    col6_sum_inputval += parseInt(c6_val);
+                }
+                else {
+                    col6_count++;
+                }
+                if (col6_count == que_rows) {
+                    document.getElementById("6col_id").innerHTML = "";
+                }
+                else {
+                    document.getElementById("6col_id").innerHTML = col6_sum_inputval;
+                }
+                document.getElementById("6col_id").style.textAlign = "right";
+
+                //col7(October)
+                var tid7 = i + "r_txt10";
+                var c7_val = document.getElementById(tid7).value;
+
+                if (c7_val != "") {
+                    col7_sum_inputval += parseInt(c7_val);
+                }
+                else {
+                    col7_count++;
+                }
+                if (col7_count == que_rows) {
+                    document.getElementById("7col_id").innerHTML = "";
+                }
+                else {
+                    document.getElementById("7col_id").innerHTML = col7_sum_inputval;
+                }
+                document.getElementById("7col_id").style.textAlign = "right";
+
+                //col8(November)
+                var tid8 = i + "r_txt11";
+                var c8_val = document.getElementById(tid8).value;
+
+                if (c8_val != "") {
+                    col8_sum_inputval += parseInt(c8_val);
+                }
+                else {
+                    col8_count++;
+                }
+                if (col8_count == que_rows) {
+                    document.getElementById("8col_id").innerHTML = "";
+                }
+                else {
+                    document.getElementById("8col_id").innerHTML = col8_sum_inputval;
+                }
+                document.getElementById("8col_id").style.textAlign = "right";
+
+                //col9(December)
+                var tid9 = i + "r_txt12";
+                var c9_val = document.getElementById(tid9).value;
+
+                if (c9_val != "") {
+                    col9_sum_inputval += parseInt(c9_val);
+                }
+                else {
+                    col9_count++;
+                }
+                if (col9_count == que_rows) {
+                    document.getElementById("9col_id").innerHTML = "";
+                }
+                else {
+                    document.getElementById("9col_id").innerHTML = col9_sum_inputval;
+                }
+                document.getElementById("9col_id").style.textAlign = "right";
+
+                //col10(January)
+                var tid10 = i + "r_txt1";
+                var c10_val = document.getElementById(tid10).value;
+
+                if (c10_val != "") {
+                    col10_sum_inputval += parseInt(c10_val);
+                }
+                else {
+                    col10_count++;
+                }
+                if (col10_count == que_rows) {
+                    document.getElementById("10col_id").innerHTML = "";
+                }
+                else {
+                    document.getElementById("10col_id").innerHTML = col10_sum_inputval;
+                }
+                document.getElementById("10col_id").style.textAlign = "right";
+
+                //col11(February)
+                var tid11 = i + "r_txt2";
+                var c11_val = document.getElementById(tid11).value;
+
+                if (c11_val != "") {
+                    col11_sum_inputval += parseInt(c11_val);
+                }
+                else {
+                    col11_count++;
+                }
+                if (col11_count == que_rows) {
+                    document.getElementById("11col_id").innerHTML = "";
+                }
+                else {
+                    document.getElementById("11col_id").innerHTML = col11_sum_inputval;
+                }
+                document.getElementById("11col_id").style.textAlign = "right";
+
+                //col12(March)
+                var tid12 = i + "r_txt3";
+                var c12_val = document.getElementById(tid12).value;
+
+                if (c12_val != "") {
+                    col12_sum_inputval += parseInt(c12_val);
+                }
+                else {
+                    col12_count++;
+                }
+                if (col12_count == que_rows) {
+                    document.getElementById("12col_id").innerHTML = "";
+                }
+                else {
+                    document.getElementById("12col_id").innerHTML = col12_sum_inputval;
+                }
+                document.getElementById("12col_id").style.textAlign = "right";
+
+                //totalCol
+                var tid_total = i + "total_val";
+                var c_tot_val = document.getElementById(tid_total).value;
+
+                if (c_tot_val != "") {
+                    total_col_sum += parseInt(c_tot_val);
+                }
+                else {
+                    total_count++;
+                }
+                if (total_count == que_rows) {
+                    document.getElementById("all_total").innerHTML = "";
+                }
+                else {
+                    document.getElementById("all_total").innerHTML = total_col_sum;
+                }
+                document.getElementById("all_total").style.textAlign = "right";
+                /*for column sum end*/
+            }
+        }
+
+    </script>
+    
+    <script>
+        
+        $('#btn_4').click(function () {
+            var btnName = document.getElementById("btn_4").innerHTML;
+            return checkFun(btnName);
+        });
+        $('#btn_5').click(function () {
+            var btnName = document.getElementById("btn_5").innerHTML;
+            return checkFun(btnName);
+        });
+        $('#btn_6').click(function () {
+            var btnName = document.getElementById("btn_6").innerHTML;
+            return checkFun(btnName);
+        });
+        $('#btn_7').click(function () {
+            var btnName = document.getElementById("btn_7").innerHTML;
+            return checkFun(btnName);
+        });
+        $('#btn_8').click(function () {
+            var btnName = document.getElementById("btn_8").innerHTML;
+            return checkFun(btnName);
+        });
+        $('#btn_9').click(function () {
+            var btnName = document.getElementById("btn_9").innerHTML;
+            return checkFun(btnName);
+        });
+        $('#btn_10').click(function () {
+            var btnName = document.getElementById("btn_10").innerHTML;
+            return checkFun(btnName);
+        });
+        $('#btn_11').click(function () {
+            var btnName = document.getElementById("btn_11").innerHTML;
+            return checkFun(btnName);
+        });
+        $('#btn_12').click(function () {
+            var btnName = document.getElementById("btn_12").innerHTML;
+            return checkFun(btnName);
+        });
+        $('#btn_1').click(function () {
+            var btnName = document.getElementById("btn_1").innerHTML;
+            return checkFun(btnName);
+        });
+        $('#btn_2').click(function () {
+            var btnName = document.getElementById("btn_2").innerHTML;
+            return checkFun(btnName);
+        });
+        $('#btn_3').click(function () {
+            var btnName = document.getElementById("btn_3").innerHTML;
+            return checkFun(btnName);
+        });
+        $('#btn_yr').click(function () {
+            var btnName = document.getElementById("btn_yr").innerHTML;
+            return checkFun(btnName);
+        });
+        function checkFun(btn_name) {
+            if (btn_name == "確定") {
+
+                if (confirm("保存してよろしいでしょうか？")) {
+
+                }
+                else {
+                    event.preventDefault();
+
+                }
+                //var input = $("<input />");
+                //input.attr("type", "hidden").attr("name", "kakutei_confirm");
+                //if (confirm("保存してよろしいでしょうか？")) {
+                //    input.val("OK");
+                //} else {
+                //    input.val("キャンセル");
+                //    event.preventDefault();
+                //}
+                //$("form")[0].appendChild(input[0]);
+            }
+            else {
+                event.preventDefault();
+            }
+        }
+    </script>
+
+    <script>
+        
+        $('#btn_hozone').click(function (event) {
+
+            //var input = $("<input />");
+            //input.attr("type", "hidden").attr("name", "hozone_confirm");
+            if (confirm("確定後の点数の変更を保存しますか？")) {
+                //input.val("OK");
+            } else {
+                event.preventDefault();
+                //input.val("キャンセル");
+            }
+            //$("form")[0].appendChild(input[0]);
+        });
+    </script>
+
+    @if (TempData["com_msg"] != null)
+    {
+        <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+        <script>
+            $(document).ready(function(){
+
+                alert('@TempData["com_msg"]');
+            });
+        </script>
+    }
+</body>
+</html>
+
+
+
+
+
+
+
+

@@ -1,0 +1,90 @@
+﻿@*//*
+    * 作成者　:  ルインマー
+    * 日付：20210507
+    * 機能　：評価者更新画面
+    * 作成したパラメータ：Session["LoginName"]
+    *
+    */*@
+
+@model koukahyosystem.Models.MasterHyoukashaKoshin
+@{
+    ViewBag.Title = "MasterHyoukashaKoshin";
+}
+
+<html>
+<head>
+    <style>
+        button {
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+        }
+        .div_textbox {
+            display: inline-block;
+        }
+
+        .div_year {
+            display: inline-block;
+        }
+
+        .div_search {
+            margin-left: 20px;
+            display: inline-block;
+        }
+    </style>
+   
+</head>
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+    <div class="panel panel-info" style="overflow:auto; ">
+        @using (Html.BeginForm("MasterHyoukashaKoshin", "MasterHyoukashaKoshin", FormMethod.Post, new { @id = "WebGridForm" }))
+        {
+            <div class="panel-heading text-center" style="background-color: rgb(34, 148, 172);">
+                <h4 style="color:white">評価者更新画面</h4>
+            </div>
+            <div class="filter1" style="margin:10px;" align="center">
+               
+                <div class="div_year">
+                    @Html.Label("年度", new { style = "color:black;font-weight: normal !important;" })
+                    <button id="btnPrevious" name="btnPrevious" value=@Model.year style="width:29px;height:29px;"> < </button>
+                    @Html.DropDownListFor(m => m.year, Model.yearList, new
+               {
+                   @id = "selectyear",
+                   @autofocus = true,
+                   style = "width:60px;Height:22px;",
+                   onchange = "return OnChangedYear()"
+               })
+                    <button id="btnNext" name="btnNext" value=@Model.year style="width:29px;height:29px;margin-right:15px;"> > </button>
+                </div>
+                <div class="div_textbox">
+                    <label class="lbl_busho">評価者決めでも変更する</label>
+                    @Html.CheckBoxFor(m => m.check, new { id = "check", style = "margin-left:5px;" })
+                </div>
+                <div class="div_search">
+                    <button type="submit" id="changeBtn" name="changeBtn" value="search" class="button searchbtncss" style="text-align:center; width:60px; height:40px;" autofocus>変更  </button>
+                </div>
+               
+            </div>
+           
+        }
+    </div>
+
+    }
+    <script src="@Url.Content("~/Scripts/jquery-1.12.4.min.js")"></script>
+    <script>
+        $('#changeBtn').click(function (event) {
+            if (confirm("変更してよろしいでしょうか？")) {
+              
+            } else {
+                event.preventDefault();
+            }
+        });
+      
+    </script>
+</body>
+</html>
+

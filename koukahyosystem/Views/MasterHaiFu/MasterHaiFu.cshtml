@@ -1,0 +1,804 @@
+﻿@*/*
+    * 作成者　: ルインマー
+    * 日付：20201126
+    * 機能　：得点配布設定
+    *
+    */*@
+@model koukahyosystem.Models.MasterHaiFuModel
+@{
+    /**/
+
+    ViewBag.Title = "HaiFu";
+    var grid = new WebGrid(source: Model.AllTypeList, rowsPerPage: 20);
+    if (Model.AllTypeList != null && Model.pgindex != 0)
+    {
+        grid.PageIndex = Model.pgindex;
+
+    }
+}
+<html>
+<head>
+    <style type="text/css">
+        /*button {
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+        }*/
+        .btncss {
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+            width: auto;
+            padding: 5px 10px 5px 10px;
+        }
+        .hozone {           
+            margin-right: 10px;
+            margin-left: 100px;
+            width: 60px;
+            height: 35px;
+           
+            text-align: center;           
+            color: black;
+            border: none;
+            border-radius: 4px;
+            border: 0.5px solid #555555;
+        }
+
+        .back {            
+            margin-right: 10px;
+            width: 60px;
+            height: 35px;           
+            text-align: center;            
+            color: black;
+            border: none;
+            border-radius: 4px;
+            border: 0.5px solid #555555;
+        }
+
+        .webgrid-table td, th {
+            padding: 3px 7px 2px;
+            border: solid 1px white;
+        }
+
+        .webgrid-header {
+            background-color: skyblue;
+            color: black;
+            padding-bottom: 4px;
+            padding-top: 5px;
+            text-align: center;
+        }
+
+            .webgrid-header a {
+                color: black;
+            }
+
+        .webgrid-footer {
+        }
+
+        .webgrid-row-style {
+            padding: 3px 7px 2px;
+        }
+
+        .webgrid-alternating-row {
+            background-color: #C1ECFA;
+            padding: 3px 7px 2px;
+        }
+
+        .webgrid-table thead th {
+            text-align: center;
+        }
+
+
+        .webgrid-table tbody td:first-child,
+        .webgrid-table tbody th:first-child {
+            text-align: center;
+            width: 15px;
+        }
+
+        .webgrid-table tbody td:nth-child(2),
+        .webgrid-table tbody th:nth-child(2) {
+            text-align: center;
+            width: 20px;
+        }
+
+        .webgrid-table tbody td:nth-child(3),
+        .webgrid-table tbody th:nth-child(3) {
+            text-align: left;
+            width: 180px;
+        }
+
+        .webgrid-table tbody td:nth-child(4),
+        .webgrid-table tbody th:nth-child(4) {
+            text-align: right;
+            width: 85px;
+        }
+
+        .webgrid-table tbody td:nth-child(5),
+        .webgrid-table tbody th:nth-child(5) {
+            text-align: right;
+            width: 75px;
+        }
+
+        .webgrid-table tbody td:nth-child(6),
+        .webgrid-table tbody th:nth-child(6) {
+            text-align: right;
+            width: 75px;
+        }
+
+        .webgrid-table tbody td:nth-child(7),
+        .webgrid-table tbody th:nth-child(7) {
+            text-align: right;
+            width: 75px;
+        }
+
+        .webgrid-table tbody td:nth-child(8),
+        .webgrid-table tbody th:nth-child(8) {
+            text-align: center;
+            width: 75px;
+        }
+
+
+        .data_tbl th, tr, td {
+            border: 1px solid #cccccc;
+           
+        }
+        .searchbtncss {
+            width: 60px;
+            height: 35px;
+            margin-left: 30px;
+            margin-right: 10px;
+        }
+
+        .clearbtncss {
+            height: 35px;
+            margin-right: 35px;
+        }
+
+        .createbtncss {
+            width: 60px;
+            height: 35px;
+            margin-left: 15px;
+            margin-right: 5px;
+        }
+        .myDialog {
+            width: 58%
+        }
+        .mycontent {
+            height: 59vh;
+        }
+        .div1 {
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .lbl_year {
+            color: black;
+            font-weight: normal !important;
+            margin-left:215px;
+            margin-right: 5px;
+        }
+        .lbl_kubun {
+            color: black;
+            font-weight: normal !important;
+            margin-right: 5px;
+            margin-left:30px;
+            margin-top: 7px;
+        }
+        @@media only screen and (max-width: 1024px) {
+
+            .myDialog {
+                width: 100%
+            }
+
+            .lbl_year {
+                margin-left: 50px;
+            }
+
+            .lbl_kubun {
+                margin-left: 15px;
+            }
+
+            .searchbtncss {
+                margin-left: 10px;
+            }
+
+            .divTxt {
+                text-align: left;
+            }
+
+            .lbl_kensaku {
+                margin-left: 0px;
+            }
+
+            .btnCreate {
+                margin-left: 5px;
+            }
+            /*.btnSearch {
+                margin-left: 15px;
+            }
+
+            .btnCreate {
+                margin-left: 15px;
+            }*/
+        }
+        @@media only screen and (max-width: 768px) {
+
+            .myDialog {
+                width: 100%
+            }
+            
+        }
+
+        @@media only screen and (max-width: 576px) {
+            .searchbtncss {
+                margin-left:15px;
+            }
+            .lbl_year {
+                margin-left: 15px;
+            }
+        }
+
+        @@media screen and (max-width: 480px) {
+            .searchbtncss {
+                width: 50px;
+                height: 35px;
+                margin-right: unset;
+            }
+
+            .clearbtncss {
+                height: 35px;
+                margin-right: unset;
+            }
+
+            .createbtncss {
+                width: 50px;
+                height: 35px;
+                margin-right: unset;
+            }
+
+            .hozone {
+                margin-right: 10px;
+                margin-left: 70px;
+                width: 60px;
+                height: 35px;
+                text-align: center;
+                color: black;
+                border: none;
+                border-radius: 4px;
+                border: 0.5px solid #555555;
+            }
+        }
+        @@media only screen and (max-width: 320px) {
+
+            .btnSearch {
+                margin-left: 15px;
+            }
+
+            .btnClear {
+                margin-left: 0px;
+            }
+
+            .btnSave {
+                margin-left: 0px;
+            }
+
+            .btnCreate {
+                margin-left: 10px;
+            }
+        }
+        
+        
+
+        @@media (min-height: 758px) {
+            /*.myDialog {
+                width: 46%
+            }*/
+            .mycontent {
+                height: 70.2vh;
+                overflow: auto;
+            }
+        }
+    </style>
+    <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+    <script>
+
+        $(document).ready(function () {
+
+            $('.modal').on('hidden.bs.modal', function (e) {
+                document.getElementById("newEditBtn").focus();
+            });
+        });
+    </script>
+</head>
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+    <div class="panel panel-info" style="overflow:auto; ">
+
+        @using (Html.BeginForm("MasterHaiFu", "MasterHaiFu", FormMethod.Post, new { @id = "WebGridForm" }))
+        {
+            <div class="panel-heading text-center" style="background-color: rgb(34, 148, 172);">
+                <h4 style="color:white">得点設定画面</h4>
+            </div>
+            <div style="margin:10px;">
+                <div class="container ">
+                    <div class="row " style="margin-top:10px;">
+                        <div class="col">
+                            <div class="div1">
+                                @Html.Label("年度", new { @class = "lbl_year" })
+                                <button name="year_btn" value="<" class="btncss" style="width:29px;height:29px;"><</button>
+                                @Html.DropDownListFor(m => m.year, Model.yearList, new { @id = "year", style = "width:70px;Height:22px;margin-bottom:4px;", onchange = "SelectedIndexChanged()", autofocus = "autofocus" })
+                                <button name="year_btn" value=">" class="btncss" style="width:29px;height:29px;">></button>
+                            </div>
+
+                            <div class="div1">
+                                @Html.Label("区分", new { @class = "lbl_kubun" })
+                                @Html.DropDownListFor(m => m.sKUBUN, Model.kubunList, "", new { id = "sKUBUN", style = "width:100px;margin-left:5px;margin-right:12px;" })
+                            </div>
+                            @*<div class="col-md-2 text-center " style="width:200px;">
+                                @Html.Label("評価", new { style = "color:black;font-weight: normal !important;margin-right:5px;margin-top:7px;" })
+                                @Html.DropDownListFor(m => m.sTYPE, Model.typeList, "", new { id = "sTYPE", style = "width:100px;margin-left:5px;margin-right:12px;" })
+                            </div>*@
+                            <div class="div1">
+                                <button type="submit" id="searchBtn" name="HaiFuBtn" value="search" class="btncss searchbtncss" style="text-align:center; ">検索</button>
+                                <button type="submit" id="clearBtn" name="HaiFuBtn" value="clear" class="btncss clearbtncss" style="text-align:center; ">クリア</button>
+                                <button type="submit" id="newEditBtn" name="HaiFuBtn" value="newEdit" class="btncss createbtncss" style="text-align:center; ">@Model.btn_txt</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                @Html.HiddenFor(m => m.btn_txt, new { style = " " })
+                @Html.HiddenFor(m => m.fpopup, new { style = " " })
+                @Html.HiddenFor(m => m.pgindex)
+            </div>
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true" align="center" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog myDialog" style="margin-top:20px;">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color: rgb(34, 148, 172);  ">
+                            <h4 class="modal-title" id="myModalLabel" style="color:white">得点設定画面</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" style="margin-top:20px;margin-bottom:20px">
+                            <div class="container" style="overflow:auto">
+                                <table class="data_tbl" id="DataTable" cellpadding="4" align="center">
+                                    <thead>
+                                        <tr>
+                                            <th style="display:none;"></th>
+                                            <th style="text-align: center;">区分</th>
+                                            <th style="text-align: center;">360度評価 </th>
+                                            <th style="text-align: center;">基礎評価</th>
+                                            <th style="text-align: center;">目標評価</th>
+                                            <th style="text-align: center;">情意考課</th>
+                                            <th style="text-align: center;">切り上げ</th>
+                                            <th style="text-align: center;">四捨五入</th>
+                                            <th style="text-align: center;">切り捨て</th>
+
+                                            <th style="display:none;">評価中</th>
+
+                                            <th style="display:none;">変更</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.HaiFuList.Count; i++)
+                                        {
+                                            var kisoid = i + 1;
+                                            var temaid = i + 1;
+                                            var hyoukaid = i + 1;
+                                            var joi_id = i + 1;
+                                            var j = i + 1;
+                                            <tr >
+                                                <td valign="top" style="display:none;">
+                                                    @Html.TextBoxFor(model => model.HaiFuList[i].ckubun, new { style = "width:20px;" })
+                                                </td>
+                                                <td valign="top" align="left" >
+                                                    @Model.HaiFuList[i].skubun
+                                                    @*@Html.TextBoxFor(model => model.HaiFuList[i].skubun, new { style = "width:100%;min-width:100%;border:none!important;", @readonly = "readonly" })*@
+                                                </td>
+                                                <td valign="top" align="center" >
+                                                    @Html.TextBoxFor(model => model.HaiFuList[i].kisomark, new
+                                                {
+                                                    @id = kisoid,
+                                                    oninput = "edValueKeyPress(id)",
+                                                    @onkeypress = "return isSpecialKey(event)",
+                                                    maxlength = 3,
+                                                    style = "margin:left:0px;width:50px;text-align:right;border:none;"
+                                                })
+                                                    @*@Html.Label("*入力してください。", new { style = "color:red;font-weight: normal !important;display:none;" })*@
+                                                </td>
+                                                <td valign="top" align="center" >
+                                                    @Html.TextBoxFor(model => model.HaiFuList[i].temamark, new
+                                                {
+                                                    @id = temaid,
+                                                    oninput = "edValueKeyPress(id)",
+                                                    @onkeypress = "return isSpecialKey(event)",
+                                                    maxlength = 3,
+                                                    style = "margin:left:0px;width:50px;text-align:right;border:none;"
+                                                })
+
+                                                </td>
+                                                <td valign="top" align="center" >
+                                                    @Html.TextBoxFor(model => model.HaiFuList[i].hyoukamark, new
+                                                {
+                                                    @id = hyoukaid,
+                                                    oninput = "edValueKeyPress(id)",
+                                                    @onkeypress = "return isSpecialKey(event)",
+                                                    maxlength = 3,
+                                                    style = "margin:left:0px;width:50px;text-align:right;border:none;"
+                                                })
+
+                                                </td>
+                                                <td valign="top" align="center" >
+                                                    @Html.TextBoxFor(model => model.HaiFuList[i].jyouimark, new
+                                                {
+                                                    @id = joi_id,
+                                                    oninput = "edValueKeyPress(id)",
+                                                    @onkeypress = "return isSpecialKey(event)",
+                                                    maxlength = 4,
+                                                    style = "margin:left:0px;width:50px;text-align:right;border:none;"
+                                                })
+
+                                                </td>
+                                                <td style="text-align:center;">
+                                                    @if (Model.HaiFuList[i].froundup == true)
+                                                    {
+                                                        @Html.RadioButtonFor(model => model.HaiFuList[i].roundVal, "froundUp", new { @checked = "check" })
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.RadioButtonFor(model => model.HaiFuList[i].roundVal, "froundUp")
+                                                    }
+                                                </td>
+                                                <td style="text-align:center;">
+                                                    @if (Model.HaiFuList[i].frounddown == true)
+                                                    {
+                                                        @Html.RadioButtonFor(model => model.HaiFuList[i].roundVal, "froundDown", new { @checked = "check" })
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.RadioButtonFor(model => model.HaiFuList[i].roundVal, "froundDown")
+                                                    }
+                                                </td>
+                                                <td style="text-align:center;">
+                                                    @if (Model.HaiFuList[i].ftruncate == true)
+                                                    {
+                                                        @Html.RadioButtonFor(model => model.HaiFuList[i].roundVal, "ftrunCate", new { @checked = "check" })
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.RadioButtonFor(model => model.HaiFuList[i].roundVal, "ftrunCate")
+                                                    }
+                                                </td>
+                                                <td valign="top" style="display:none;">@Html.TextBoxFor(model => model.HaiFuList[i].fhyoukacyuu, new { style = "width:50px;text-align:right;" })</td>
+                                                <td valign="top" style="display:none;">@Html.TextBoxFor(model => model.HaiFuList[i].fhenkou, new { style = "width:50px;text-align:right;" })</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+
+                                </table>
+                            </div>
+
+
+                        </div>
+
+                        <div class="modal-footer" align="center">
+                            <button type="submit" class="btncss" id="hozone" name="HaiFuBtn" value="hozone" style="width:60px; height:35px; text-align:center; margin-right:10px;" onclick="msgFunction()">保存</button>
+                            @* <button type="submit" class="btncss " data-dismiss="modal" style="height:35px; width:60px;" onclick="modal_backBtn();">戻る</button>*@
+                            <button type="button" class="btncss " data-dismiss="modal" style="height:35px; width:60px;">戻る</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            @Html.HiddenFor(m => m.sort, new { id = "sort", style = "position: absolute;visibility:hidden" })
+
+            @Html.HiddenFor(m => m.pgindex, new { id = "pgindex", style = "position: absolute;visibility:hidden" })
+
+            @Html.HiddenFor(m => m.sort_year, new { id = "sort_year", style = "position: absolute;visibility:hidden " })
+
+            @Html.HiddenFor(m => m.sort_kubun, new { id = "sort_kubun", style = "position: absolute;visibility:hidden" })
+
+            @Html.HiddenFor(m => m.sort_hyoukamark, new { id = "sort_hyoukamark", style = "position: absolute;visibility:hidden" })
+
+            @Html.HiddenFor(m => m.sort_kisomark, new { id = "sort_kisomark", style = " position: absolute;visibility:hidden" })
+
+            @Html.HiddenFor(m => m.sort_mokuhyomark, new { id = "sort_hyoukamark", style = "position: absolute;visibility:hidden" })
+
+            @Html.HiddenFor(m => m.sort_jyouimark, new { id = "sort_kisomark", style = " position: absolute;visibility:hidden" })
+
+            @Html.HiddenFor(m => m.sort_roundVal, new { id = "sort_kisomark", style = " position: absolute;visibility:hidden" })
+
+
+            <input type="submit" value="pgindex" id="pageindex_btn" name="HaiFuBtn" class="btncss" style=" position: absolute; visibility:hidden" />
+            <input type="submit" value="order" id="sortOrder_btn" name="HaiFuBtn" class="btncss" style=" position: absolute; visibility:hidden" />
+
+
+        }
+        <div id="gridContent" align="center" style="margin:15px; " class="mycontent">
+            @grid.GetHtml(
+            tableStyle: "webgrid-table",
+            headerStyle: "webgrid-header",
+            footerStyle: "webgrid-footer",
+            alternatingRowStyle: "webgrid-alternating-row",
+            rowStyle: "webgrid-row-style",
+            columns: grid.Columns(
+            grid.Column(header: "No.", format: @<text> <div>  @(item.WebGrid.Rows.IndexOf(item) + 1 + (grid.RowsPerPage * grid.PageIndex))</div></text>)
+            , grid.Column(columnName: "dNENDOU", header: "年度")
+            , grid.Column(columnName: "sKUBUN", header: "区分")
+            , grid.Column(columnName: "hyoukamark", header: "360度評価")
+            , grid.Column(columnName: "kisomark", header: "基礎評価")
+            , grid.Column(columnName: "mokuhyomark", header: "目標評価")
+            , grid.Column(columnName: "jyouimark", header: "情意考課")
+            , grid.Column(columnName: "sROUNDING", header: "端数処理")
+            //, grid.Column(columnName: "sTYPE", header: "評価")
+            //, grid.Column(columnName: "nHAIFU", header: "点")
+
+            ))
+        </div>
+    </div>
+    }
+    <script src="@Url.Content("~/Scripts/jquery-1.12.4.min.js")"></script>
+    <script>
+
+    </script>
+    <script>
+
+        function SelectedIndexChanged() {
+            $('#searchBtn').click();
+        }
+
+        $(function () {
+
+             $('tfoot a').click(function () {
+
+                 var page = this.href.match(/page=([0-9])+/)[1];
+                 page = page - 1;
+                 $("#pgindex").val(page);
+                 $('#pageindex_btn').click();
+                 return false;
+             });
+
+             $('th a').click(function () {
+                 var link = this.href;
+                 var linkArr = link.split('?');
+
+                 if (linkArr.length == 2) {
+                     var linkfir = linkArr[1].split('&');
+                     if (linkfir.length == 2) {
+                         //sort
+                         var sortArr = linkfir[0].split('=');
+                         var sort = sortArr[sortArr.length - 1];
+                         //alert(sort);
+                         $("#sort").val(sort);
+                         $('#sortOrder_btn').click();
+                         
+                         return false;
+                     }
+                 }
+             });
+
+             if ('@Model.fpopup' == "True") {
+
+                    $('#myModal').modal('show');
+                    return true;
+                }
+                else {
+                    $('#myModal').modal('hide');
+             }
+
+             @*if ('@Model.fpermit' == "False") {
+                 $('#newEditBtn').attr('disabled', 'disabled');
+                 $('#newEditBtn').css("opacity", "0.6");
+                 $('#newEditBtn').css("cursor", "not-allowed");
+                }*@
+
+
+            });
+    </script>
+    <script>
+        $(document).ready(function () {
+            
+            //テーブルのセルをクリックすると、ラジオボタンをチェックする
+            $('#DataTable tr td').click(function (event) {
+
+                var col = $(this).index();
+              
+                if (col > 5 && col < 9 ) {
+                    var rowIndex = $(this).parent().index();
+                    var radcol = col- 6;
+                    var chk = $(this).closest("tr").find("input:radio").get(radcol);
+                  
+                    if (event.target != chk) {
+                        if (chk.checked == false) {
+                            chk.checked = !chk.checked;
+                            //td radion button is change                                                    
+                            //$(this).closest("tr").find('td:eq(10) input').val("1");
+                           
+                        }
+                    }
+                }
+
+            });
+
+            $('#DataTable tbody tr td input').change(function () {
+                var col =  $(this).parent().index();
+               
+                if (col == 4) {
+                    $(this).closest("tr").find('td:eq(10) input').val("1");
+                }                
+            });
+        });
+    </script>
+    <script>
+        
+        function msgFunction() {
+           
+            //if (fchanged == "1") {
+                
+            //}
+
+            var fnodata = true;
+            var n1 = document.getElementById("DataTable").rows.length;
+            var fmsg = false;
+
+            for (var i = 1; i < n1; i++) {
+                var fhyouka = document.getElementById('DataTable').rows[i].cells[9].children[0].value;
+                var fhenkou = document.getElementById('DataTable').rows[i].cells[10].children[0].value;
+               
+                if (fhyouka === "1" && fhenkou === "1") {                  
+                    fmsg = true;
+                    break;
+                }
+                else {                   
+                    fmsg = false;
+                }
+            }
+
+           
+            if (fmsg == true) {
+                var r = confirm("評価中の目標評価がリセットされますがよろしいですか？");
+                if (r == false) {                    
+                        event.preventDefault();
+                    }               
+            }
+
+            for (var i = 1; i < n1; i++) {
+                var mark1 = document.getElementById('DataTable').rows[i].cells[2].children[0].value;
+                var mark2 = document.getElementById('DataTable').rows[i].cells[3].children[0].value;
+                var mark3 = document.getElementById('DataTable').rows[i].cells[4].children[0].value;
+                var mark4 = document.getElementById('DataTable').rows[i].cells[5].children[0].value;
+                $(document.getElementById('DataTable').rows[i].cells[2].children[0]).css('borderColor', '');
+                $(document.getElementById('DataTable').rows[i].cells[3].children[0]).css('borderColor', '');
+                $(document.getElementById('DataTable').rows[i].cells[4].children[0]).css('borderColor', '');
+                $(document.getElementById('DataTable').rows[i].cells[5].children[0]).css('borderColor', '');
+                $(document.getElementById('DataTable').rows[i].cells[2].children[0]).css('border', 'none');
+                $(document.getElementById('DataTable').rows[i].cells[3].children[0]).css('border', 'none');
+                $(document.getElementById('DataTable').rows[i].cells[4].children[0]).css('border', 'none');
+                $(document.getElementById('DataTable').rows[i].cells[5].children[0]).css('border', 'none');
+
+                if (mark1.trim().length == 0) {
+                    $(document.getElementById('DataTable').rows[i].cells[2].children[0]).css('border', '1px solid');
+                    $(document.getElementById('DataTable').rows[i].cells[2].children[0]).css('borderColor', '#f3172d');
+                    fnodata = false;
+                }
+
+                if (mark2.trim().length == 0) {
+                    $(document.getElementById('DataTable').rows[i].cells[3].children[0]).css('border', '1px solid');
+                    $(document.getElementById('DataTable').rows[i].cells[3].children[0]).css('borderColor', '#f3172d');
+                    fnodata = false
+                }
+
+                if (mark3.trim().length == 0) {
+                    $(document.getElementById('DataTable').rows[i].cells[4].children[0]).css('border', '1px solid');
+                    $(document.getElementById('DataTable').rows[i].cells[4].children[0]).css('borderColor', '#f3172d');
+                    fnodata = false
+                }
+
+                if (mark4.trim().length == 0) {
+                    $(document.getElementById('DataTable').rows[i].cells[5].children[0]).css('border', '1px solid');
+                    $(document.getElementById('DataTable').rows[i].cells[5].children[0]).css('borderColor', '#f3172d');
+                    fnodata = false
+                }
+
+            }
+
+            if (fnodata == true) {
+                if (@Model.btn_txt == "変更") {
+                    var input = $("<input />");
+                    input.attr("type", "hidden").attr("name", "comfirmmsg");
+                    if (confirm("変更してよろしいでしょうか？")) {
+                        // $('form').attr('action', $(this).attr('href')).submit();
+                        //input.val($(this).attr('href'));
+                    } else {
+                        input.val("キャンセル");
+                        event.preventDefault();
+                    }
+                    $("form")[0].appendChild(input[0]);
+                }
+            }
+            else {
+                event.preventDefault();
+            }
+        }
+
+        function isSpecialKey(event) {
+            var regex = new RegExp("^[0-9]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+
+            if (!regex.test(key)) {
+
+                event.preventDefault();
+                return false;
+            }
+
+        }
+
+        function edValueKeyPress(id) {
+                // alert(id)
+                //var n1 = document.getElementById("DataTable").rows.length;
+                //for (var i = 1; i < n1; i++) {
+                var i = id;
+            var totaltensu = 0;
+            var mark1 = document.getElementById('DataTable').rows[i].cells[2].children[0].value;
+            var mark2 = document.getElementById('DataTable').rows[i].cells[3].children[0].value;
+            var mark3 = document.getElementById('DataTable').rows[i].cells[4].children[0].value;
+                var mark4 = document.getElementById('DataTable').rows[i].cells[5].children[0].value;
+                //$(document.getElementById('DataTable').rows[i].cells[2].children[0]).css('borderColor', '');
+                //$(document.getElementById('DataTable').rows[i].cells[3].children[0]).css('borderColor', '');
+                //$(document.getElementById('DataTable').rows[i].cells[4].children[0]).css('borderColor', '');
+                //$(document.getElementById('DataTable').rows[i].cells[5].children[0]).css('borderColor', '');
+                if(isNaN(mark1)){
+                    document.getElementById('DataTable').rows[i].cells[2].children[0].value = "";
+                    return false;
+                }
+                if(isNaN(mark2)){
+                    document.getElementById('DataTable').rows[i].cells[3].children[0].value = "";
+                    return false;
+                }
+                if(isNaN(mark3)){
+                    document.getElementById('DataTable').rows[i].cells[4].children[0].value = "";
+                    return false;
+                }
+                if(isNaN(mark4)){
+                    document.getElementById('DataTable').rows[i].cells[5].children[0].value = "";
+                    return false;
+                }
+                //if(mark1.trim().length == 0){
+                //    $(document.getElementById('DataTable').rows[i].cells[2].children[0]).css('borderColor', '#f3172d');
+                //}
+                //if(mark2.trim().length == 0){
+                //    $(document.getElementById('DataTable').rows[i].cells[3].children[0]).css('borderColor', '#f3172d');
+                //}
+                //if(mark3.trim().length == 0){
+                //    $(document.getElementById('DataTable').rows[i].cells[4].children[0]).css('borderColor', '#f3172d');
+                //}
+                //if(mark4.trim().length == 0){
+                //    $(document.getElementById('DataTable').rows[i].cells[5].children[0]).css('borderColor', '#f3172d');
+                //}
+
+                event.preventDefault();
+            }
+    </script>
+
+    @if (TempData["hozone_msg"] != null)
+        {
+            <script>
+            $(document).ready(function () {
+                alert('@TempData["hozone_msg"]')
+            });
+            </script>
+        }
+</body>
+</html>
+
+

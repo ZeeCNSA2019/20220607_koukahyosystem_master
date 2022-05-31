@@ -1,0 +1,1314 @@
+﻿@model koukahyosystem.Models.ShainModel
+<html>
+<head>
+    <script  src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>  
+    <style>
+
+        .divElement {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -50px;
+            margin-left: -50px;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+            box-shadow: 5px 5px 10px rgb(34, 148, 172);
+        }
+
+        .center-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 100vh;
+        }
+
+        .button {
+            padding: 5px 10px;
+            text-align: center;
+            /*cursor: pointer;
+            outline: none;*/
+            color: black;
+            /*background-color: #BDE9F2;*/
+            border: none;
+            border-radius: 3px;
+            border: 0.5px solid #555555;
+        }
+
+        .button:hover {
+            background-color: lightblue
+        }
+
+        .button:active {
+            background-color: lightblue;
+            transform: translateY(4px);
+        }
+       
+
+       
+        #shaindt thead, #shaindt th, #shaindt tr, #shaindt td {
+            border: none;
+        }
+
+        .open-button {
+            background-color: #555;
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            cursor: pointer;
+            opacity: 0.8;
+            position: fixed;
+            bottom: 23px;
+            right: 28px;
+            width: 280px;
+        }
+
+        .Img {
+            width: 20%;
+            height: 100%;
+            box-shadow: 0 0 0 1px black inset;
+        }
+       
+        /*#taishoshadt thead, #taishoshadt th, #taishoshadt tr, #taishoshadt td {
+            border: 1px solid white;
+        }*/
+        #taishodiv {
+            display: inline-block;
+            width: 68%;
+            /*margin: 15px;*/
+            margin-left: 30px;
+            margin-top: 15px;
+            border: none;
+            height: auto;
+            position: static;
+            overflow: auto;
+        }
+       
+        /*#adddiv {
+            vertical-align: top;
+            display: inline-block;
+       
+            width: 100px;
+            border: none;
+            margin: 10px;
+            padding-top: 7.5%;
+        }*/
+
+        #selecttaishodiv {
+            vertical-align: top;
+            display: inline-block;
+            /*width: 650px;*/
+            width: 22%;
+            border: none;
+            /*margin: auto;*/
+            margin-left: 25px;
+            margin-right: 5px;
+            padding-top: 0.5%;
+            overflow: hidden;
+        }
+
+        #taishoshadt td, #taishoshadt th {
+        border:1px solid lightgray;
+        }
+
+        #selecttaishodt td, #selecttaishodt th {
+            border: 2px solid lightgray;
+        }
+
+        #selecttaishodt tr {
+           line-height:14px;
+        }
+        .mlgocss {
+            width: 95%;
+         min-width:85vh;
+         overflow:auto;
+         margin:0;
+        }
+        
+
+        .rowhide {
+            display:none;
+        }
+        .rowshow {
+            display:table-row;
+        }
+        .insertcss {
+            height: 35px;
+            width: 100px;
+            float: left;
+            margin-bottom: 5px;
+        }
+        .clrtaicss {
+            height:35px;
+            width:70px;
+            margin-bottom:5px;
+            float:right;
+        }
+        @@media screen and (max-width: 768px) {
+            #taishoshadt {
+                width:90%;
+            }
+            .mlgocss {
+                width: 100%;
+                
+            }
+            .insertcss {
+                height: auto;
+                width: auto;
+                float: unset;
+                margin: 0;
+            }
+
+            .clrtaicss {
+                height: auto;
+                width: auto;
+                
+                float: unset;
+                margin: 0;
+            }
+        }
+        @@media screen and (min-width: 1900px) {
+            .mlgocss {
+                width: 75%;
+            }
+
+            
+        }
+      
+    </style>
+
+
+</head>
+
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+        <div>
+            <div class="modal-body" style="padding:1px 1px 1px 1px;">
+                <div id='divElement' class="panel panel-info">
+                    <div class="panel-heading" style="background-color: rgb(34, 148, 172);" align="center">
+                        <h4 style="color:white">@Model.gamenstatus </h4>
+                    </div>
+                    <div align="center">
+                        <div>
+                            @Html.ValidationSummary(true, null, new { @class = "text-danger" })
+                        </div>
+
+                        @using (Html.BeginForm("Shain", "Shain", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <div class="container" style="overflow:auto;">
+                                <input type="submit" name="shain_btn" value="DisplayMaster" style="position: absolute; visibility:hidden" />
+                                <table id="shaindt" cellpadding="7" align="center" style="margin-top:10px;">
+                                    @*社員NO*@
+                                    <tr>
+                                        <td valign="top" style="min-width:130px;">
+                                            @Html.LabelFor(m => m.cSHAIN, new { style = " font-weight: normal !important;" })
+                                        </td>
+                                        <td valign="top" style="min-width:250px;">
+                                            @Html.TextBoxFor(m => m.cSHAIN, new
+                                            {
+                                                @id = "SHAIN_NO",
+                                                type = "number",
+                                                min = "0",
+                                                step = "1",
+                                                style = "width:55px;ime-mode:disabled",
+                                                maxlength = "4",
+                                                @size = "4",
+                                                onkeypress = "return isNumberKey(event)",
+                                                oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                            })
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.cSHAIN, null, new { @class = "text-danger" })
+                                            </div>
+                                        </td>
+
+
+                                    </tr>
+
+                                    @*ログイン名*@
+                                    <tr>
+                                        <td valign="top">
+                                            @Html.LabelFor(m => m.sLOGIN, new { style = " font-weight: normal !important;" })
+                                        </td>
+                                        <td valign="top">
+                                            @Html.TextBoxFor(m => m.sLOGIN, new
+                                            {
+                                                @id = "sLOGIN",
+                                                @autocomplete = "new-user",
+                                                style = "width:200px;",
+                                                maxlength = "20",
+                                                onkeypress = "isSpecialKey(event)"
+                                            })
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.sLOGIN, null, new { @class = "text-danger" })
+                                            </div>
+                                        </td>
+
+                                    </tr>
+
+                                    @*氏名NO*@
+                                    <tr>
+                                        <td valign="top">
+                                            @Html.LabelFor(m => m.sSHAIN, new { style = "font-weight: normal !important;" })
+
+                                        </td>
+                                        <td valign="top">
+                                            @Html.TextBoxFor(m => m.sSHAIN, new { @id = "sSHAIN_NAME", maxlength = "20", style = "width:200px;", onkeypress = "isSpecialKey(event)" })
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.sSHAIN, null, new { @class = "text-danger" })
+                                            </div>
+                                        </td>
+
+                                    </tr>
+
+                                    @*パスワード*@
+                                    <tr>
+                                        <td valign="top">
+                                            @Html.LabelFor(m => m.sPWD, new { style = " font-weight: normal !important;" })
+                                        </td>
+                                        <td valign="top">
+                                            @Html.TextBoxFor(m => m.sPWD, new { @id = "sPWD", @autocomplete = "new-password", type = "password", style = "width:100px;", maxlength = "8", onkeypress = "isSpecialKeyPsw(event)" })
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.sPWD, null, new { @class = "text-danger" })
+                                            </div>
+                                        </td>
+
+                                    </tr>
+
+                                    @*メールアドレス*@
+                                    <tr>
+                                        <td valign="top">
+                                            @Html.LabelFor(m => m.sMAIL, new { style = " font-weight: normal !important;" })
+                                        </td>
+                                        <td valign="top">
+                                            @Html.TextBoxFor(m => m.sMAIL, new { @id = "sMAIL", style = "width:450px;", maxlength = "40", onkeypress = "isSpecialMailKey(event)" })
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.sMAIL, null, new { @class = "text-danger" })
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    @*役職*@
+                                    <tr>
+                                        <td valign="top">
+                                            @Html.LabelFor(m => m.sYAKUSHOKU, new { style = " font-weight: normal !important;" })
+                                        </td>
+                                        <td valign="top">
+                                            @Html.TextBoxFor(m => m.sYAKUSHOKU, new { @id = "sYAKUSHOKU", style = "width:200px;", maxlength = "20", onkeypress = "isSpecialKey(event)" })
+                                        </td>
+                                    </tr>
+
+                                    @* 考課区分*@
+                                    <tr>
+                                        <td valign="top">
+                                            @Html.LabelFor(m => m.cKUBUN, new { style = " font-weight: normal !important;" })
+                                        </td>
+                                        <td valign="top">
+                                            @Html.DropDownListFor(m => m.cKUBUN, Model.kubunList, "", new { @id = "cKUBUN", style = "width:150px;" })
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.cKUBUN, null, new { @class = "text-danger" })
+                                            </div>
+                                        </td>
+
+                                    </tr>
+
+                                    @**評価者*@
+                                    <tr>
+                                        <td valign="top">
+                                            @Html.LabelFor(m => m.sHYOUKASHA, new { style = " font-weight: normal !important;" })
+                                        </td>
+                                        <td valign="top">
+                                            @*@Html.TextBoxFor(m => m.sHYOUKASHA, new { @id = "sHYOUKASHA", style = "width:200px;", @readonly = "readonly", @tabindex = "-1" })*@
+                                            @Html.Label("",@Model.sHYOUKASHA, new { style = " font-weight: normal !important;" })
+                                        </td>
+
+                                    </tr>
+
+                                    @**評価対象者*@
+                                    <tr>
+                                        <td valign="top">
+                                            @Html.Label("", "評価対象者", new { style = " font-weight: normal !important;" })
+                                        </td>
+                                        <td valign="top">
+
+
+                                            <button type="submit" id="taishoushaBtn" class="button" name="ShainBtn" value="taishousha" style="text-align:center;  height:35px;" onclick="taishousha()"> @Model.count_taishousha</button>
+                                        </td>
+
+                                    </tr>
+                                    @*部署*@
+                                    <tr>
+                                        <td valign="top">
+                                            @Html.Label(Model.S_busho_lbl ?? "", new { style = "font-weight: normal !important;" })
+                                        </td>
+                                        <td valign="top">
+
+                                            @Html.DropDownListFor(m => m.cBUSHO, Model.bushoList, new { @id = "cBUSHO_ID" })
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.cBUSHO, null, new { @class = "text-danger" })
+                                            </div>
+                                        </td>
+
+                                    </tr>
+
+                                    @*グループ*@
+                                    <tr>
+                                        <td valign="top">
+                                            @Html.Label(Model.Group_lbl ?? "", new { style = "font-weight: normal !important;" })
+                                        </td>
+                                        <td valign="top">
+                                            @Html.DropDownListFor(m => m.cGROUP, Model.groupList, "", new { @id = "cGROUP_ID", style = "width:150px;" })
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.cGROUP, null, new { @class = "text-danger" })
+                                            </div>
+                                        </td>
+
+                                    </tr>
+
+                                    @*前年度ランク*@
+                                    <tr>
+                                        <td valign="top">
+                                            @Html.LabelFor(m => m.cZENNENDORANK, new { style = " font-weight: normal !important;" })
+                                        </td>
+                                        <td valign="top">
+                                            @Html.DropDownListFor(m => m.cZENNENDORANK, Model.zenendoList, "", new { @id = "sZENNENDORANK", style = "width:150px;Height:22px;" })
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.cZENNENDORANK, null, new { @class = "text-danger" })
+                                            </div>
+                                        </td>
+
+                                    </tr>
+
+                                    @*360度減点対象者*@
+                                    <tr>
+                                        <td valign="top">
+                                            @Html.LabelFor(m => m.nGENTEN, new { style = " font-weight: normal !important;width:100%" })
+                                        </td>
+                                        <td valign="top">
+                                            @Html.DropDownListFor(m => m.nGENTEN, Model.gentenList, "", new { @id = "nGENTEN", style = "width:150px;Height:22px;" })
+                                        </td>
+
+                                    </tr>
+
+                                    @*入社年月日*@
+                                    <tr>
+                                        <td valign="top">
+                                            @Html.LabelFor(m => m.dNYUUSHA, new { style = " font-weight: normal !important;" })
+                                        </td>
+                                        <td valign="top">
+                                            @Html.EditorFor(m => m.dNYUUSHA, new { @id = "dNYUUSHA", style = "width:130px", type = "date" })
+                                        </td>
+                                    </tr>
+
+                                    @*生年月日*@
+                                    <tr>
+                                        <td valign="top">
+                                            @Html.LabelFor(m => m.dSEINENGAPPI, new { style = " font-weight: normal !important;" })
+                                        </td>
+                                        <td valign="top">
+                                            @Html.EditorFor(m => m.dSEINENGAPPI, new { @id = "dSEINENGAPPI", style = "width:130px", type = "date" })
+                                        </td>
+
+                                    </tr>
+
+                                    @*性別*@
+                                    <tr>
+                                        <td valign="top">
+                                            @Html.LabelFor(m => m.sSEIBETSU, new { style = " font-weight: normal !important;" })
+                                        </td>
+                                        <td valign="top">
+                                            @Html.DropDownListFor(m => m.sSEIBETSU, Model.sebetsuList, "", new { @id = "sSEIBETSU", style = "width:150px;Height:22px;" })
+                                        </td>
+                                    </tr>
+
+                                    @*管理者*@
+                                    <tr>
+                                        <td>
+                                            @Html.LabelFor(m => m.fKANRISYA, new { style = " font-weight: normal !important;" })
+                                        </td>
+                                        <td>
+                                            @Html.CheckBoxFor(m => m.fKANRISYA, new { @id = "fKANRISYA" })
+                                        </td>
+
+                                    </tr>
+
+                                    @*退社*@
+                                    <tr>
+                                        <td>
+                                            @Html.LabelFor(m => m.fTAISYA, new { style = " font-weight: normal !important;" })
+                                        </td>
+                                        <td>
+                                            @Html.CheckBoxFor(m => m.fTAISYA, new { @id = "fTAISYA" })
+                                        </td>
+
+                                    </tr>
+
+                                    @*画像*@
+                                    <tr>
+                                        <td valign="top" style="width:130px;">
+                                            @*<label for="files" class="button" style="width:105px;background-color:#eeeeee ">画像(顔写真)</label>*@
+                                            @*<input type="file" id="myfile" name="myfile" class="button" style="width:95px;background-color:#eeeeee " data-buttonText="画像(顔写真)">*@
+                                            <input type="button" id="myfile" value="画像(顔写真)" style="width:105px;background-color:#eeeeee " class="button" onclick="document.getElementById('files').click();" />
+                                            @*<input type="file" style="display:none;position:absolute;" id="file" name="file" />*@
+                                            @Html.TextBoxFor(m => m.ImgPath, new { id = "files", name = "file", type = "file", style = "position: absolute; visibility: hidden", accept = "image/*" })
+                                        </td>
+                                        <td valign="top">
+                                            @if (Model.sPATH_GAZO != null)
+                                            {
+                                                <img id="image" style=" border-width:1px; border-color:Black;   border-style:solid; width:205px ;height:205px; object-fit: cover; " src="@Url.Content("~/Img/" + Model.sPATH_GAZO)" /> @*src = "~/Img/@TempData["Img"]"*@
+                                            }
+                                            else
+                                            {
+                                                <img id="image" style=" border-width:1px; border-color:Black;   border-style:solid; width:205px ;height:205px; object-fit: cover; " />
+                                            }
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.sPATH_GAZO, null, new { @class = "text-danger" })
+                                            </div>
+                                        </td>
+
+                                    </tr>
+
+                                </table>
+
+                                <table class="panel-body" cellpadding="28" align="center">
+                                    <tr>
+                                        <td align="center">
+                                            <input type="submit" value="保存" name="shain_btn" class="button" style="height:35px; width:60px;" onclick="hozon()" />
+                                        </td>
+
+                                        <td align="center">
+                                            <input type="submit" value="戻る" name="shain_btn" class="button" style="height:35px;width:60px;" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+
+                            <div>
+                                @Html.ValidationSummary(true)
+                            </div>
+
+                            <div>
+                                @*検索条件のバックアップ*@
+                                @Html.HiddenFor(m => m.S_cSHAIN, new { id = "S_cSHAIN" })
+                                @Html.HiddenFor(m => m.S_sSHAIN, new { id = "S_sSHAIN" })
+                                @Html.HiddenFor(m => m.S_cBUSHO, new { id = "S_cBUSHO" })
+                                @Html.HiddenFor(m => m.S_cKUBUN, new { id = "S_cKUBUN" })
+                                @Html.HiddenFor(m => m.S_fTAISYA, new { id = "S_fTAISYA" })
+                                @Html.HiddenFor(m => m.pgindex, new { id = "pgindex" })
+                                @Html.HiddenFor(m => m.sort, new { id = "sort" })
+                                @Html.HiddenFor(m => m.sortdir_cShain, new { id = "sortdir_cShain" })
+                                @Html.HiddenFor(m => m.sortdir_sShain, new { id = "sortdir_sShain" })
+                                @Html.HiddenFor(m => m.sortdir_slogin, new { id = "sortdir_slogin" })
+                                @Html.HiddenFor(m => m.sortdir_kubun, new { id = "sortdir_kubun" })
+                                @Html.HiddenFor(m => m.taishoshaStr, new { id = "taishoshaStr" })
+                                @Html.HiddenFor(m => m.prv_ckubun, new { id = "prv_ckubun" })
+                                @Html.HiddenFor(m => m.fhyoukachu, new { id = "fhyoukachu" })
+                                @*評価されたデータフラグ*@
+                                @Html.HiddenFor(m => m.fhyouka, new { id = "fhyouka" })
+                                @Html.HiddenFor(m => m.fkiso, new { id = "fkiso" })
+                                @Html.HiddenFor(m => m.fmokuhyo, new { id = "fmokuhyo" })
+
+                                @*画像*@
+                                @*画面上に変更があるあれば、フラグをオン*@
+                                @Html.HiddenFor(m => m.fnew, new { id = "fnew" })
+                                @Html.HiddenFor(m => m.sPATH_GAZO, new { id = "ImgPath", })
+                                @Html.HiddenFor(m => m.cropImage, new { id = "croppedImage", name = "croppedImage" })
+                                @Html.HiddenFor(m => m.count_taishousha, new { id = "count_taishousha" })
+                                @Html.HiddenFor(m => m.cKUBUN, new { id = "cKubun_txt" })
+                               
+                            </div>
+
+
+
+                            <div class="modal fade " id="myModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true" align="center" data-backdrop="static" data-keyboard="false">
+                                <div class="modal-dialog mlgocss">
+                                    <div class="modal-content" >
+                                        <div class="modal-header" style="background-color: rgb(34, 148, 172);  ">
+                                            <h4 class="modal-title" id="ModalLabel" style="color:white">評価対象者</h4>
+                                            <button type="button" id="ModalBtn" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div  align="center" >
+                                            <div id="taishodiv">
+                                               
+                                                <table id="taishoshadt" cellpadding="5" align="left" style="width:100%">
+
+                                                    <thead style="background-color:lightblue;">
+                                                        <tr>
+                                                            <th style="text-align:center; white-space:nowrap;">選択</th>
+
+                                                            <th style="text-align:center; white-space:nowrap;">状態</th>
+                                                            <th style="text-align:center; white-space:nowrap;">番号</th>
+                                                            <th style="text-align:center; white-space:nowrap;">氏名</th>
+                                                            <th style="text-align:center; white-space:nowrap;">評価者</th>
+                                                            <th style="text-align:center; white-space:nowrap;">区分</th>
+                                                            <th style="text-align:center; white-space:nowrap;">部署</th>
+                                                            <th style="text-align:center; white-space:nowrap;">グループ</th>
+
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        @for (int i = 0; i < Model.taishoushaList.Count; i++)
+                                                             {
+                                                        <tr>
+
+                                                            <td>
+                                                                @Html.CheckBoxFor(model => model.taishoushaList[i].ftaishousha, new { style = "width:100%; " })
+                                                            </td>
+
+                                                            <td>
+                                                                @Model.taishoushaList[i].jyoutai
+                                                            </td>
+
+                                                            <td>
+                                                                @Model.taishoushaList[i].ctaishousha
+                                                            </td>
+                                                            <td>
+                                                                @Model.taishoushaList[i].staishousha
+                                                            </td>
+                                                            <td>
+                                                                @Model.taishoushaList[i].hyukasha
+                                                            </td>
+                                                            <td>
+                                                                @Model.taishoushaList[i].ckubun
+                                                            </td>
+                                                            <td>
+                                                                @Model.taishoushaList[i].cbusho
+                                                            </td>
+                                                            <td>
+                                                                @Model.taishoushaList[i].cgroup
+                                                            </td>
+                                                        </tr>
+                                                        }
+
+                                                    </tbody>
+                                                    <tfoot style="background-color:lightblue">
+                                                        <tr style="border-color:lightblue">
+                                                            <th style="border-color:lightblue"></th>
+                                                            <th style="border-color:lightblue"></th>
+                                                            <th style="border-color:lightblue"></th>
+                                                            <th style="border-color:lightblue"></th>
+                                                            <th style="border-color:lightblue"></th>
+                                                            <th style="border-color:lightblue">区分</th>
+                                                            <th style="border-color:lightblue">部署</th>
+                                                            <th style="border-color:lightblue">グループ</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+
+                                                @*<div style="margin-bottom:5px;">
+                                                    <div class="row" style="float:left">
+                                                        <div class="col-sm-12 ">
+                                                            @Html.LabelFor(m => m.mo_search, new { style = "font-weight: normal !important;" })
+                                                            @Html.TextBoxFor(m => m.mo_search, new { @id = "mo_search", style = "width:187px;" })
+
+                                                            @Html.LabelFor(m => m.mo_cKUBUN, new { style = " font-weight: normal !important;", @class="mo_ckubun" })
+                                                            @Html.DropDownListFor(m => m.mo_cKUBUN, Model.mo_kubunList, "", new { @id = "mo_cKUBUN", style = "width:150px;" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" style="float:left">
+                                                        <div class="col-sm-12 ">
+
+                                                            @Html.LabelFor(m => m.mo_cBUSHO, new { style = "font-weight: normal !important;" })
+                                                            @Html.DropDownListFor(m => m.mo_cBUSHO, Model.mo_bushoList, new { @id = "mo_cBUSHO",style = "width:150px;" })　
+
+                                                            @Html.LabelFor(m => m.mo_group, new { style = "font-weight: normal !important;", @class = "mo_group" })
+                                                            @Html.DropDownListFor(m => m.mo_group, Model.mo_groupList, "", new { @id = "mo_group", style = "width:150px;" })
+
+                                                        </div>
+                                                    </div>
+                                                </div>*@
+                                               
+
+                                                @*<button id="tsspre_btn" value="tsspre" name="shain_btn" class="button" style="height:35px; width:60px;margin-right:10%" onclick="previousfunt()">前へ</button>
+                                                    <button id="tssnext_btn" value="tssnext" name="shain_btn" class="button" style="height:35px; width:60px;" onclick="nextfunt()">次へ</button>*@
+                                           
+
+                                              
+                                            
+                                            <div id="selecttaishodiv">
+                                                 <button id="inserttaishosha_btn" value="inserttaishosha" name="shain_btn" class="button insertcss"  onclick="insertselecttaishofunt()">対象者追加</button>
+                                                 <button id="tssclear_btn" value="tssclear" name="shain_btn" class="button clrtaicss"  onclick="cleartaisho()">クリア</button>
+                                                <table id="selecttaishodt" cellpadding="5" style="width:100%;">
+                                                    <thead style="background-color:lightblue;">
+                                                        <tr style="line-height:29px;">
+                                                            <th style="text-align:center; width:60px;">番号</th>
+                                                            <th style="text-align:center; width:100px;">氏名</th>
+                                                            <th style="text-align:center ;width:45px;">削除</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @for (int i = 0; i < Model.Selecttaishosha.Count; i++)
+                                                        {
+                                                            <tr style="border:1px solid gray;">
+                                                                <td style="width:80px;">
+                                                                    @Model.Selecttaishosha[i].ctaishousha
+                                                                </td>
+
+                                                                <td>
+                                                                    @Model.Selecttaishosha[i].staishousha
+                                                                </td>
+                                                                <td style="text-align: center;width:50px;min-width:50px">
+                                                                    <button type="submit" class="btn btn-link" name="deleteBtn" style="height:28px;"><span class=" glyphicon glyphicon-trash " style="line-height:10px;margin:0;"></span></button><!--onclick="deletetaisho(this)"-->
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                               
+                                           
+                                          
+                                        </div>
+
+                                        <div class="modal-footer"> <button type="button" class="button" data-dismiss="modal">閉じる</button></div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="uploadimageModal" class="modal" role="dialog" style="width:700px;height:550px; background-color:white;   position: fixed; margin-left:25%" align="center">
+            <div class="modal-header" style="background-color: rgb(34, 148, 172);">
+                <h4 class="modal-title">画像クロップ</h4>
+            </div>
+            <div class="modal-body">
+                <div id="image_demo" style="width:350px;  "></div>
+                <button class="btn button crop_image ">確定</button>
+            </div>
+        </div>
+    }
+
+
+    @section Scripts{
+        <script src="~/Scripts/DataTables/jquery.dataTables.js"></script>
+        <script src="~/Scripts/DataTables/dataTables.buttons.min.js"></script>
+        <link href="~/Content/DataTables/css/jquery.dataTables.css" rel="stylesheet" />
+        <link href="~/Content/DataTables/css/buttons.dataTables.css" rel="stylesheet" />
+        <script>
+            $(document).ready(function() {
+                $('#taishoshadt').DataTable( {
+            initComplete: function () {
+                this.api().columns().every( function (colindx) {
+                    var column = this;
+                   
+                    if (colindx > 3) {
+                        
+                        var sel_width = "";
+                        
+                        var select = $('<select ><option value=""></option></select>')
+                            .appendTo($(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+
+                            select.append('<option value="' + d + '">' + d + '</option>')
+                        });
+                    }
+                } );
+                    }
+                    , "dom": 'Pfrtip'
+                    
+            ,"pageLength": 10,
+            "language": {
+                "emptyTable": "テーブルにデータがありません",
+                "info": " _TOTAL_ 件中 _START_ から _END_ まで表示",
+                "infoEmpty": " 0 件中 0 から 0 まで表示",
+                "infoFiltered": "（全 _MAX_ 件より抽出）",
+                "infoThousands": ",",
+                "lengthMenu": "_MENU_ 件表示",
+                "loadingRecords": "読み込み中...",
+                "processing": "処理中...",
+                "search": "検索:",
+                "zeroRecords": "一致するレコードがありません",
+                "paginate": {
+                    "first": "先頭",
+                    "last": "最終",
+                    "next": "次",
+                    "previous": "前"
+                },
+                "aria": {
+                    "sortAscending": ": 列を昇順に並べ替えるにはアクティブにする",
+                    "sortDescending": ": 列を降順に並べ替えるにはアクティブにする"
+                }                 
+              
+            }
+             
+        } );
+    } );
+           
+           
+
+        </script>
+    }
+
+    <script>
+        $(document).ready(function () {
+
+          
+            if ('@Model.fhyouka' == 'True')
+            {
+                $('#cKubun_txt').val('@Model.cKUBUN');                
+                $('#cKUBUN').attr('disabled', 'true');              
+            }
+            //If checkbox is not checked
+
+            $('#taishoshadt > tbody').on('click', '>tr', function (event) {
+                var chk = $(this).closest("tr").find("input:checkbox").get(0);
+                if (event.target != chk) {
+                    chk.checked = !chk.checked;
+                }
+
+            });
+
+            //既に行がテーブルにあって、削除場合
+            $('#selecttaishodt tr td').click(function (event) {
+                var col = $(this).index();
+                if (col == 2) {
+                    var rowIndex = $(this).parent().index();                    
+                    rowIndex = rowIndex + 1;
+                    var cshain = $('#selecttaishodt tr:eq(' + rowIndex + ') td:eq(0)').text();
+                    cshain = cshain.trim();
+                    $(this).parent("tr:first").remove();                   
+                    dele(cshain); 
+                }
+               
+                event.preventDefault();
+                return false;
+            });
+
+        });
+
+    </script>
+    <script type="text/javascript">
+
+        function isNumberKey(evt) {
+            var regex = new RegExp("^[0-9]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+
+                event.preventDefault();
+                return false;
+            }
+
+        }
+
+        function isSpecialKey(event) {
+
+            var regex = new RegExp("^[a-zA-Z 0-9\.\_\-]*$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+
+                event.preventDefault();
+                return false;
+            }
+
+        }
+
+        function isSpecialKeyPsw(event) {
+
+            var regex = new RegExp("^[a-zA-Z0-9]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+
+                event.preventDefault();
+                return false;
+            }
+
+        }
+
+        function isSpecialMailKey(event) {
+
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            var Strval = /[A-Za-z0-9\s ._^@@-]/g;
+            //var Strval =/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+            var key = String.fromCharCode(event.which);
+            if (!Strval.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+
+        }
+        function taishousha() {
+            $('#myModal').modal('show');
+            $('#mo_search').val("");
+            $('#mo_cKUBUN').val("");
+            $('#mo_cBUSHO').val("00");
+            $('#mo_group').val("");
+            table = $('#taishoshadt').DataTable();
+            //table.rows().iterator('row', function (context, index) {
+            //    $(this.row(index).node()).addClass('rowshow');
+            //});
+            event.preventDefault();
+        }
+
+        function hozon() {
+            var prvckubun = '@Model.prv_ckubun';
+            if (prvckubun !="") {
+                var newcKUBUN = document.getElementById('cKUBUN').value;
+
+            if (prvckubun != newcKUBUN)
+            {
+
+                @*if ('@Model.fhyoukachu' == 'True') {
+
+                    var input = $("<input />");
+                    input.attr("type", "hidden").attr("name", "hyouka_com");
+                    if (confirm("360度評価される途中ですが、区分を変更しますか？")) {
+                        input.val("OK");
+                    } else {
+                        input.val("キャンセル");
+                        event.preventDefault();
+                    }
+                    $("form")[0].appendChild(input[0]);
+                }*@
+
+                if ( '@Model.fhyouka' == 'True' || '@Model.fkiso' == 'True' || '@Model.fmokuhyo' == 'True') {
+
+                    var input = $("<input />");
+                    input.attr("type", "hidden").attr("name", "hyouka_com");
+                    if (confirm("期中の考課区分変更は基礎評価と目標評価がリセットされますがよろしいですか？")) {
+                        input.val("OK");
+                    } else {
+                        input.val("キャンセル");
+                        event.preventDefault();
+                    }
+                    $("form")[0].appendChild(input[0]);
+                }
+            }
+            }
+
+        }
+
+        function insertselecttaishofunt() {
+
+          //評価中あると確認メッセージ出す
+            var newcshain = "";
+            var tableyoukachu = "";
+            var table = $('#taishoshadt').DataTable();
+            table.$('input[type="checkbox"]').each(function () {
+                var rowindex = $(this).closest('tr');
+                var taidt_cshain = table.rows(rowindex).data()[0][2];
+                taidt_cshain = taidt_cshain.trim();
+
+                if (this.checked) {
+                    if (newcshain == "") {
+                        newcshain = taidt_cshain;
+                    }
+                    else {
+                        newcshain += "," + taidt_cshain;
+                    }
+                }
+
+                if (table.rows(rowindex).data()[0][1] == "評価中") {
+
+                    if (tableyoukachu == "") {
+                        tableyoukachu = taidt_cshain;
+                    }
+                    else {
+                        tableyoukachu += "," + taidt_cshain;
+                    }
+                }
+
+
+            });
+            var chk1 = false;
+            var chk2 = false;
+            //alert('newcshain<<' + newcshain);
+            var newshainArr = newcshain.split(",");
+            var hyoukaArr = tableyoukachu.split(",");
+
+            var selectedStr = document.getElementById("taishoshaStr").value;
+            var selectedArr = selectedStr.split(',');
+
+            for (var s = 0; s < newshainArr.length; s++) {
+                var shainval = newshainArr[s];
+                    chk2 = hyoukaArr.includes(shainval);
+                    if (chk2 == true) {
+                        break;
+                    }
+
+
+            }
+
+            /* for (var s = 0; s < selectedArr.length; s++) {
+
+                var shainval = selectedArr[s];
+                //alert('taidt_cshain<<' + shainval);
+
+                chk1 = newshainArr.includes(shainval);
+                //alert('1<<' + chk1);
+                if (chk1 == false) {
+                    chk2 = hyoukaArr.includes(shainval);
+                    //alert('2<<' + fhyoukacyuu);
+                    if (chk2 == true) {
+                        break;
+                    }
+                }
+            }*/
+            //alert('chk2<<' + chk2);
+
+            if (chk2 == true) {
+
+                if (!confirm("考課表画面、基礎評価画面、1On1ミーティングに評価者を決めたんですが、変更しますか？")) {
+                   //no
+                    event.preventDefault();
+                    return false;
+                }
+            }
+            var rowCount = document.getElementById("selecttaishodt").rows.length;
+
+            for (var i = rowCount - 1; i >= 1; i--) {
+                document.getElementById("selecttaishodt").rows[i].remove();
+            }
+
+            var countchecked = 0;
+            var taishoshaStr = "";
+
+            var sel_table = document.getElementById("selecttaishodt");
+            var sel_rowidx = 1;
+            var table = $('#taishoshadt').DataTable();
+            table.$('input[type="checkbox"]').each(function () {
+
+                if (this.checked) {
+
+                    var rowindex = $(this).closest('tr');
+
+                    var cshain = table.rows(rowindex).data()[0][2];
+                    var sshain = table.rows(rowindex).data()[0][3];
+
+                    //alert(cshain + " , " + sshain);
+                    var row = sel_table.insertRow(sel_rowidx);
+
+                    var newrow = '<tr  style="line-height:14px;"><td style="width:40px;">' + cshain + ' </td><td style="width:100px;">  ' + sshain + ' </td> <td style="text-align: center;width:45px;min-width:50px; height:12px;" valign="top"> <button id="' + cshain + '" style="border:none;background-color:transparent" class="btn-link" onclick="deletetaisho(this)" ><span class=" glyphicon glyphicon-trash " style="font-size:13px;"></span></button> </td> </tr>';
+                    row.innerHTML = newrow;
+                    row.style.backgroundColor = "White";
+
+                    countchecked++;
+                    sel_rowidx++;
+
+                    if (taishoshaStr == "") {
+                        taishoshaStr +=  cshain ;
+                    }
+                    else {
+                        taishoshaStr +=  "," + cshain ;
+                    }
+                }
+            });
+
+
+            sel_table.cellPadding = '10';
+            $('thead th').css({ "line-height": '18px' });
+            var taishouCount = countchecked + " 名";
+            $("#taishoushaBtn").html(taishouCount);
+            $("#count_taishousha").val(taishouCount);
+            $("#taishoshaStr").val(taishoshaStr);
+            document.getElementById("selecttaishodt").style.height = "27px";
+            event.preventDefault();
+            return false;
+        }
+
+        //最初テーブルに行追加して、削除場合
+        function deletetaisho(obj) {
+
+            //var tssidx = $('#tss_pgindex').val();
+            var index = $(obj).closest("tr").index();
+
+            var rowCount = document.getElementById("selecttaishodt").rows.length;
+            var cshain = "";
+            if (index <= rowCount) {
+
+                cshain = document.getElementById('selecttaishodt').rows[index].cells[0].innerHTML;
+                cshain = cshain.trim();
+                document.getElementById("selecttaishodt").rows[index].remove();
+                dele(cshain);
+            }
+
+
+            event.preventDefault();
+            return false;
+        }
+
+        function dele(cshain) {
+
+
+            //main table
+            var countchecked = 0;
+            var taishoshaStr = "";
+            var rowCount = document.getElementById("selecttaishodt").rows.length;
+            for (var i = 1; i < rowCount; i++) {
+                var shain = document.getElementById('selecttaishodt').rows[i].cells[0].innerHTML;
+                shain = shain.trim();
+
+                if (shain != "") {
+                    if (taishoshaStr == "") {
+                        taishoshaStr += shain;
+                    }
+                    else {
+                        taishoshaStr += ',' + shain;
+                    }
+
+                    countchecked++;
+                }
+
+            }
+
+            var taishouCount = countchecked + " 名";
+            $("#taishoushaBtn").html(taishouCount);
+            $("#count_taishousha").val(taishouCount);
+            $("#taishoshaStr").val(taishoshaStr);
+
+            //対象者テーブル
+            var table = $('#taishoshadt').DataTable();
+
+            table.$('input[type="checkbox"]').each(function () {
+
+                var rowindex = $(this).closest('tr');
+
+                var taidt_cshain = table.rows(rowindex).data()[0][1];
+                taidt_cshain = taidt_cshain.trim();
+
+
+                if (taidt_cshain == cshain) {
+                    $(this).prop("checked", false);
+
+                }
+            });
+        }
+
+        function cleartaisho() {
+
+            var rowCount = document.getElementById("selecttaishodt").rows.length;
+
+            if (rowCount > 1) {
+                var r = confirm("選択している対象者をクリアしてもよろしいでしょうか？");
+                if (r == true) {
+                    var rowCount = document.getElementById("selecttaishodt").rows.length;
+
+                    for (var i = rowCount - 1; i >= 1; i--) {
+                        document.getElementById("selecttaishodt").rows[i].remove();
+                    }
+
+                    //対象者テーブル
+                    var table = $('#taishoshadt').DataTable();
+                    table.$("input[type=checkbox]").prop("checked", false);
+
+                    var taishouCount = "0 名";
+                    $("#taishoushaBtn").html(taishouCount);
+                    $("#count_taishousha").val(0);
+                    $("#taishoshaStr").val("");
+
+                }
+            }
+
+
+            event.preventDefault();
+            return false;
+        }
+
+         try {
+            //$('#myModal').modal('hide');
+            $(document).ready(function () {
+
+
+                if ('@Session["isAuthenticated"]' != '')
+                {
+                    $('#uploadimageModal').modal('hide');
+                    if ('@Model.gamenstatus' == "社員新規作成")
+                    {
+                        $("#SHAIN_NO").removeAttr('readonly');
+                        document.getElementById("SHAIN_NO").focus();
+                    }
+                    else
+                    {
+                        $("#SHAIN_NO").attr('readonly', 'readonly');
+                        document.getElementById("sLOGIN").focus();
+                    }
+                }
+
+
+            });
+
+            $(function () {
+
+                $('#cBUSHO_ID').change(function () {
+                    var bushoval = $('select#cBUSHO_ID').val();
+
+                    if (bushoval != "") {
+
+                        $.ajax({
+                        type: "POST",
+                            url: '@Url.Action("GroupDataList", "Shain")',
+                            data: '{cBUSHO: ' + JSON.stringify(bushoval) + '}',
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (retval) {
+
+                                if (retval != null) {
+                                    var ddlCountrylist = $("#cGROUP_ID");
+                                    ddlCountrylist.find('option').remove();
+
+                                    $(retval).each(function (i, v) {
+                                        $('<option value=' + v.Value + '>' + v.Text + '</option>').appendTo(ddlCountrylist);
+                                    });
+                                    $("#cGROUP_ID").val('0');
+                                }
+                                else {
+                                    var ddlCountrylist = $("#cGROUP_ID");
+                                    ddlCountrylist.find('option').remove();
+                                }
+
+                            },
+                            failure: function (errmsg) {
+                                //alert('errmsg' + errmsg);
+                            }
+                        });
+                    }
+                });
+
+                $('#cGROUP_ID').change(function () {
+                    var bushoval = $('select#cBUSHO_ID').val();
+                    var groupval = $('select#cGROUP_ID').val();
+                    if (groupval != "") {
+                        $.ajax({
+                        type: "POST",
+                            url: '@Url.Action("SelectKubunName", "Shain")',
+                            data: '{cGROUP: ' + JSON.stringify(groupval) + ',cBUSHO:' + JSON.stringify(bushoval)+ '}',
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (retval) {
+
+                                if (retval != null) {
+                                    $("#cBUSHO_ID").val(retval);
+
+                                    $.ajax({
+                                    type: "POST",
+                                    url: '@Url.Action("GroupDataList", "Shain")',
+                                    data: '{cBUSHO: ' + JSON.stringify(retval) + '}',
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    success: function (retval) {
+
+                                        if (retval != null) {
+                                            var ddlCountrylist = $("#cGROUP_ID");
+                                            ddlCountrylist.find('option').remove();
+                                            $(retval).each(function (i, v) {
+                                                $('<option value=' + v.Value + '>' + v.Text + '</option>').appendTo(ddlCountrylist);
+                                            });
+
+                                            var res = groupval.split("_");
+                                            if (res.length == 2) {
+                                                groupval = res[1];
+                                            }
+
+                                            $("#cGROUP_ID").val(groupval);
+                                        }
+                                        else {
+                                            var ddlCountrylist = $("#cGROUP_ID");
+                                            ddlCountrylist.find('option').remove();
+                                        }
+
+                                    },
+                                    failure: function (errmsg) {
+                                        //alert('errmsg' + errmsg);
+                                    }
+                                    });
+                                }
+
+                            },
+                            failure: function (errmsg) {
+                                //alert('errmsg' + errmsg);
+                            }
+                        });
+                    }
+                });
+            });
+
+        }
+         catch (err) {
+             alert(err);
+        }
+
+    </script>
+    <script type="text/javascript" src=@Url.Content("~/Scripts/croppie.js")></script>
+    <script type="text/javascript" src=@Url.Content("~/Scripts/croppie.min.js")></script>
+    <link href="~/Content/croppie.css" rel="stylesheet" />
+    <script>
+        var imageFile = null;
+        $image_crop = $('#image_demo').croppie({
+            enableExif: true,
+            viewport: {
+                width: 300,
+                height: 300,
+                type: 'square' //circle
+            },
+            boundary: {
+                width: 350,
+                height: 350
+            }
+        });
+
+        $('#files').on('click', function () {
+            this.value = null;
+        });
+
+        $('#files').on('change', function () {
+
+            var reader = new FileReader();
+            reader.onload = function (event) {
+                $image_crop.croppie('bind', {
+                    url: event.target.result
+                }).then(function () {
+
+                });
+            }
+            reader.readAsDataURL(this.files[0]);
+            //document.getElementById('fsave').value = 'True';
+            document.getElementById('ImgPath').value = 'saving_' + this.files[0].name;
+            $("#croppedImage").val('');
+            $('#uploadimageModal').modal('show');
+        });
+
+        $('.crop_image').on('click', function (event) {
+            $image_crop.croppie('result', {
+                type: 'base64',
+                format: 'jpeg',
+                size: 'original'
+            }).then(function (response) {
+                $('#image').attr('src', response);
+                $("#croppedImage").val(response);
+
+                $('#uploadimageModal').modal('hide');
+            });
+        });
+    </script>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,859 @@
+﻿@*/*
+    * 作成者　: ルインマー
+    * 日付：20200424
+    * 機能　：評価画面
+    */*@
+
+@model koukahyosystem.Models.HyoukaSaitem
+@using System.Data
+@{
+    ViewBag.Title = "HyoukaSaitem";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <style type="text/css">
+        .btn_saitem {
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+        }
+
+
+        .btncss {
+            background-color: White;
+            border: none;
+            padding: 10px !important;
+            font-family: arial, sans-serif;
+            font-size: 14px;
+            color: black;
+            cursor: pointer;
+            text-align: center;
+            height: 40px;
+            float: left;
+            text-align: center;
+        }
+
+        .btncss_active {
+            background-color: #90ee90;
+            border: none;
+            padding: 10px !important;
+            font-family: arial, sans-serif;
+            font-size: 14px;
+            color: black;
+            cursor: pointer;
+            height: 40px;
+            float: left;
+            text-align: center;
+        }
+
+        /*.scroll td {
+            border: 1px solid black;
+            box-shadow: inset 1px 1px 1px 1px #ddd,inset 1px 1px 1px 1px #ddd;
+        }*/
+
+        .headercss {
+            position: relative;
+            width: auto;
+            float: none;
+            /*border: 1pt solid black;*/
+        }
+
+        .tab {
+            overflow: hidden;
+            /*border: 1px solid #ccc;*/
+            background-color: #f1f1f1;
+        }
+
+            .tab button {
+                background-color: inherit;
+                float: left;
+                border: none;
+                /*outline: none;*/
+                cursor: pointer;
+                padding: 14px 16px;
+                transition: 0.3s;
+                font-size: 17px;
+                width: 80px;
+            }
+
+                /* Change background color of buttons on hover */
+                .tab button:hover {
+                    background-color: #ddd;
+                }
+        /*input {
+            text-align: right;
+        }*/
+
+        .date_tbl td {
+            border: none;
+        }
+
+
+        .tab-content {
+            height: 51vh;
+            overflow: auto;
+        }
+
+        .scroll {
+            border: none;
+            border-collapse: separate;
+            border-spacing: 0;
+            table-layout: fixed;
+            border: 0.5px solid #cccccc;
+        }
+
+            .scroll th, .scroll td {
+                height: 30px;
+                text-align: center;
+                border: 0.5px solid #cccccc;
+            }
+
+            .scroll thead th {
+                background-color: rgb(189, 233, 242);
+                position: -webkit-sticky;
+                position: sticky;
+                top: 0;
+                z-index: 2;
+                background-clip: padding-box;
+            }
+
+        .first-col {
+            width: 20px;
+            min-width: 25px;
+            position: sticky;
+            position: -webkit-sticky;
+            left: 0;
+            background-color: #fff;
+            /*border: 1px solid black;*/
+            background-clip: padding-box;
+        }
+
+        .second-col {
+            position: sticky;
+            position: -webkit-sticky;
+            width: auto;
+            min-width: 172px;
+            left: 20px;
+            background-color: #fff;
+            background-clip: padding-box;
+        }
+
+        .scroll thead th:nth-of-type(1) {
+            background-color: rgb(189, 233, 242);
+            left: 0;
+            z-index: 3;
+            /*border: 1px solid black;*/
+        }
+
+        .scroll thead th:nth-of-type(2) {
+            background-color: rgb(189, 233, 242);
+            left: 20px;
+            z-index: 3;
+            /*border: 1px solid black;*/
+        }
+
+
+
+        .btn_save {
+            background-color: #9dccf1;
+            text-align: center;
+            float: right;
+            /*width: 70px;*/
+            height: 35px;
+        }
+
+        .btn_year {
+            width: 29px;
+            height: 29px;
+        }
+
+        /*h4 {
+            color: white;
+            display: inline-block;
+            margin-right: 25.5%;
+        }*/
+    </style>
+    <style>
+        @@media only screen and (max-width: 768px) {
+            h4 {
+                text-align: center;
+            }
+        }
+
+        @@media only screen and (max-width: 576px) {
+            h4 {
+                text-align: center;
+            }
+        }
+
+        @@media only screen and (max-width: 375px) {
+            h4 {
+                text-align: center;
+            }
+        }
+    </style>
+    <style>
+        .scroll tr:nth-child(5n) {
+            border-bottom: 2px solid black;
+            border-bottom-color: rebeccapurple;
+        }
+    </style>
+</head>
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+        <div id='divElement' class="panel panel-info">
+            @using (Html.BeginForm("HyoukaSaitem", "HyoukaSaitem", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                var color1 = "#f1f1f1";
+                var color2 = "#f1f1f1";
+                var color3 = "#f1f1f1";
+                var color4 = "#f1f1f1";
+                var btnstyle_save = "";
+                <div class="panel-heading" style="background-color: rgb(34, 148, 172); width:100%">
+
+
+                    <input type="submit" value="display" name="year_btn" class="button" style="display:none" />
+
+                    <div class="row">
+                        <div class="col-sm-5 ">
+                            @Html.Label("年度", new { style = "color:white;font-weight: normal !important;margin-right:5px;margin-left:15px" })
+                            <button class="btn_saitem btn_year" id="btnyesterday" name="btnyesterday" value=@Model.selectcode style="width:29px;height:29px;"><</button>
+                            <input type="hidden" id="selectyear" name="selectyear" value=@Model.selectcode />
+                            @Html.DropDownList("Years", new SelectList(Model.yearList, "Value", "Text", Model.selectcode), new { @id = "sYear", style = "width:70px;Height:22px;" })
+                            <button id="btntoday" name="btntoday" value="add" style="position: absolute; visibility:hidden">add</button>
+                            <button class="btn_saitem btn_year" id="btntomorrow" name="btntomorrow" value=@Model.selectcode style="width:29px;height:29px;">></button>
+                        </div>
+                        <div class="col-sm-7 h4">
+                            <h4 style="color:white;">評価画面</h4>
+                        </div>
+                        @*<div class="col-sm-7 " align="center">
+                                <h4 style="color:white ; display: inline-block;margin-right:25.5%" align="center">評価画面</h4>
+                            </div>*@
+                    </div>
+                </div>
+
+
+                <div class="tab">
+                    @if (@Session["Jiki"].ToString() == "1")
+                    {
+                        color1 = "#90ee90";
+                        color2 = "#f1f1f1";
+                        color3 = "#f1f1f1";
+                        color4 = "#f1f1f1";
+
+                    }
+                    @if (@Session["Jiki"].ToString() == "2")
+                    {
+                        color1 = "#f1f1f1";
+                        color2 = "#90ee90";
+                        color3 = "#f1f1f1";
+                        color4 = "#f1f1f1";
+                    }
+                    @if (@Session["Jiki"].ToString() == "3")
+                    {
+                        color1 = "#f1f1f1";
+                        color2 = "#f1f1f1";
+                        color3 = "#90ee90";
+                        color4 = "#f1f1f1";
+                    }
+                    @if (@Session["Jiki"].ToString() == "4")
+                    {
+                        color1 = "#f1f1f1";
+                        color2 = "#f1f1f1";
+                        color3 = "#f1f1f1";
+                        color4 = "#90ee90";
+                    }
+                    <button style=" background-color:@color1;width:60px; height: 40px;text-align:center; padding: 0px !important;" name="jiki_btn" id="dai1btn" class="btn_saitem" value="第1">第1</button>
+                    <button style=" background-color:@color2;width:60px; height: 40px;text-align:center; padding: 0px !important;" name="jiki_btn" id="dai2btn" class="btn_saitem" value="第2">第2</button>
+                    <button style=" background-color:@color3;width:60px; height: 40px;text-align:center; padding: 0px !important;" name="jiki_btn" id="dai3btn" class="btn_saitem" value="第3">第3</button>
+                    <button style=" background-color:@color4;width:60px; height: 40px;text-align:center; padding: 0px !important;" name="jiki_btn" id="dai4btn" class="btn_saitem" value="第4">第4</button>
+                </div>
+
+                <div class="container" id="tabs" style="overflow:auto">
+
+                    @if (@Model.List_kubun.Count > 0)
+                    {
+
+                        <ul class="nav nav-tabs" role="tablist" id="ul_tab" style="text-align:left;width:100%">
+                            @{
+
+                                foreach (var item in Model.List_kubun)
+                                {
+
+                                    @*<li class="nav-item">*@
+                                    if (@Session["Kubun"].ToString() == @item.cKUBUN)
+                                    {
+                                        <button name="kubun_btn" class="btncss_active" value="@item.cKUBUN" id="#@item.cKUBUN">@item.sKUBUN</button>
+
+                                    }
+                                    else
+                                    {
+                                        <button name="kubun_btn" class="btncss" value="@item.cKUBUN" id="#@item.cKUBUN">@item.sKUBUN</button>
+
+                                    }
+                                    @*</li>*@
+
+
+                                }
+                            }
+                            <li style="float:right;margin-top:3px;">
+
+                                @if (Model.btn_disabled == "disabled")
+                                {
+                                    btnstyle_save = "cursor:not-allowed;opacity:0.6;";
+                                }
+                                <button class="btn_saitem btn_save" type='button' id="save" name="save" onclick="Save()" style="background-color:#9dccf1;text-align:center; float:right; width:auto; height:35px;@btnstyle_save" @Model.btn_disabled>一時保存</button>
+                            </li>
+                        </ul>
+                        if (Model.dt_Kijun.Rows.Count > 0)
+                        {
+                            <table align="center" cellpadding="0" id="table2" style="font-size:13px">
+                                <thead>
+                                    <tr style="height:10px;"></tr>
+                                    <tr>
+                                        @foreach (DataColumn col in Model.dt_Kijun.Columns)
+                                        {
+                                            <td style="text-align: center;border:none;">@col.ColumnName</td>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (DataRow row in Model.dt_Kijun.Rows)
+                                    {
+                                        <tr>
+                                            @foreach (DataColumn col in Model.dt_Kijun.Columns)
+                                            {
+                                                <td style="text-align: left;border:none;overflow: hidden;">@row[col.ColumnName]</td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+
+
+                            </table>
+                        }
+                        <div class="tab-content" style="margin-top:10px">
+
+                            <table align="center" cellpadding="4" class="scroll" id="table1" border="1">
+                                <thead>
+
+                                    <tr>
+                                        @foreach (DataRow row in Model.dt_HyoukaCode.Rows)
+                                        {
+                                            foreach (DataColumn col in Model.dt_HyoukaCode.Columns)
+                                            {
+
+
+                                                if (row[col.ColumnName].Equals("qno"))
+                                                {
+
+                                                    <th class="sticky-col first-col" style="text-align: center; "></th>
+
+                                                }
+                                                else if (row[col.ColumnName].Equals("質問事項"))
+                                                {
+                                                    <th class="sticky-col second-col" style="text-align: center; ">@row[col.ColumnName]</th>
+                                                }
+
+                                                else
+                                                {
+                                                    <th class="headercss" style="text-align: center; "> @row[col.ColumnName]</th>
+                                                }
+                                            }
+                                        }
+                                    </tr>
+                                    <tr>
+                                        @foreach (DataColumn col in Model.dt_Hyouka.Columns)
+                                        {
+                                            if (col.ColumnName.Equals("qno"))
+                                            {
+                                                <th style="text-align: center;display:none;"></th>
+                                            }
+                                            else if (col.ColumnName.Equals("質問事項"))
+                                            {
+
+                                                <th style="text-align: center;display:none; ">@col.ColumnName</th>
+                                            }
+
+                                            else
+                                            {
+                                                @*<th style="text-align: center;display:normal;" class="headercss">@col.ColumnName</th>*@
+                                                <th style="text-align: center;display:none;" class="headercss">
+                                                    <input id=@col.ColumnName name=@col.ColumnName type="text" maxlength="1" size="4" onkeypress="return isSpecialKey(event)"
+                                                           value="@col.ColumnName" disabled="true" />
+                                                </th>
+
+                                            }
+                                        }
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+
+                                    @foreach (DataRow row in Model.dt_Hyouka.Rows)
+                                    {
+                                        <tr>
+                                            @foreach (DataColumn col in Model.dt_Hyouka.Columns)
+                                            {
+                                                if (col.ColumnName.Equals("質問事項"))
+                                                {
+                                                    <td class="sticky-col second-col" style="text-align: left;">@row[col.ColumnName]</td>
+
+                                                }
+                                                else if (col.ColumnName.Equals("qno"))
+                                                {
+                                                    <td class="sticky-col first-col" style="text-align: center;">@row[col.ColumnName]</td>
+
+                                                }
+                                                else
+                                                {
+                                                    /*if ( int.Parse(Model.selectcode) >= int.Parse(Session["curr_nendou"].ToString()))
+                                                    {*/
+                                                    if (row[col.ColumnName].Equals(""))
+                                                    {
+                                                        <td id=@col.ColumnName name=@col.ColumnName style="text-align:right">
+
+                                                            <input id=@col.ColumnName class="fullwidth_halfwidth" style="ime-mode:inactive;text-align:right" type="text" name=@col.ColumnName maxlength=@Model.input_maxlength size="1"
+                                                                   oninput="javascript: if (this.value != '') this.style.borderColor = '' ;if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);
+                                                                   @Model.limit_input;"
+                                                                   onkeypress="return isSpecialKey(event)" value="" @Model.btn_disabled />
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+
+                                                        //if (row[col.ColumnName].ToString().Length > 1)
+                                                        if (row[col.ColumnName].ToString().Length > Model.input_maxlength)
+                                                        {
+                                                            <td id=@col.ColumnName name=@col.ColumnName style="text-align:right">
+
+
+                                                                <input id=@col.ColumnName class="fullwidth_halfwidth" style="ime-mode:inactive;text-align:right" type="text" name=@col.ColumnName maxlength=@Model.input_maxlength size="1" value=@row[col.ColumnName].ToString().Substring(0, 1)
+                                                                       oninput="if (this.value != '') this.style.borderColor = '' ;if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);
+                                                                  @Model.limit_input;"
+                                                                       onkeypress="return isSpecialKey(event)" @Model.btn_disabled />
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td id=@col.ColumnName name=@col.ColumnName style="text-align:right">
+
+                                                                <input id=@col.ColumnName name=@col.ColumnName type="text" maxlength=@Model.input_maxlength size="1" value=@row[col.ColumnName] style="text-align:right"
+                                                                       oninput="if (this.value != '') this.style.borderColor = '' ;if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);
+                                                                   if (this.value != '1' && this.value != '2' && this.value != '3' && this.value != '4' && this.value != '5') this.value = ''; "
+                                                                       disabled />
+                                                            </td>
+                                                        }
+                                                    }
+
+                                                }
+
+                                            }
+
+                                        </tr>
+
+
+                                    }
+
+                                    <tr>
+                                        @foreach (DataRow row in Model.dt_Hyouka.Rows)
+                                        {
+                                            foreach (DataColumn col in Model.dt_Hyouka.Columns)
+                                            {
+                                                if (col.ColumnName.Equals("質問事項"))
+                                                {
+                                                    <td class="sticky-col second-col" style="text-align: center">※評価が終わったら右の完了ボタンを押してください。</td>
+
+                                                }
+                                                else if (col.ColumnName.Equals("qno"))
+                                                {
+                                                    <td class="sticky-col first-col" style="text-align: center"></td>
+
+                                                }
+                                                else
+                                                {
+                                                    //if (Model.selectcode == Session["curr_nendou"].ToString())
+                                                    //{
+                                                    if (row[col.ColumnName].ToString().Length > 1 || row[col.ColumnName].ToString().Length == 0)
+                                                    {
+                                                        var btnstyle = "";
+                                                        if (Model.btn_disabled == "disabled")
+                                                        {
+                                                            //btnstyle = "cursor:not-allowed;opacity:0.6;";
+                                                            btnstyle = "background-color:#C0E399;border-radius: 4px; display:inline-block;border:0.5px solid #999999;";
+                                                        }
+                                                        else
+                                                        {
+                                                            btnstyle = "background-color:#C0E396;border: 0.5px solid #555555;color:black; text-align:center;text-decoration:none;border-radius: 4px; display:inline-block;";
+
+                                                        }
+                                                        <td style="text-align:center" id=@col.ColumnName>
+                                                            <button type='button' style="@btnstyle" id=@col.ColumnName name=@col.ColumnName onclick="Saveitem(id)" @Model.btn_disabled>完了</button>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td style="text-align:center" id=@col.ColumnName>
+                                                            <button type='button' style="cursor:not-allowed;background:#C0E399;border-radius: 4px; display:inline-block;border:0.5px solid #999999" id=@col.ColumnName name=@col.ColumnName onclick="Saveitem(id)" disabled>完了</button>
+
+                                                        </td>
+                                                    }
+
+                                                    @*}
+                                                        else
+                                                        {
+                                                            <td style="text-align:center" id=@col.ColumnName>
+                                                                <button type='button' style="background-color:#C0E399;cursor:not-allowed;opacity:0.6;" id=@col.ColumnName name=@col.ColumnName onclick="Saveitem(id)" disabled>完了</button>
+
+                                                            </td>
+                                                        }*@
+
+                                                }
+                                            }
+                                            break;
+                                        }
+                                    </tr>
+
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    }
+                </div>
+
+
+            }
+        </div>
+    }
+
+    <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+    <script>
+        $(document).ready(function () {
+
+            if ('@Session["Kubun"]' != "") {
+                var valid = '#' + '@Session["Kubun"]';
+                document.getElementById(valid).focus();
+            } else {
+
+                if ('@Session["Jiki"]' == 1) {
+                    document.getElementById("dai1btn").focus();
+                }
+                else if ('@Session["Jiki"]' == 2)
+                {
+                    document.getElementById("dai2btn").focus();
+                }
+                else if ('@Session["Jiki"]' == 3)
+                {
+                    document.getElementById("dai3btn").focus();
+                }
+                else if ('@Session["Jiki"]' == 4) {
+                    document.getElementById("dai4btn").focus();
+                }
+            }
+
+            //$(".scroll tr:nth_child(5) td").css('border-bottom', '2px solid black');
+
+        });
+    </script>
+    <script>
+
+    </script>
+    <script>
+        //input[type = text] {
+        //    borderColor: none;
+        //    padding: 4px 8px;
+        //    border - radius: 12px;
+        //}
+        //$('input').on('change', function () {
+        //  //  if (this.value != '') this.style.borderColor = ' ';
+        //    alert($(this).val());
+        //    if ($(this).val() != '') {
+        //        alert("ok")
+        //  this.style.borderColor = ' ';
+
+        //    }
+        //})
+        $("body").on("change", "#sYear", function () {
+            var ddtext = $("#sYear option:selected").text();
+
+            $("#selectyear").val(ddtext);
+            $('#btntoday').click();
+        });
+
+
+         function myFunction() {
+             $('#btntoday').click();
+
+        }
+        //function isNumberKey(event) {
+
+        //    var regex = new RegExp("^[0-9]+$");
+        //    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        //    if (!regex.test(key)) {
+
+        //        event.preventDefault();
+        //        return false;
+        //    }
+        //    else {
+        //        return true;
+        //    }
+        //}
+
+
+        $(document).ready(function () {
+            $('#txttoday').keydown(function (e) {
+                if (e.keyCode == 13) {
+
+                    $('#btntoday').click();
+                }
+            });
+        });
+
+        function isSpecialKey(event) {
+
+            var regex = new RegExp("^[1-5]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+
+                event.preventDefault();
+                return false;
+
+            }
+            else {
+
+                return true;
+
+            }
+
+        }
+
+
+
+        function Save() {
+            var tabel = document.getElementsByTagName("table")[1];
+            var rows = document.getElementsByTagName("table")[1].rows.length - 1;
+            var txtyear = document.getElementById('selectyear').value;
+            var itemlist = [];
+            var itemlist1 = [];
+            var itemlist2 = [];
+            var rows = tabel.rows.length - 1;
+
+            for (i = 1; i < rows; i++) {
+                var inputs = tabel.rows.item(i).getElementsByTagName("input");
+                var inputslengte = inputs.length;
+
+                for (var j = 0; j < inputslengte; j++) {
+                    var inputval = inputs[j].value;
+                    var inputvalth = inputs[j].id;
+                    itemlist1 += inputval + "/"
+                }
+                break;
+            }
+
+            for (i = 2; i < rows; i++) {
+                var inputs = tabel.rows.item(i).getElementsByTagName("input");
+                var inputslengte = inputs.length;
+
+                for (var j = 0; j < inputslengte; j++) {
+                    var inputval = inputs[j].value;
+                    var inputvalth = inputs[j].id;
+                    itemlist2 += inputval + "/"
+                }
+            }
+
+
+            itemlist = JSON.stringify({ 'itemlist1': itemlist1, 'itemlist2': itemlist2, 'txtyear': txtyear });
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                type: "POST",
+                url: '@Url.Action("Ichijihozon_btn_clcik", "HyoukaSaitem")',
+                data: itemlist
+
+            }).done(function (result) {
+                if (result == "yes") {
+                   // alert("保存しました。")
+                    var n1 = document.getElementById("table1").rows.length;
+                    for (var i = 2; i < n1; i++) {
+
+                        var n2 = document.getElementById("table1").rows[i].cells.length;
+
+                        for (var j = 2; j < n2; j++) {
+                            var x = document.getElementById('table1').rows[i].cells[j].children[0].value;
+                            if (x == "") {
+                               // $(document.getElementById('table1').rows[i].cells[j].children[0]).css('background', '#ffffff');
+                                $(document.getElementById('table1').rows[i].cells[j].children[0]).css('border', '');
+
+                            }
+
+                        }
+                    }
+                }
+                if (result == "false")
+                {
+
+                }
+                else {
+                    var n1 = document.getElementById("table1").rows.length;
+                    for (var i = 2; i < n1; i++) {
+
+                        var n2 = document.getElementById("table1").rows[i].cells.length;
+
+                        for (var j = 2; j < n2; j++) {
+                            var x = document.getElementById('table1').rows[i].cells[j].children[0].value;
+                            if (x == "") {
+                              //  $(document.getElementById('table1').rows[i].cells[j].children[0]).css('background', '#ffffff');
+                                $(document.getElementById('table1').rows[i].cells[j].children[0]).css('border', '');
+
+                            }
+
+                        }
+                    }
+
+                }
+
+            }).fail(function (response) {
+                alert('Error: ' + response);
+            });
+
+
+        }
+
+
+        function Saveitem(id) {
+            var btnname = id;
+            var tabel = document.getElementsByTagName("table")[1];
+            var rows = document.getElementsByTagName("table")[1].rows.length - 1;
+            var txtyear = document.getElementById('selectyear').value;
+            var itemlist = [];
+            var count = 0;
+            var rows = tabel.rows.length - 1;
+            for (i = 0; i < rows; i++) {
+                var inputs = tabel.rows.item(i).getElementsByTagName("input");
+                var inputslengte = inputs.length;
+
+                for (var j = 0; j < inputslengte; j++) {
+
+                    var inputval = inputs[j].value;
+
+                    var inputvalth = inputs[j].id;
+
+                    if (inputvalth == btnname) {
+
+                        itemlist += inputval + "/"
+                    }
+                }
+
+            }
+
+            itemlist = JSON.stringify({ 'itemlist': itemlist, 'txtyear': txtyear });
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                type: "POST",
+                url: '@Url.Action("kanryou_btn_clcik", "HyoukaSaitem")',
+                data: itemlist
+
+            }).done(function (result) {
+                if (result == "yes") {
+
+                    if (confirm("「完了」以降は変更が出来なくなります。")) {
+                        $.ajax({
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            type: "POST",
+                            url: '@Url.Action("kanryou_btn_save", "HyoukaSaitem")',
+                            data: itemlist
+
+                        }).done(function (result) {
+                            if (result == "yes") {
+                               // alert("保存しました。")
+
+                                $('button[id="' + btnname + '"]').prop('disabled', true);
+
+                                $('button[id="' + btnname + '"]').css('cursor', 'not-allowed');
+                                $('button[id="' + btnname + '"]').css('opacity', '0.6');
+                                var n1 = document.getElementById("table1").rows.length;
+
+                                for (var i = 2; i <= n1; i++) {
+                                    var n2 = document.getElementById("table1").rows[i].cells.length;
+                                    for (var j = 2; j < n2; j++) {
+                                        var x1 = document.getElementById('table1').rows[i].cells[j].id;
+                                        var x = document.getElementById('table1').rows[i].cells[j].children[0].value;
+                                        if (x1 == id && x != "") {
+                                            $(document.getElementById('table1').rows[i].cells[j].children[0]).css('border', '');
+
+                                            $(document.getElementById('table1').rows[i].cells[j].children[0]).prop('disabled', 'true');
+
+                                        }
+                                    }
+                                    //alert(i)
+                                }
+
+                            }
+
+                        }).fail(function (response) {
+                            alert('Error: ' + response);
+                        });
+                    }
+                    else {
+
+                    }
+
+                }
+                if (result == "no") {
+
+                }
+                if (result == "false") {
+
+                }
+                if (result == "cancel") {
+
+                    //  $('input[name="' + id + '"]').css('background', '#F8F7CB');
+                    $('input[name="' + id + '"]').css('borderColor', '#f3172d');
+                    //  $(document.getElementById('table1').rows[i].cells[j].children[0]).css('borderColor', '#f3172d');
+
+                    var n1 = document.getElementById("table1").rows.length;
+                    for (var i = 2; i < n1; i++) {
+
+                        var n2 = document.getElementById("table1").rows[i].cells.length;
+
+                        for (var j = 2; j < n2; j++) {
+
+                            var x1 = document.getElementById('table1').rows[i].cells[j].id;
+
+                            var x = document.getElementById('table1').rows[i].cells[j].children[0].value;
+
+                            if (x1 == id && x != "") {
+                                $(document.getElementById('table1').rows[i].cells[j].children[0]).css('border', '');
+
+
+
+                            }
+                        }
+                    }
+
+                }
+            }).fail(function (response) {
+                alert('Error: ' + response);
+            });
+        }
+    </script>
+</body>
+</html>
+
+@*if (row[col.ColumnName].ToString()=="")*@

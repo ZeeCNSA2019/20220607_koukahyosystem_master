@@ -1,0 +1,194 @@
+﻿@{
+    ViewBag.Title = "Master";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        FIELDSET {
+            margin: 8px;
+            border: 1px solid silver;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        LEGEND {
+            padding: 2px;
+            font-size: 17px;
+            display: inline-block;
+        }
+
+        .mastercss {
+            width: 80%;
+            margin: auto;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .tab-content {
+            height: 67vh;
+            overflow: auto;
+        }
+
+        button {
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+        }
+
+        .tbcss {
+            margin-left: 10%;
+            margin-bottom: 22px;
+        }
+
+        @@media screen and (max-width: 768px) {
+            .mastercss {
+                width: 95%;
+                margin: auto;
+            }
+
+            .tbcss {
+                margin-left: 0%;
+            }
+        }
+
+        @@media (min-height: 758px) {
+            .tab-content {
+                height: 75.7vh;
+                overflow: auto;
+            }
+
+            .tbcss {
+                margin-left: 7.5%;
+            }
+        }
+    </style>
+</head>
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+
+
+        <div class="panel panel-info" style="overflow:auto; ">
+
+            <div class="panel-heading" style="background-color: rgb(34, 148, 172); width:100%">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12 " align="center">
+                            <h4 style="color:white ; display: inline-block;">各種マスタ</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mastercss">
+
+                <div class="container tab-content">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <fieldset>
+                                <legend>基本設定</legend>
+                                <div class="row">
+                                    <div class="col-sm-6" style="display:inline-block;">
+                                        <ul>
+                                            <li>@Html.ActionLink("区分マスタ", "MasterKubun", "MasterKubun")</li>
+                                            <li>@Html.ActionLink("組織階層名", "MasterSoshikaiso", "MasterSoshikaiso")</li>
+                                            <li>@Html.ActionLink("第1階層マスタ", "MasterBusho", "MasterBusho") </li>
+                                            <li>@Html.ActionLink("第2階層マスタ", "MasterGroup", "MasterGroup")</li>
+                                            <li>@Html.ActionLink("社員マスタ", "Shain", "Shain")</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-sm-6" style="display:inline-block;vertical-align:top">
+                                        <ul>
+                                            <li>@Html.ActionLink("得点設定", "MasterHaiFu", "MasterHaiFu")</li>
+                                            @*<li>@Html.ActionLink("データリセット", "ResetData", "ResetData")</li>*@
+                                        </ul>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <fieldset>
+                                <legend>基礎評価</legend>
+
+                                <ul>
+                                    <li>@Html.ActionLink("基礎評価設問", "MasterKiso", "MasterKiso")</li>
+                                </ul>
+                            </fieldset>
+                        </div>
+                        <div class="col-md-6">
+                            <fieldset>
+                                <legend>目標評価</legend>
+                                @*<table>
+                                        <tr>
+                                            <td>
+                                                <ul>
+                                                    <li>@Html.ActionLink("採点方法設定", "MasterSaiten", "MasterSaiten")</li>
+                                                </ul>
+                                            </td>
+                                            <td>
+                                                <ul>
+                                                    <li>@Html.ActionLink("達成率設定", "MasterPercentage", "MasterPercentage")</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </table>*@
+                                <ul>
+                                    <li>@Html.ActionLink("採点方法設定", "MasterSaiten", "MasterSaiten")</li>
+                                </ul>
+                            </fieldset>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <fieldset>
+                                <legend> 満足度調査</legend>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <ul>
+                                            <li>@Html.ActionLink("満足度調査設問", "MasterManzokudo", "MasterManzokudo")</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <ul>
+                                            <li>@Html.ActionLink("満足度調査基準", "MasterManzokijun", "MasterManzokijun")</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="col-md-6">
+                            <fieldset>
+                                <legend> 360度評価</legend>
+                                <div class="row">
+                                    <div class="col-sm-6" style="display:inline-block;">
+                                        <ul>
+                                            <li>@Html.ActionLink("360度評価設問", "MasterHyoukaQuest", "MasterHyoukaQuest")</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-sm-6" style="display:inline-block;">
+                                        <ul>
+                                            <li>@Html.ActionLink("360度評価基準", "Master360kijun", "Master360kijun")</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</body>
+</html>

@@ -1,0 +1,371 @@
+﻿@model koukahyosystem.Models.MasterKisoModel
+@{
+    ViewBag.Title = "MasterKiso_copy";
+}
+
+
+<head>
+    <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+
+    <meta name="viewport" content="width=device-width" />
+    <style>
+
+        /*button {
+            padding: 5px 10px;
+            text-align: center;
+            color: black;
+            border: none;
+            border-radius: 3px;
+            border: 0.5px solid #555555;
+            height: 35px;
+        }*/
+        .btncss {
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+            width: auto;
+            padding: 5px 10px 5px 10px;
+        }
+            button:hover {
+                background-color: lightblue
+            }
+
+            button:active {
+                background-color: lightblue;
+                transform: translateY(4px);
+            }
+
+        #copyDatatbl {
+            width: 70%;
+            border-collapse: separate;
+            border-spacing: 0;
+            table-layout: fixed;
+            border: 0.5px solid #cccccc;
+        }
+        
+        #copyDatatbl thead th {
+            /*border: 1px solid black;*/
+            border: 0.5px solid #cccccc;
+            text-align: center;
+            background-color: #C1ECFA;
+        }
+
+        #copyDatatbl tbody tr td {
+            /*border: 1px solid black;*/
+            border: 0.5px solid #cccccc;
+        }
+
+        table#copyDatatbl tr:nth-child(even) {
+            background-color: #C1ECFA;
+        }
+
+        #copyDatatbl th {
+            position: sticky;
+            z-index: 3;
+            top: 0;
+        }
+
+        #copyDatatbl td {
+            vertical-align: top;
+            text-align: center;
+        }
+
+        .number_textbox {
+            width: 20px;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            text-align: center;
+        }
+
+        .lbl_year {
+            font-weight: normal;
+        }
+
+        .mycontent {
+            height: 58.5vh;
+            overflow: auto;
+        }
+
+        .div_copydropdown {
+            display: inline-block;
+            /*margin-right: 400px;*/
+            margin-left:25px;
+            margin-bottom:5px;
+        }
+
+        .div_copybuttons {
+            display: inline-block;
+            float: right;
+            margin-right: 25px;
+            margin-bottom: 5px;
+        }
+
+        .copy_para {
+            text-align: left;
+            margin-left: 160px;
+        }
+        .btn_copy {
+            text-align: center;
+            margin-right: 10px;
+        }
+        .btn_back{
+            width:64px;
+        }
+        .btn_copy, .btn_back, #copy_btnNext, #copy_btnPrevious, #copy_btnSearch {
+            padding: 5px 10px;
+            text-align: center;
+            color: black;
+            border: none;
+            border-radius: 3px;
+            border: 0.5px solid #555555;
+            height: 35px;
+        }
+
+        @@media only screen and (max-width: 1024px) {
+        }
+
+        @@media only screen and (max-width: 768px) {
+
+            .btn {
+                padding: 0px;
+            }
+
+            .copy_para {
+                margin-left: 110px;
+            }
+        }
+
+        @@media only screen and (max-width: 576px) {
+
+            .copy_para {
+                text-align: left;
+                margin-left: 50px;
+            }
+        }
+
+        @@media only screen and (max-width: 375px) {
+
+            .copy_para {
+                text-align: left;
+                margin-left: 50px;
+            }
+
+            .div_copydropdown {
+                display: inline-block;
+                /*margin-left:0px;*/
+            }
+
+            .div_copybuttons {
+                margin-left: 55px;
+                margin-top: 5px;
+                float: none;
+            }
+
+            .btn {
+                padding: 0px;
+            }
+        }
+
+        @@media only screen and (max-width: 320px) {
+            .copy_para {
+                margin-left: 40px;
+            }
+        }
+
+        @@media (min-height: 758px) {
+            .mycontent {
+                height: 69.8vh;
+                overflow: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="panel panel-info" style="overflow:auto">
+
+        <div class="panel-heading" style="background-color: rgb(34, 148, 172); width:100%">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 " align="center">
+                        <h4 style="color:white" class="modal-title" id="myModalLabel">基礎評価設問コピー</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @using (Html.BeginForm("MasterKiso", "MasterKiso", FormMethod.Post))
+        {
+            <div class="container">
+                <div class="row" style="margin-top:10px">
+                    <div class="div_copydropdown">
+                        @Html.Label("年度", new { @class = "lbl_year" })
+                        <button id="copy_btnPrevious" name="copy_btnPrevious" value=@Model.copy_year class="btncss" style="width:29px;height:29px;"> < </button>
+                        @Html.DropDownListFor(m => m.copy_year, Model.copy_yearList, new { @id = "copy_year", style = "width:70px;Height:22px;", onchange = "return OnChangedCopy()" })
+                        <button id="copy_btnNext" name="copy_btnNext" value=@Model.copy_year class="btncss" style="width:29px;height:29px;"> > </button>
+                        <button id="copy_btnSearch" name="copy_btnSearch" value="copy_add" style="position: absolute; visibility:hidden">add</button>
+
+                        @*@Html.TextBoxFor(model => model.question_count, new { @id = "txt_copyNo", @class = "number_textbox"})*@
+                    </div>
+
+                    <div class="div_copybuttons">
+
+                        <button type="submit" id="btn_copy" name="btn_copy" class="btncss btn_copy" value="copy" style="text-align:center; margin-right:10px;">コピー</button>
+
+                        <button type="submit" id="btn_back" name="btn_back" class="btncss btn_back" value="back" >戻る</button>
+                    </div>
+
+                </div>
+
+                <div align="center" style=" margin-top:10px;">
+                    <div class="row copy_para">
+                        @Html.Label(Model.year, new { @class = "lbl_year" })
+                        @Html.Label(Model.year, "年度にコピーする", new { @class = "lbl_year" })
+                    </div>
+
+                    <div style="overflow:auto;" class="mycontent">
+                        <table class="copyData_tbl" id="copyDatatbl" cellpadding="5">
+                            <thead>
+                                <tr>
+                                    <th style="width:35px;text-align:center">
+                                        <input type="checkbox" id="chk_all" />
+                                        @*@Html.CheckBoxFor(model => model.KisoCopyList[0].copy_chk, new { id = "cp_chk", style = "width:100%; " })*@
+                                    </th>
+                                    <th style="width:60px;text-align:center">コード</th>
+                                    <th style="text-align:center">設問</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @for (int i = 0; i < Model.KisoCopyList.Count; i++)
+                                {
+                                    var idx = i + 1;
+                                    <tr>
+                                        <td>
+                                            @Html.CheckBoxFor(model => model.KisoCopyList[i].copy_chk, new { id = "cp_chk" + idx, style = "width:100%; " })
+                                        </td>
+                                        <td>
+                                            @Html.TextBoxFor(model => model.KisoCopyList[i].c_qCode, new { @id = "txt_no" + idx, @class = "number_textbox", @readonly = "readonly" })
+                                        </td>
+                                        <td>
+
+                                            @Html.TextAreaFor(model => model.KisoCopyList[i].c_question, new
+                                       {
+                                           @class = "ta_question",
+                                           id = "ta_question" + idx,
+                                           cols = "30",
+                                           maxlength = 100,
+                                           style = "width: 100%;max-width: 100%;border:none;background-color:transparent;resize: none;outline:none",
+                                           @readonly = "readonly"
+                                       })
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+
+    <script src="@Url.Content("~/Scripts/jquery-1.12.4.min.js")"></script>
+
+    <script>
+        $(document).ready(function () {
+            //$('#chk_all').click(function (e) {
+            //    var table = $(e.target).closest('table');
+            //    $('td input:checkbox', table).prop('checked', this.checked);
+            //});
+
+            $('#copyDatatbl tbody tr').click(function () {
+                $(this).find('input:checkbox').each(function () {
+                    if (this.checked) this.checked = false; // toggle the checkbox
+                    else this.checked = true;
+                })
+            });
+           
+            $('#copyDatatbl > thead').on('click', 'tr:first', function (event) {
+                var table = document.getElementById("copyDatatbl");
+                var chk = $(this).closest("tr").find("input:checkbox").get(0);
+
+                if (event.target != chk) {
+                    chk.checked = !chk.checked;
+                }
+                var flagchk = document.getElementById('chk_all').checked;
+                if (flagchk == true) {
+
+                    for (var i = 1; i < table.rows.length; i++) {
+                        document.getElementById('copyDatatbl').rows[i].cells[0].children[0].checked = true;
+                    }
+                } else {
+                    for (var i = 1; i < table.rows.length; i++) {
+                        document.getElementById('copyDatatbl').rows[i].cells[0].children[0].checked = false;
+                    }
+                }
+            });
+            
+        });
+    </script>
+    
+    <script>
+        
+        function OnChangedCopy(evt) {
+            $('#copy_btnSearch').click();
+        }
+        $('#btn_copy').click(function (event) {
+            var chk_count = 0;
+            var qcount = 0;
+            qcount = '@Session["queCount"]';
+          
+            var table = document.getElementById("copyDatatbl");
+            var headerchk = document.getElementById('chk_all').checked;
+            for (var i = 1; i < table.rows.length; i++){
+                var result = document.getElementById('copyDatatbl').rows[i].cells[0].children[0].checked;
+                if (result == true) {
+                    chk_count++;
+                    qcount++;
+                }
+            }
+            if (chk_count > 0 || headerchk == true) {
+                if (qcount > 20) {
+                   
+                    //alert("設問100件以上になるため一部コピーできませんでした。")
+                    if (confirm("設問20件以上になるため一部コピーできませんでした。コピーしてよろしいでしょうか？")) {
+
+                    }
+                    else {
+                        event.preventDefault();
+                    }
+                }
+                else {
+
+                }
+            }
+            else{
+                event.preventDefault();
+            }
+            
+           
+        });
+    </script>
+    
+    @if (TempData["com_msg"] != null)
+    {
+        <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+        <script>
+            $(document).ready(function(){
+
+                alert('@TempData["com_msg"]');
+            });
+        </script>
+    }
+</body>
+

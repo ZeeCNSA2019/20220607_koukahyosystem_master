@@ -1,0 +1,1137 @@
+﻿@model koukahyosystem.Models.OneOnOneModel
+
+@{
+    ViewBag.Title = "OneOnOne";
+    var grid = new WebGrid(source: Model.OneOnOneList, canPage: true, rowsPerPage: 10, ajaxUpdateContainerId: "gridContent");
+    if (Model.OneOnOneList.Count != 0)
+    {
+        grid.PageIndex = Model.pgindex;
+
+    }
+}
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+
+        .div_main {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -50px;
+            margin-left: -50px;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+            box-shadow: 5px 5px 10px rgb(34, 148, 172);
+        }
+
+        button {
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+        }
+
+        .button:hover {
+            background-color: lightblue
+        }
+
+        .button:active {
+            background-color: lightblue;
+            transform: translateY(4px);
+        }
+
+        .buttonlink {
+            background: none !important;
+            border: none;
+            padding: 0 !important;
+            /*optional*/
+            font-family: arial, sans-serif;
+            /*input has OS specific font-family*/
+            color: #069;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .searchbtncss {
+            width: 60px;
+            height: 35px;
+            margin-right: 1.5vh;
+        }
+
+        .clearbtncss {
+            height: 35px;
+            margin-right: 5.6vh;
+        }
+
+        .createbtncss {
+            width: auto;
+            height: 35px;
+            margin-right: 5px;
+        }
+
+        .webgrid-table td, th {
+            padding: 3px 7px 2px;
+        }
+
+        .webgrid-header {
+            background-color: lightblue;
+            color: black;
+            padding-bottom: 4px;
+            padding-top: 5px;
+            text-align: center;
+        }
+
+            .webgrid-header a {
+                color: black;
+            }
+
+        .webgrid-footer {
+        }
+
+        .webgrid-row-style {
+            padding: 3px 7px 2px;
+        }
+
+        .webgrid-alternating-row {
+            background-color: #C1ECFA;
+            padding: 3px 7px 2px;
+        }
+
+        .webgrid-table thead th {
+            text-align: center;
+        }
+
+            /*Leader Grid*/
+            .webgrid-table thead td:first-child,
+            .webgrid-table thead th:first-child,
+            .webgrid-table tbody td:first-child,
+            .webgrid-table tbody th:first-child {
+                width: 45px;
+                text-align: center;
+                border: solid 1px white;
+            }
+
+            .webgrid-table thead td:nth-child(2),
+            .webgrid-table thead th:nth-child(2),
+            .webgrid-table tbody td:nth-child(2),
+            .webgrid-table tbody th:nth-child(2) {
+                width: 70px;
+                border: solid 1px white;
+            }
+
+            .webgrid-table thead td:nth-child(3),
+            .webgrid-table thead th:nth-child(3),
+            .webgrid-table tbody td:nth-child(3),
+            .webgrid-table tbody th:nth-child(3) {
+                width: 80px;
+                border: solid 1px white;
+                display: none;
+            }
+
+            .webgrid-table thead td:nth-child(4),
+            .webgrid-table thead th:nth-child(4),
+            .webgrid-table tbody td:nth-child(4),
+            .webgrid-table tbody th:nth-child(4) {
+                width: 130px;
+                border: solid 1px white;
+            }
+
+            .webgrid-table thead td:nth-child(5),
+            .webgrid-table thead th:nth-child(5),
+            .webgrid-table tbody td:nth-child(5),
+            .webgrid-table tbody th:nth-child(5) {
+                width: 80px;
+                border: solid 1px white;
+                display: none;
+            }
+
+            .webgrid-table thead td:nth-child(6),
+            .webgrid-table thead th:nth-child(6),
+            .webgrid-table tbody td:nth-child(6),
+            .webgrid-table tbody th:nth-child(6) {
+                width: 400px;
+                max-width: 400px;
+                word-wrap: break-word;
+                border: solid 1px white;
+            }
+
+            .webgrid-table thead td:nth-child(7),
+            .webgrid-table thead th:nth-child(7),
+            .webgrid-table tbody td:nth-child(7),
+            .webgrid-table tbody th:nth-child(7) {
+                width: 70px;
+                border: solid 1px white;
+                text-align: center;
+            }
+
+            .webgrid-table thead td:nth-child(8),
+            .webgrid-table thead th:nth-child(8),
+            .webgrid-table tbody td:nth-child(8),
+            .webgrid-table tbody th:nth-child(8) {
+                width: 50px;
+                border: solid 1px white;
+                text-align: center;
+            }
+
+            .webgrid-table thead td:nth-child(9),
+            .webgrid-table thead th:nth-child(9),
+            .webgrid-table tbody td:nth-child(9),
+            .webgrid-table tbody th:nth-child(9) {
+                width: 60px;
+                border: solid 1px white;
+            }
+
+        .mlgocss {
+            width: 75%
+        }
+
+        .tiMobileclass {
+            visibility: hidden;
+            position: absolute;
+        }
+
+        .btncss {
+            width: auto;
+            float: right;
+        }
+
+        .Lbtncss {
+            width: auto;
+            float: right;
+            margin-right: 5px;
+        }
+
+        .Lclearbtn {
+            margin-left: 10px;
+        }
+
+        .statuscss {
+            height: 8px;
+            font-size: 20px;
+            margin-left: 30%
+        }
+
+        .disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .lbl_year {
+            color: black;
+            font-weight: normal !important;
+            margin-left: 15px;
+        }
+        .lbl_taishosha {
+            color: black;
+            font-weight: normal !important;
+            margin-left: 15px;
+        }
+        .lbl_mokuhyou {
+            color: black;
+            font-weight: normal !important;
+            margin-left: 15px;
+        }
+        .lbl_kakutei {
+            color: black;
+            font-weight: normal !important;
+            margin-left: 15px;
+        }
+        .btn_search {
+            text-align: center;
+            width: 60px;
+            height: 35px;
+            margin-left:160px;
+        }
+
+        @@media screen and (max-width: 1024px) {
+            .mlgocss {
+                width: 100%
+            }
+            .btn_search {
+                margin-left: 50px;
+            }
+            .searchbtncss {
+                margin-right: 0;
+            }
+
+            .clearbtncss {
+                margin-right: 0;
+            }
+
+            .createbtncss {
+                margin-right: 0;
+            }
+
+            .btncss {
+                width: 300px;
+            }
+
+            .Lbtncss {
+                width: 250px;
+                float: unset;
+                margin-right: unset;
+            }
+
+            .Lclearbtn {
+                margin: 0;
+            }
+
+            .datehidecss {
+                display: none;
+            }
+
+            .tiMobileclass {
+                visibility: visible;
+                position: static;
+            }
+
+            .desclass {
+                visibility: hidden;
+                position: absolute;
+            }
+
+            .modal-content {
+                width: auto;
+            }
+
+            .statuscss {
+                font-size: 16px;
+                height: 4px;
+                margin-left: 10%
+            }
+
+            .hidejishibicss {
+                display: none;
+            }
+        }
+
+        @@media screen and (max-width: 768px) {
+
+            .mlgocss {
+                width: 100%
+            }
+            .btn_search{
+                margin-left:50px;
+            }
+            .searchbtncss {
+                margin-right: 0;
+            }
+
+            .clearbtncss {
+                margin-right: 0;
+            }
+
+            .createbtncss {
+                margin-right: 0;
+            }
+
+            .btncss {
+                width: 300px;
+            }
+
+            .Lbtncss {
+                width: 250px;
+                float: unset;
+                margin-right: unset;
+            }
+
+            .Lclearbtn {
+                margin: 0;
+            }
+
+            .datehidecss {
+                display: none;
+            }
+
+            .tiMobileclass {
+                visibility: visible;
+                position: static;
+            }
+
+            .desclass {
+                visibility: hidden;
+                position: absolute;
+            }
+
+            .modal-content {
+                width: auto;
+            }
+
+            .statuscss {
+                font-size: 16px;
+                height: 4px;
+                margin-left: 10%
+            }
+
+            .hidejishibicss {
+                display: none;
+            }
+        }
+
+        @@media only screen and (max-width: 576px) {
+            .lbl_mokuhyou {
+                margin-left: 15px;
+            }
+            .btn_search{
+                margin-left:90px;
+            }
+            /*.searchbtncss {
+                margin-left: 15px;
+            }*/
+
+            .createbtncss {
+                margin-left: 75px;
+            }
+        }
+
+        @@media only screen and (max-width: 375px) {
+            .createbtncss {
+                margin-left: 35px;
+            }
+            .btn_search{
+                margin-left:50px;
+            }
+        }
+
+        @@media only screen and (max-width: 320px) {
+            .btn_search {
+                margin-left: 15px;
+            }
+        }
+    
+    </style>
+    <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+    <script>
+        $(document).ready(function () {
+            // active the button
+            $('.modal').on('hidden.bs.modal', function (e) {
+                if ($('.modal').hasClass('in')) {
+                    $('body').addClass('modal-open');
+                    document.getElementById("prvDataBtn").focus();
+                }
+                else {
+                    document.getElementById("Ken_taishosha").focus();
+                }
+
+            });
+        });
+    </script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            //保存できないときの確認メッセージ
+            if ('@Model.msg' != null && '@Model.msg' != "") {
+                alert('@Model.msg');
+            }
+
+            if ('@Model.status' == "") {
+                $('.statusclass').hide();
+            }
+
+            $('#dHIDUKE').attr("readonly", true);
+
+            $("#sMOKUHYO").attr("readonly", true);
+            $('#Actiontask').attr("readonly", true);
+            $('#Trouble_tantousha').attr("readonly", true);
+            $('#Awareness_tantousha').attr("readonly", true);
+
+            $('#dHIDUKE').css("background-color", "#FFFFCC");
+            $('#sMOKUHYO').css("background-color", "#FFFFCC");
+            $('#Actiontask').css("background-color", "#FFFFCC");
+            $('#Trouble_tantousha').css("background-color", "#FFFFCC");
+            $('#Awareness_tantousha').css("background-color", "#FFFFCC");
+
+
+            $('#dHIDUKE').prop('tabIndex', -1);
+            $("#sMOKUHYO").prop('tabIndex', -1);
+            $('#Actiontask').prop('tabIndex', -1);
+            $('#Trouble_tantousha').prop('tabIndex', -1);
+            $('#Awareness_tantousha').prop('tabIndex', -1);
+
+            document.getElementById("Ken_taishosha").focus();
+
+            if ('@Model.fKAKUTEI' == 'True') {
+                document.getElementById("confirmBtn").disabled = true;
+                $('#confirmBtn').addClass("disabled");
+            }
+
+            $('#saveBtn').css("background-color", "#9dccf1");
+
+            if (($("#confirmBtn").is(":disabled")) == false) {
+                $('#confirmBtn').css("background-color", "#FFCDFF");
+            }
+            $("#btn_table").css('margin-top', '5px');
+
+            //document.getElementById("preBtn").focus();
+
+            var btn = '@Model.btnName';
+
+            if (btn.length == 2) {
+                $('#confirmBtn').css({ width: '60px' });
+            }
+            else if (btn.length == 3) {
+                $('#confirmBtn').css({ width: '70px' });
+            }
+            else if (btn.length == 4) {
+                $('#confirmBtn').css({ width: '80px' });
+            }
+
+            if ('@Model.fKAKUTEI' == 'True') {
+
+                if ($(window).width() < 768) {
+                    $("#time_txtaea").tooltip();
+                }
+            }
+
+            $('#prv_date').prop('tabIndex', -1);
+            $('#prv_djishi').prop('tabIndex', -1);
+            $('#prv_tema').prop('tabIndex', -1);
+            $('#prv_taskaction').prop('tabIndex', -1);
+            $('#prv_trouble').prop('tabIndex', -1);
+            $('#prv_trouble_L').prop('tabIndex', -1);
+            $('#prv_awareness').prop('tabIndex', -1);
+            $('#prv_awareness_L').prop('tabIndex', -1);
+            $('#prv_feedback').prop('tabIndex', -1);
+            $('#prv_memo').prop('tabIndex', -1);
+
+             @*入力画面を表示するかどうかの範囲*@
+            if ('@Model.fpopup' == "True") {
+
+                $('#myModal').modal('show');
+                return true;
+            }
+            else {
+
+                $('#myModal').modal('hide');
+            }
+            /*検索条件、データ順番、ページネーションするとき実行される th a,*/
+            $('tfoot a').click(function () {
+
+                var page = this.href.match(/page=([0-9])+/)[1];
+                page = page - 1;
+                $("#pgindex").val(page);
+                $('#pageindex_btn').click();
+                return false;
+            });
+
+            $('th a').click(function () {
+                var link = this.href;
+                var linkArr = link.split('?');
+
+                if (linkArr.length == 2) {
+                    var linkfir = linkArr[1].split('&');
+                    if (linkfir.length == 2) {
+                        //sort
+                        var sortArr = linkfir[0].split('=');
+                        var sort = sortArr[sortArr.length - 1];
+                        $("#sort").val(sort);
+                        $('#sortOrder_btn').click();
+                        return false;
+
+                    }
+                }
+            });
+
+
+        });
+
+    </script>
+
+    <script>
+        function SelectedIndexChanged() {
+            $('#searchBtn').click();
+        }
+
+        function editfunt(e, ctaishosha) {
+            var cMOKUHYO = e.id;
+            $("#cMOKUHYO").val(cMOKUHYO);
+            $("#cTaishosha").val(ctaishosha);
+        }
+
+        function kakutei() {
+
+            var input = $("<input />");
+            input.attr("type", "hidden").attr("name", "confirm_value");
+            if (confirm("確定しますか？")) {
+                //input.val("OK");
+                $('#comfirmMsg').val('OK');
+            } else {
+                input.val("キャンセル");
+                $('#comfirmMsg').val('キャンセル');
+                event.preventDefault();
+            }
+            $("form")[0].appendChild(input[0]);
+        }
+
+        function prvData() {
+            $('#PrvModal').modal('show');
+            return false;
+        }
+
+        function modal_backBtn() {
+            $('#PrvModal').modal('hide');
+            return false;
+        }
+
+    </script>
+</head>
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+    <div id='div_main' class="panel panel-info" style="overflow:auto">
+        @using (Html.BeginForm("OneOnOneKakunin", "OneOnOne", FormMethod.Post))
+        {
+            <div class="panel-heading" style="background-color: rgb(34, 148, 172); width:100%">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12 " align="center">
+                            <h4 style="color:white ; display: inline-block;">@Model.GamenName</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="container" class="row" style="margin: 10px;">
+                <div style="display:inline-block;margin-top:5px">
+                    <input type="submit" id="searchBtn" value="search" name="OneOnOneBtn" class="button" style="text-align:center; width:60px; height:35px;margin-left:50px ;margin-right:10px ;visibility:hidden;position:absolute" />
+                    @Html.Label("年度", new { @class = "lbl_year" })
+                    <button id="preBtn" name="year_btn" value="<" style="width:29px;height:29px;"><</button>
+                    @Html.DropDownListFor(m => m.cur_year, Model.YearList, new { @id = "year", style = "width:70px;Height:22px;margin-bottom:4px;", onchange = "SelectedIndexChanged()" })
+                    <button id="nextBtn" name="year_btn" value=">" style="width:29px;height:29px;">></button>
+                </div>
+                <div style="display:inline-block;margin-top:5px">
+                    @Html.LabelFor(m => m.Ken_taishosha, new { @class = "lbl_taishosha" })
+                    @Html.TextBoxFor(m => m.Ken_taishosha, new
+                    {
+                        @id = "Ken_taishosha",
+                        style = "width:130px;margin-left:5px;",
+                        maxlength = "30",
+                        oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);",
+                        autofocus = "autofocus"
+                    })
+                </div>
+                <div style="display:inline-block;margin-top:5px">
+                    @Html.LabelFor(m => m.Ken_sMOKUHYO, new { @class = "lbl_mokuhyou" })
+                    @Html.TextBoxFor(m => m.Ken_sMOKUHYO, new
+                    {
+                        @id = "Ken_sMOKUHYO",
+                        style = "width:200px;margin-left:5px;",
+                        maxlength = "30",
+                        oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                    })
+
+                </div>
+                <div style="display:inline-block;margin-top:5px">
+                    @Html.LabelFor(m => m.Ken_fKAKUTEI, new { @class = "lbl_kakutei" })
+                    @Html.CheckBoxFor(m => m.Ken_fKAKUTEI, new { @id = "fKANRISYA" })
+                </div>
+                <div style="display:inline-block;margin-top:5px">
+                    <button type="submit" id="searchBtn" value="search" name="OneOnOneBtn" class="button btn_search">検索</button>
+                    <button type="submit" id="clearBtn" value="clear" name="OneOnOneBtn" class="button Lclearbtn" style="text-align:center;  height:35px; ">クリア</button>
+                </div>
+            </div>
+
+            <input type="submit" value="pgindex" id="pageindex_btn" name="OneOnOneBtn" class="button" style=" position: absolute; visibility:hidden" />
+            <input type="submit" value="order" id="sortOrder_btn" name="OneOnOneBtn" class="button" style=" position: absolute; visibility:hidden" />
+            @Html.HiddenFor(m => m.cMOKUHYO, new { id = "cMOKUHYO", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.cTaishosha, new { id = "cTaishosha", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.cur_year, new { id = "year", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.fpermit, new { id = "fpermit", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.fpopup, new { id = "fpopup", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.fSuperior, new { id = "fSuperior", style = " position: absolute;" })
+            @*/*検索画面の順番とページ番号*/*@
+            @Html.HiddenFor(m => m.GamenName, new { id = "GamenName", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.pgindex, new { id = "pgindex", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.sort, new { id = "sort", style = " position: absolute;" })
+            @*@Html.HiddenFor(m => m.sortdir_num, new { id = "sortdir_num", style = " position: absolute;" })*@
+            @Html.HiddenFor(m => m.sortdir_date, new { id = "sortdir_date", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.sortdir_staishosha, new { id = "sortdir_staishosha", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.sortdir_sMokuhyo, new { id = "sortdir_sMokuhyo", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.sortdir_kanryou, new { id = "sortdir_kanryou", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.sortdir_djishibi, new { id = "sortdir_djishibi", style = " position: absolute;" })
+
+            <div id="gridContent" align="center" style="margin:15px; ">
+                @grid.GetHtml(
+                          tableStyle: "webgrid-table",
+                          headerStyle: "webgrid-header",
+                          footerStyle: "webgrid-footer",
+                          alternatingRowStyle: "webgrid-alternating-row",
+                          rowStyle: "webgrid-row-style",
+                          columns: grid.Columns(
+                                  grid.Column(header: "No.", format: @<text> <div>  @(item.WebGrid.Rows.IndexOf(item) + 1 + (grid.RowsPerPage * grid.PageIndex)) </div></text>)
+                                , grid.Column(columnName: "dHIDUKE", header: "送信日")
+                                , grid.Column(columnName: "cTAISHOSHA", header: "社員コード")
+                                , grid.Column(columnName: "sTAISHOSHA", header: "社員名")
+                                , grid.Column(columnName: "cMOKUHYO", header: "目標番号")
+                                , grid.Column(columnName: "sMOKUHYO", header: "目標")
+                                //, grid.Column(columnName: "fKAKUTEI", header: "状態")
+                                , grid.Column(columnName: "dJISHIBI", header: "実施日")
+                                , grid.Column(" ", "　", canSort: false, format: @<text><button id="@item.cMOKUHYO" value="Edit" name="OneOnOneBtn" class="name buttonlink" onclick="editfunt(this,'@item.cTAISHOSHA')">読込</button></text>)
+                                  ))
+            </div>
+        }
+
+
+        @*ミーティング作成画面*@
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true" align="center" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog mlgocss" style="margin-top:20px; ">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: rgb(34, 148, 172);  ">
+                        <h4 class="modal-title" id="myModalLabel" style="color:white">1on1ミーティング入力画面</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <table align="center" style="margin-top:10px;">
+                        <thead>
+                            <tr>
+                                <td style="min-width :75px;"></td>
+                                <td style="width:95vh" colspan="2">
+                                    @Html.Label(Model.status ?? "", new { @id = "status", Style = "align:center;font-weight: normal !important; color:blue;", @class = "statuscss" })
+
+                                    <button id="prvDataBtn" name="OneOnOneBtn" value="前回内容" style="text-align:center; width:70px; height:28px;float:right " onclick="prvData()">前回内容</button>
+                                </td>
+                            </tr>
+                        </thead>
+                    </table>
+
+
+                    @using (Html.BeginForm("OneOnOneKakunin", "OneOnOne", FormMethod.Post))
+                    {
+
+                        <div class="modal-body">
+                            <table class="data_tbl" id="datatbl" cellpadding="5">
+                                <tbody>
+                                    <tr>
+                                        <td style="min-width :75px;" class="onspacetd"></td>
+                                        <td style="width:95vh" colspan="2"></td>
+                                    </tr>
+
+                                    <tr class="onspace">
+                                        <td>@Html.LabelFor(m => m.dHIDUKE, new { style = " font-weight: normal !important; color:black;" })</td>
+                                        <td colspan="2">
+                                            <div id="div0" style=" width:100%;">
+                                                <div id="div1" style="float:left;width:25%;">
+                                                    <div id="date_txtaea">
+                                                        @Html.EditorFor(m => m.dHIDUKE, new { @id = "dHIDUKE", style = "width:130px", type = "date", @class = "customecss" })
+                                                        <div>
+                                                            @Html.ValidationMessageFor(model => model.dHIDUKE, null, new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="div2" style="float:left;width:65%;margin-left:40px;" class="hidejishibicss">
+                                                    @Html.LabelFor(m => m.dJISHIBI, new { @id = "dJISHIBI_lbl", style = " font-weight: normal !important;color:black;margin-right:12px;" })
+                                                    @Html.TextBoxFor(m => m.dJISHIBI, new { @id = "dJISHIBI", style = "width:130px;height:25px;", type = "date", @class = "customecss", @readonly = "true" })
+                                                </div>
+
+                                            </div>
+                                        </td>
+                                    </tr>
+
+
+                                    <tr class="tiMobileclass onspace">
+                                        <td>  @Html.LabelFor(m => m.dJISHIBI, new { @id = "dJISHIBI_lbl", style = " font-weight: normal !important;color:black;margin-right:12px;" })</td>
+                                        <td colspan="2">
+                                            <div id="time_txtaea">
+                                                @Html.EditorFor(m => m.dJISHIBI, new { @id = "dJISHIBI", style = "width:130px", @class = "customecss", @readonly = "true" })
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td> @Html.LabelFor(m => m.sMOKUHYO, new { style = " font-weight: normal !important;color:black;" })</td>
+                                        <td colspan="2">
+                                            <div id="tema_txtaea">
+                                                @Html.TextAreaFor(m => m.sMOKUHYO, 3, 30, htmlAttributes: new
+                                                {
+                                                    @id = "sMOKUHYO",
+                                                    name = "sMOKUHYO",
+                                                    style = "width: 100%; max-width: 100%;",
+                                                    maxlength = "500",
+                                                    @class = "customecss",
+                                                    oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                                })
+                                            </div>
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.sMOKUHYO, null, new { @class = "text-danger" })
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td> </td>
+                                        <td>
+
+                                            <span style="font-size:12px;"> グループメンバー記入欄</span>
+                                        </td>
+                                        <td>
+                                            <span style="font-size:12px;"> リーダー記入欄</span>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="onspace">
+                                        <td> @Html.LabelFor(m => m.Actiontask, new { style = " font-weight: normal !important;color:black;" })</td>
+                                        <td class="onspacetd">
+                                            <div id="actiontask_txtaea">
+                                                @Html.TextAreaFor(m => m.Actiontask, 5, 30, htmlAttributes: new
+                                                {
+                                                    @id = "Actiontask",
+                                                    style = "width: 100%; max-width: 100%;",
+                                                    maxlength = "1000",
+                                                    @class = "customecss",
+                                                    oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                                })
+                                            </div>
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.Actiontask, null, new { @class = "text-danger" })
+                                                @Html.ValidationMessageFor(model => model.Feedback, null, new { @class = "text-danger", Style = "visibility:hidden" })
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div id="feedback_txtaea">
+                                                @Html.TextAreaFor(m => m.Feedback, 5, 30, htmlAttributes: new
+                                                {
+                                                    @id = "Feedback",
+                                                    style = "width: 100%; max-width: 100%;",
+                                                    maxlength = "1000",
+                                                    @class = "customecss",
+                                                    oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                                })
+                                            </div>
+
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.Feedback, null, new { @class = "text-danger" })
+                                                @Html.ValidationMessageFor(model => model.Actiontask, null, new { @class = "text-danger", Style = "visibility:hidden" })
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="onspace">
+                                        <td> @Html.LabelFor(m => m.Trouble_tantousha, new { style = " font-weight: normal !important;color:black;" })</td>
+                                        <td class="onspacetd">
+                                            <div id="trouble_tantousha_txtaea">
+                                                @Html.TextAreaFor(m => m.Trouble_tantousha, 5, 10, htmlAttributes: new
+                                                {
+                                                    @id = "Trouble_tantousha",
+                                                    style = "width: 100%; max-width: 100%;",
+                                                    maxlength = "1000",
+                                                    @class = "customecss",
+                                                    oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                                })
+                                            </div>
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.Trouble_tantousha, null, new { @class = "text-danger" })
+                                                @Html.ValidationMessageFor(model => model.Trouble_Leader, null, new { @class = "text-danger", Style = "visibility:hidden" })
+                                            </div>
+
+                                        </td>
+                                        <td>
+                                            <div id="trouble_leader_txtaea">
+                                                @Html.TextAreaFor(m => m.Trouble_Leader, 5, 15, htmlAttributes: new
+                                                {
+                                                    @id = "Trouble_Leader",
+                                                    style = "width: 100%; max-width: 100%;",
+                                                    maxlength = "1000",
+                                                    @class = "customecss",
+                                                    oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                                })
+                                            </div>
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.Trouble_Leader, null, new { @class = "text-danger" })
+                                                @Html.ValidationMessageFor(model => model.Trouble_tantousha, null, new { @class = "text-danger", Style = "visibility:hidden" })
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="onspace">
+                                        <td> @Html.LabelFor(m => m.Awareness_tantousha, new { style = " font-weight: normal !important;color:black;" })</td>
+                                        <td class="onspacetd">
+                                            <div id="awareness_tantousha_txtaea">
+                                                @Html.TextAreaFor(m => m.Awareness_tantousha, 5, 30, htmlAttributes: new
+                                                {
+                                                    @id = "Awareness_tantousha",
+                                                    style = "width: 100%; max-width: 100%;",
+                                                    maxlength = "1000",
+                                                    @class = "customecss",
+                                                    oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                                })
+                                            </div>
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.Awareness_tantousha, null, new { @class = "text-danger" })
+                                                @Html.ValidationMessageFor(model => model.Awareness_Leader, null, new { @class = "text-danger", Style = "visibility:hidden" })
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div id="awareness_leader_txtaea">
+                                                @Html.TextAreaFor(m => m.Awareness_Leader, 5, 30, htmlAttributes: new
+                                                {
+                                                    @id = "Awareness_Leader",
+                                                    style = "width: 100%; max-width: 100%;",
+                                                    maxlength = "1000",
+                                                    @class = "customecss",
+                                                    oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                                })
+                                            </div>
+
+                                            <div>
+                                                @Html.ValidationMessageFor(model => model.Awareness_Leader, null, new { @class = "text-danger" })
+                                                @Html.ValidationMessageFor(model => model.Awareness_tantousha, null, new { @class = "text-danger", Style = "visibility:hidden" })
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hideclass">
+                                        <td> @Html.LabelFor(m => m.Memo, new { @id = "memoLbl", style = " font-weight: normal !important;color:black;" })</td>
+                                        <td colspan="2">
+                                            <div id="memo_txtaea">
+                                                @Html.TextAreaFor(m => m.Memo, 5, 30, htmlAttributes: new
+                                                {
+                                                    @id = "memo",
+                                                    style = "width: 100%; max-width: 100%;",
+                                                    maxlength = "1000",
+                                                    @class = "customecss",
+                                                    oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);",
+                                                })
+                                            </div>
+                                            <span style="font-size:12px;">※リーダーしか閲覧できません。</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                        <div class="modal-footer" align="center">
+                            <button type="submit" id="saveBtn" class="button" name="OneOnOneBtn" value="hozon" style=" height:35px; text-align:center; margin-right:10px;">一時保存</button>
+                            <button type="submit" id="confirmBtn" class="button" name="OneOnOneBtn" value="comfirm" style="text-align:center;  height:35px; margin-right:10px;" onclick="kakutei()"> @Model.btnName</button>
+                            <button type="submit" id="backBtn" class="button " name="OneOnOneBtn" value="back" style="height:35px; width:60px;">戻る</button>
+                        </div>
+                        @Html.HiddenFor(m => m.cMOKUHYO, new { id = "cMOKUHYO", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.cTaishosha, new { id = "cTaishosha", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.cur_year, new { id = "year", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.comfirmMsg, new { id = "comfirmMsg", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.fpermit, new { id = "fpermit", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.fKAKUTEI, new { id = "fKAKUTEI", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.fKANRYOU, new { id = "fKANRYOU", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.fSuperior, new { id = "fSuperior", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.Ken_taishosha, new { id = "Ken_taishosha", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.Ken_sMOKUHYO, new { id = "Ken_sMOKUHYO", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.Ken_fKAKUTEI, new { id = "Ken_fKAKUTEI", style = " position: absolute;" })
+                        @*/*検索画面の順番とページ番号*/*@
+                        @Html.HiddenFor(m => m.GamenName, new { id = "GamenName", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.pgindex, new { id = "pgindex", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.sort, new { id = "sort", style = " position: absolute;" })
+                        @*@Html.HiddenFor(m => m.sortdir_num, new { id = "sortdir_num", style = " position: absolute;" })*@
+                        @Html.HiddenFor(m => m.sortdir_date, new { id = "sortdir_date", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.sortdir_staishosha, new { id = "sortdir_staishosha", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.sortdir_sMokuhyo, new { id = "sortdir_sMokuhyo", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.sortdir_kanryou, new { id = "sortdir_kanryou", style = " position: absolute;" })
+                        @Html.HiddenFor(m => m.sortdir_djishibi, new { id = "sortdir_djishibi", style = " position: absolute;" })
+                    }
+
+                </div>
+            </div>
+        </div>
+
+        @*前回内容画面 、変更できません。読むのみ*@
+        <div class="modal fade " id="PrvModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true" align="center" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog mlgocss" style="margin-top:20px; ">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: rgb(34, 148, 172);  ">
+                        <h4 class="modal-title" id="PrvModalLabel" style="color:white">前回内容</h4>
+                        <button type="button" id="PrvModalBtn" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table style="margin:20px 10px 10px 10px ; width:80%" cellpadding="5" tabindex="-1">
+
+                            <tbody>
+                                <tr>
+                                    <td style="min-width :75px;" class="onspacetd"></td>
+                                    <td style="width:95vh" colspan="2"></td>
+                                </tr>
+
+                                <tr class="onspace">
+                                    <td>  @Html.LabelFor(m => m.dHIDUKE, new { style = " font-weight: normal !important; color:black;" })</td>
+                                    <td colspan="2">
+                                        <div id="div0" style=" width:100%;">
+                                            <div id="div1" style="float:left;width:25%;">
+                                                <div id="date_txtaea">
+                                                    @Html.TextBoxFor(m => m.prv_date, new { @id = "prv_date", style = "width:100px;margin-right:15px;", @class = "customecss", @readonly = "true", @tabindex = "-1" })
+
+                                                </div>
+                                            </div>
+                                            <div id="div2" style="float:left;width:65%;margin-left:40px;" class="hidejishibicss">
+                                                @Html.LabelFor(m => m.dJISHIBI, new { style = " font-weight: normal !important; color:black;", @class = "desclass" })
+                                                @Html.TextBoxFor(m => m.prv_djishi, new { @id = "prv_djishi", style = " font-weight: normal !important; color:black; width:100px;margin-left:10px;", @class = "customecss desclass", @readonly = "true", @tabindex = "-1" })
+                                            </div>
+
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <tr class="tiMobileclass onspace">
+                                    <td>  @Html.LabelFor(m => m.dJISHIBI, new { @id = "dJISHIBI_lbl", style = " font-weight: normal !important;color:black;margin-right:12px;" })</td>
+                                    <td colspan="2">
+                                        <div id="time_txtaea">
+                                            @Html.EditorFor(m => m.prv_djishi, new { @id = "prv_djishi", style = "width:130px", @class = "customecss", @readonly = "true" })
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td> @Html.LabelFor(m => m.sMOKUHYO, new { style = " font-weight: normal !important;color:black;" })</td>
+                                    <td colspan="2">
+                                        <div id="tema_txtaea">
+                                            @Html.TextAreaFor(m => m.prv_tema, 3, 30, htmlAttributes: new {
+                                           @id = "prv_tema",
+                                           name = "sMOKUHYO",
+                                           style = "width: 100%; max-width: 100%;",
+                                           maxlength = "500",
+                                           @class = "customecss",
+                                           oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);",
+                                           @readonly = "true"
+                                       })
+                                        </div>
+
+                                    </td>
+                                </tr>
+
+                                <tr class="onspace">
+                                    <td> @Html.LabelFor(m => m.Actiontask, new { style = " font-weight: normal !important;color:black;" })</td>
+                                    <td class="onspacetd">
+                                        <div id="actiontask_txtaea">
+                                            @Html.TextAreaFor(m => m.prv_taskaction, 5, 30, htmlAttributes: new {
+                                                @id = "prv_taskaction",
+                                                style = "width: 100%; max-width: 100%;",
+                                                maxlength = "1000",
+                                                @class = "customecss",
+                                                oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);",
+                                            @readonly = "true"
+                                            })
+                                        </div>
+
+                                    </td>
+                                    <td>
+                                        <div id="feedback_txtaea">
+                                            @Html.TextAreaFor(m => m.prv_feedback, 5, 30, htmlAttributes: new{
+                                           @id = "prv_feedback",
+                                           style = "width: 100%; max-width: 100%;",
+                                           maxlength = "1000",
+                                           @class = "customecss",
+                                           oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);",
+                                           @readonly = "true"
+                                       })
+                                        </div>
+
+
+                                    </td>
+                                </tr>
+                                <tr class="onspace">
+                                    <td> @Html.LabelFor(m => m.Trouble_tantousha, new { style = " font-weight: normal !important;color:black;" })</td>
+                                    <td class="onspacetd">
+                                        <div id="trouble_tantousha_txtaea">
+                                            @Html.TextAreaFor(m => m.prv_trouble, 5, 10, htmlAttributes: new{
+                                           @id = "prv_trouble",
+                                           style = "width: 100%; max-width: 100%;",
+                                           maxlength = "1000",
+                                           @class = "customecss",
+                                           oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);",
+                                           @readonly = "true"
+                                       })
+                                        </div>
+
+
+                                    </td>
+                                    <td>
+                                        <div id="trouble_leader_txtaea">
+                                            @Html.TextAreaFor(m => m.prv_trouble_L, 5, 15, htmlAttributes: new {
+                                           @id = "prv_trouble_L",
+                                           style = "width: 100%; max-width: 100%;",
+                                           maxlength = "1000",
+                                           @class = "customecss",
+                                           oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);",
+                                           @readonly = "true"
+                                       })
+                                        </div>
+
+                                    </td>
+                                </tr>
+                                <tr class="onspace">
+                                    <td> @Html.LabelFor(m => m.Awareness_tantousha, new { style = " font-weight: normal !important;color:black;" })</td>
+                                    <td class="onspacetd">
+                                        <div id="awareness_tantousha_txtaea">
+                                            @Html.TextAreaFor(m => m.prv_awareness, 5, 30, htmlAttributes: new {
+                                           @id = "Awarenprv_awarenessess_tantousha",
+                                           style = "width: 100%; max-width: 100%;",
+                                           maxlength = "1000",
+                                           @class = "customecss",
+                                           oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);",
+                                           @readonly = "true"
+                                       })
+                                        </div>
+
+                                    </td>
+                                    <td>
+                                        <div id="awareness_leader_txtaea">
+                                            @Html.TextAreaFor(m => m.prv_awareness_L, 5, 30, htmlAttributes: new{
+                                           @id = "prv_awareness_L",
+                                           style = "width: 100%; max-width: 100%;",
+                                           maxlength = "1000",
+                                           @class = "customecss",
+                                           oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);",
+                                           @readonly = "true"
+                                       })
+                                        </div>
+
+
+                                    </td>
+                                </tr>
+
+
+                                <tr class="hideclass">
+                                    <td> @Html.LabelFor(m => m.Memo, new { @id = "memoLbl", style = " font-weight: normal !important;color:black;" })</td>
+                                    <td colspan="2">
+                                        <div id="memo_txtaea">
+                                            @Html.TextAreaFor(m => m.prv_memo, 5, 30, htmlAttributes: new{
+                                           @id = "prv_memo",
+                                           style = "width: 100%; max-width: 100%;",
+                                           maxlength = "1000",
+                                           @class = "customecss",
+                                           oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);",
+                                           @readonly = "true"
+                                       })
+                                        </div>
+                                        <span style="font-size:12px;">※リーダーしか閲覧できません。</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+
+
+                        </table>
+                    </div>
+                    <div class="modal-footer" align="center">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" style="height:35px; width:60px;">戻る</button>
+                    </div>
+                    <div class="modal-footer" align="center">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" style="height:35px; width:60px;">戻る</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    }
+
+   
+</body>
+
+

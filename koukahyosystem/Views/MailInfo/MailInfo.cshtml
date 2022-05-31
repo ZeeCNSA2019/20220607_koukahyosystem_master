@@ -1,0 +1,226 @@
+﻿@*/*
+    * 作成者　: テテ
+    * 日付：20201116
+    * 機能　：送信メール設定
+    * 作成したパラメータ：TempData["hozone_msg"]
+    *
+    */*@
+@model koukahyosystem.Models.MailInfo_Model
+@{
+    ViewBag.Title = "MailInfo";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <style type="text/css">
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .mail-form {
+            width: 500px;
+            border: 0px;
+            padding: 20px 20px;
+            border-radius: 10px;
+            margin: 0px auto;
+        }
+
+        .address {
+            margin-bottom: 20px;
+        }
+
+            .address input {
+                width: 250px;
+                margin-left: 10px;
+            }
+
+        .server {
+            margin-bottom: 20px;
+        }
+
+            .server input {
+                width: 250px;
+                margin-left: 52px;
+            }
+
+        .port {
+            margin-bottom: 20px;
+        }
+
+            .port input {
+                width: 250px;
+                margin-left: 66px;
+            }
+
+        .password {
+            margin-bottom: 20px;
+        }
+
+            .password input {
+                width: 250px;
+                margin-left: 38px;
+            }
+
+        .hozone {
+            /*border-radius: 10px;
+            padding: 10px 15px;*/
+            margin-right: 10px;
+            margin-left: 135px;
+            width: 60px;
+            height: 35px;
+            padding: 5px 10px;
+            text-align: center;
+            cursor: pointer;
+            /*outline: none;*/
+            color: black;
+            border: none;
+            border-radius: 3px;
+            border: 0.5px solid #555555;
+        }
+
+        .back {
+            /*border-radius: 10px;
+            padding: 10px 15px;*/
+            margin-right: 10px;
+            width: 60px;
+            height: 35px;
+            padding: 5px 10px;
+            text-align: center;
+            cursor: pointer;
+            /*outline: none;*/
+            color: black;
+            border: none;
+            border-radius: 3px;
+            border: 0.5px solid #555555;
+        }
+
+        .require {
+            margin-left: 110px;
+        }
+        .lbl_font{
+            font-weight:normal;
+        }
+        @@media screen and (max-width: 480px) {
+            .address input {
+                width: 100%;
+                display: block;
+                margin-left: 0px;
+            }
+
+            .server input {
+                width: 100%;
+                display: block;
+                margin-left: 0px;
+            }
+
+            .port input {
+                width: 100%;
+                display: block;
+                margin-left: 0px;
+            }
+
+            .password input {
+                width: 100%;
+                display: block;
+                margin-left: 0px;
+            }
+
+            .require {
+                margin-left: 0px;
+            }
+
+            .hozone {
+                margin-right: 10px;
+                margin-left: 70px;
+                width: 60px;
+                height: 35px;
+                padding: 5px 10px;
+                text-align: center;
+                cursor: pointer;
+                outline: none;
+                color: black;
+                border: none;
+                border-radius: 3px;
+                border: 0.5px solid #555555;
+            }
+            
+        }
+    </style>
+</head>
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+        <div class="panel panel-info" style="display:inline-block;width:100%">
+            @using (Html.BeginForm("MailInfo", "MailInfo", FormMethod.Post))
+            {
+                <div class="panel-heading text-center" style="background-color: rgb(34, 148, 172);">
+                    <h4>送信メール設定</h4>
+                </div>
+                <form>
+                    <fieldset class="mail-form">
+
+                        <div class="address">
+                            @Html.Label("送信用のメアド",new { @class = "lbl_font" })
+                            @Html.TextBoxFor(model => model.address_val, new { maxlength = 30, autofocus = "autofocus" })
+                            <div class="require">@Html.ValidationMessageFor(model => model.address_val, null, new { @class = "text-danger" })</div>
+                        </div>
+
+                        <div class="server">
+                            @Html.Label("サーバー", new { @class = "lbl_font" })
+                            @Html.TextBoxFor(model => model.server_name, new { maxlength = 25 })
+                            <div class="require">@Html.ValidationMessageFor(model => model.server_name, null, new { @class = "text-danger" })</div>
+                        </div>
+
+                        <div class="port">
+                            @Html.Label("ポート", new { @class = "lbl_font" })
+                            @Html.TextBoxFor(model => model.port_no, new { @onkeypress = "return isSpecialKey(event)", maxlength = 15 })
+                            <div class="require">@Html.ValidationMessageFor(model => model.port_no, null, new { @class = "text-danger" })</div>
+                        </div>
+
+                        <div class="password">
+                            @Html.Label("パスワード", new { @class = "lbl_font" })
+                            @Html.TextBoxFor(model => model.psw_val, new { @autocomplete = "new-password", type = "password", maxlength = 16 })
+                            <div class="require">@Html.ValidationMessageFor(model => model.psw_val, null, new { @class = "text-danger" })</div>
+                        </div>
+
+                        <button type="submit" class="hozone" id="hozone" name="hozone" value="hozone">保存</button>
+                        <button type="submit" class="back" id="back" name="back" value="back">戻る</button>
+
+                    </fieldset>
+
+                </form>
+            }
+        </div>
+    }
+    <script src="@Url.Content("~/Scripts/jquery-1.12.4.min.js")"></script>
+    <script>
+        function isSpecialKey(event) {
+
+            var regex = new RegExp("^[0-9]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+
+            if (!regex.test(key)) {
+
+                event.preventDefault();
+                return false;
+            }
+            else {
+
+                return true;
+
+            }
+        }
+    </script>
+
+    @*@if (TempData["hozone_msg"] != null)
+    {
+        <script>
+        $(document).ready(function () {
+            alert('@TempData["hozone_msg"]')
+        });
+        </script>
+    }*@
+</body>
+</html>
+

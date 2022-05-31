@@ -1,0 +1,312 @@
+﻿@*/*
+    * 作成者　: ナン
+    * 日付：20200424
+    * 機能　：プロフィール画面
+    */*@
+@model koukahyosystem.Models.ShainModel
+@{
+    ViewBag.Title = "newProfile";
+}
+<head>
+
+    <title></title>
+    <style>
+        .divElement {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -50px;
+            margin-left: -50px;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+            box-shadow: 5px 5px 10px rgb(34, 148, 172);
+        }
+
+        .button {
+            padding: 5px 10px;
+            text-align: center;
+            cursor: pointer;
+            outline: none;
+            color: black;
+            /*background-color: #BDE9F2;*/
+            border: none;
+            border-radius: 3px;
+            border: 0.5px solid #555555;
+        }
+               
+        .button:hover {
+                background-color: lightblue
+          }
+
+        .button:active {
+                background-color: lightblue;
+                transform: translateY(4px);
+            }
+
+        tr.spaceUnder > td {
+            padding-bottom: 0.5em;
+        }
+    </style>
+
+    <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                $('#myModal').modal('hide');
+               
+            });
+        
+        });
+    </script>
+
+    <script type="text/javascript">
+
+        function someFunction() {
+            $('#myModal').modal('show');
+            $("#sPWD").focus();
+           
+            $("#savebtnid").autofocus;
+            document.getElementById('sPWD1').value = null;
+            document.getElementById('sPWD2').value = null;
+        }
+
+        function OnChanged(evt) {
+
+            if (evt != null) {
+                var charCode = (evt.which) ? evt.which : evt.keyCode
+
+                if (charCode == 13) {
+                    event.preventDefault();
+
+                }
+            }
+
+        }
+
+        function isSpecialKey(event) {
+
+            var regex = new RegExp("^[a-zA-Z0-9]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+
+                event.preventDefault();
+                return false;
+            }
+            
+        }
+
+        function SaveFunction() {
+
+            if ('@Model.cSHAIN' != null)
+            {
+                var pswVal_1 = document.getElementById('sPWD1').value;
+                var pswVal_2 = document.getElementById('sPWD2').value;
+
+               
+                if (pswVal_1 == null || pswVal_1 == "")
+                {
+                    alert("パスワートを入力してください。");
+                    return;
+                }
+
+                if (pswVal_2 == null || pswVal_2 == "")
+                {
+                    alert("確認用パスワートを入力してください。");
+                    return;
+                }
+
+                if (pswVal_1 != pswVal_2)
+                {
+                    alert("パスワードが一致していません。");
+                    return
+                }
+
+                var shainNum = '@Model.cSHAIN';
+            //alert('shainNum<<' + shainNum + '<<pswVal' + pswVal);
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("psw_save", "Shain")',
+                    data: '{cShain: ' + JSON.stringify(shainNum) + ',spsw:' + JSON.stringify(pswVal_1) +'}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response == true)
+                        {                            
+                            $('#myModal').modal('hide');
+                        }
+                        else
+                        {
+                            alert("保存できません。");
+                        }
+
+                    },
+                    failure: function (errmsg) {
+                        //alert('errmsg' + errmsg);
+                    }
+                });
+            }
+
+        }
+        function BackFunction() {
+            $('#myModal').modal('hide');
+        }
+        
+    </script>
+</head>
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+          <div id='divElement' class="panel panel-info">
+               
+              <div class="panel-heading" style="background-color: rgb(34, 148, 172);" align="center">
+                    <h4 style="color:white">プロフィール </h4>
+                </div>
+
+              <div style="margin:5px 5px 5px 5px;" align="center">
+                  <table align="center">
+                      <tr class="spaceUnder">
+                          <td></td>
+                          <td>
+                              <img id="image" style=" border-width:1px; border-color:Black;   border-style:solid;  width:205px ;height:205px; object-fit: cover;" src="@Url.Content("~/Img/"+ Model.sPATH_GAZO)" /> @*src = "~/Img/@TempData["Img"]"*@
+                          </td>
+                      </tr>
+
+                      <tr class="spaceUnder">
+                          <td>
+                              @Html.LabelFor(m => m.sLOGIN, new { style = " font-weight: normal !important;" })
+                          </td>
+                          <td>
+                              @Html.Label("　:　" + @Model.sLOGIN, new { style = "font-weight: normal !important;" })
+                          </td>
+                      </tr>
+
+                      <tr class="spaceUnder">
+                          <td>
+                              @Html.LabelFor(m => m.sSHAIN, new { style = " font-weight: normal !important;" })
+                          </td>
+                          <td>
+                              @Html.Label("　:　" + @Model.sSHAIN, new { style = "font-weight: normal !important;" })
+
+                          </td>
+                      </tr>
+
+                      <tr class="spaceUnder">
+                          <td>
+                              @Html.LabelFor(m => m.sYAKUSHOKU, new { style = " font-weight: normal !important;" })
+                          </td>
+                          <td>
+                              @Html.Label("　:　" + @Model.sYAKUSHOKU, new { style = "font-weight: normal !important;" })
+                          </td>
+                      </tr>
+
+                      <tr class="spaceUnder">
+                          <td>
+                              @Html.LabelFor(m => m.sHYOUKASHA, new { style = " font-weight: normal !important;" })
+                          </td>
+                          <td>
+                              @Html.Label("　:　" + @Model.sHYOUKASHA, new { style = "font-weight: normal !important;" })
+                          </td>
+                      </tr>
+
+                      <tr class="spaceUnder">
+                          <td>
+                              @Html.LabelFor(m => m.cBUSHO, new { style = " font-weight: normal !important;" })
+                          </td>
+                          <td>
+                              @Html.Label("　:　" + @Model.cBUSHO, new { style = "font-weight: normal !important;" })
+                          </td>
+                      </tr>
+
+                      <tr class="spaceUnder">
+                          <td>
+                              @Html.LabelFor(m => m.cKUBUN, new { style = " font-weight: normal !important;" })
+                          </td>
+                          <td>
+                              @Html.Label("　:　" + @Model.cKUBUN, new { style = "font-weight: normal !important;" })
+                          </td>
+                      </tr>
+
+                      <tr class="spaceUnder">
+                          <td>
+                              @Html.LabelFor(m => m.dNYUUSHA, new { style = " font-weight: normal !important;" })
+                          </td>
+                          <td>
+                              @Html.Label("　:　" + @Model.Pro_dNYUUSHA, new { style = "font-weight: normal !important;" })
+                          </td>
+                      </tr>
+
+                      <tr class="spaceUnder">
+                          <td>
+                              @Html.LabelFor(m => m.dSEINENGAPPI, new { style = " font-weight: normal !important;" })
+                          </td>
+                          <td>
+                              @Html.Label("　:　" + @Model.Pro_dSEINENGAPPI, new { style = "font-weight: normal !important;" })
+                          </td>
+                      </tr>
+
+                      <tr class="spaceUnder">
+                          <td>
+                              @Html.LabelFor(m => m.sSEIBETSU, new { style = " font-weight: normal !important;" })
+                          </td>
+                          <td>
+                              @Html.Label("　:　" + @Model.sSEIBETSU, new { style = "font-weight: normal !important;" })
+                          </td>
+                      </tr>
+                  </table>
+
+                    <table align="center">
+                        <!--style="margin-left:37.2%"-->
+                        <tr class="spaceUnder">
+                            <td>
+                                <a onclick="someFunction()"> パスワードの変更</a>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+          </div>
+
+          <div id='myModal' class='modal' align="center" data-backdrop="static" data-keyboard="false" style="margin-top:20px;">                
+               <div class="modal-dialog" style="width:440px; height:160px; ">
+                    <div class="modal-content" style="padding:10px 10px 10px 10px;">
+                        <div class="panel-heading" align="center" style="background-color: rgb(34, 148, 172); color: Black; margin-top:0px;">
+                            <h4 style="color:Black ; display: inline-block;">パスワードの変更</h4>
+                        </div>
+                        <div id='myModalContent' style="width:400px; height:130px;" align="center">
+                            <table style="margin:20px 10px 10px 10px ;">
+                                <tr class="spaceUnder">
+                                    <td>
+                                        @Html.Label("パスワード", new { style = " font-weight: normal !important;" })
+                                    </td>
+                                    <td>
+                                        @Html.TextBox("psd1", "", new { @id = "sPWD1", type = "password", style = "width:200px;margin-left:7px;", tabindex = "1", maxlength = "8", onkeypress = "isSpecialKey(event)" })
+                                    </td>
+                                </tr>
+                                <tr class="spaceUnder">
+                                    <td>
+                                        @Html.Label("確認用パスワード", new { style = " font-weight: normal !important;" })
+                                    </td>
+                                    <td>
+                                        @Html.TextBox("psd1", "", new { @id = "sPWD2", type = "password", style = "width:200px;margin-left:7px;", tabindex = "1", maxlength = "8", onkeypress = "isSpecialKey(event)" })
+                                    </td>
+                                </tr>
+                            </table>
+                            <table class="panel-body" align="center">
+                                <tr>
+                                    <td align="center" style="width:130px;">
+                                        <input type="submit" style="height:35px; width:60px;" value="保存" id="savebtnid" name="shain_btn" class="button" tabindex="2" onclick="SaveFunction();" autofocus />
+                                    </td>
+                                    <td align="center" style="width:130px;">
+                                        <input type="submit" style="height:35px; width:60px;" value="戻る" name="shain_btn" class="button" tabindex="3" onclick="BackFunction();" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+           </div>
+    }
+ </body>
+

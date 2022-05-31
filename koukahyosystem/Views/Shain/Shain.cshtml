@@ -1,0 +1,373 @@
+﻿@model koukahyosystem.Models.ShainModel
+@{
+    ViewBag.Title = "Shain";
+
+    var grid = new WebGrid(source: Model.AllShainList, canPage: true, rowsPerPage:20, ajaxUpdateContainerId: "gridContent");
+    grid.Pager(WebGridPagerModes.All);
+    if (Model.AllShainList.Count != 0)
+    {
+        grid.PageIndex = Model.pgindex;
+       
+    }
+    
+}
+<html>
+<head>
+    <style>
+        .divElement {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -50px;
+            margin-left: -50px;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+            box-shadow: 5px 5px 10px rgb(34, 148, 172);
+        }
+
+        /*.button {
+            padding: 5px 10px;
+            text-align: center;
+            cursor: pointer;
+            outline: none;
+            color: black;
+            border: none;
+            border-radius: 3px;
+            border: 0.5px solid #555555;
+        }*/
+        .btncss {
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+            width: auto;
+            padding: 5px 10px 5px 10px;
+        }
+        .button:hover {
+            background-color: lightblue
+        }
+
+        .button:active {
+            background-color: lightblue;
+            transform: translateY(4px);
+        }
+        .bushocss {
+            margin-right: 12px;
+        }
+        .webgrid- table {
+            width: 400px;
+            display: table;
+            border-collapse: separate;
+            border: solid 1px black;
+            background-color: white;
+            color: black;
+        }
+
+        .webgrid-table td, th {
+            padding: 3px 7px 2px;
+        }
+
+        .webgrid-header {
+            background-color: skyblue;
+            color: black;
+            padding-bottom: 4px;
+            padding-top: 5px;
+            text-align: center;
+        }
+
+            .webgrid-header a {
+                color: black;
+            }
+
+        .webgrid-footer {
+        }
+
+        .webgrid-row-style {
+            padding: 3px 7px 2px;
+        }
+
+        .webgrid-alternating-row {
+            background-color: #C1ECFA;
+            padding: 3px 7px 2px;
+        }
+
+        .webgrid-table thead th {
+            text-align: center;
+        }
+
+            .webgrid-table thead td:first-child,
+            .webgrid-table thead th:first-child,
+            .webgrid-table tbody td:first-child,
+            .webgrid-table tbody th:first-child {
+                width: 45px;
+                text-align: center;
+                border: solid 1px white;
+            }
+
+            .webgrid-table thead td:nth-child(2),
+            .webgrid-table thead th:nth-child(2),
+            .webgrid-table tbody td:nth-child(2),
+            .webgrid-table tbody th:nth-child(2) {
+                width: 80px;
+                border: solid 1px white;
+            }
+
+            .webgrid-table thead td:nth-child(3),
+            .webgrid-table thead th:nth-child(3),
+            .webgrid-table tbody td:nth-child(3),
+            .webgrid-table tbody th:nth-child(3) {
+                width: 120px;
+                border: solid 1px white;
+            }
+
+            .webgrid-table thead td:nth-child(4),
+            .webgrid-table thead th:nth-child(4),
+            .webgrid-table tbody td:nth-child(4),
+            .webgrid-table tbody th:nth-child(4) {
+                width: 120px;
+                border: solid 1px white;
+            }
+
+            .webgrid-table thead td:nth-child(5),
+            .webgrid-table thead th:nth-child(5),
+            .webgrid-table tbody td:nth-child(5),
+            .webgrid-table tbody th:nth-child(5) {
+                width: 80px;
+                border: solid 1px white;
+                display: none;
+            }
+
+            .webgrid-table thead td:nth-child(6),
+            .webgrid-table thead th:nth-child(6),
+            .webgrid-table tbody td:nth-child(6),
+            .webgrid-table tbody th:nth-child(6) {
+                width: 170px;
+                border: solid 1px white;
+            }
+
+            .webgrid-table thead td:nth-child(7),
+            .webgrid-table thead th:nth-child(7),
+            .webgrid-table tbody td:nth-child(7),
+            .webgrid-table tbody th:nth-child(7) {
+                width: 50px;
+                border: solid 1px white;
+                text-align: center;
+            }
+
+        .gridContent {
+            height: 60vh;
+            overflow: auto;
+        }
+        .div1,.div2,.div3,.div4,.div5{
+            display:inline-block;
+            margin-bottom:10px;
+        }
+        @@media screen and (min-width: 1367px) {
+            .gridContent {
+                height: 71.2vh;
+                overflow: auto;
+            }
+        }
+
+        @@media only screen and (max-width: 768px) {
+
+            .bushocss {
+                margin-right: 0px;
+            }
+        }
+
+        @@media only screen and (max-width: 576px) {
+            
+        }
+
+        @@media only screen and (max-width: 320px) {
+
+        }
+    </style>
+    <script type="text/javascript">
+
+        function isNumberKey(evt) {
+
+            if (evt.keyCode == 13) {
+                return true;
+
+            }
+            else {
+                var regex = new RegExp("^[0-9]+$");
+                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+
+                    event.preventDefault();
+                    return false;
+
+                }
+            }
+          
+            
+        }
+        function isSpecialKey(event) {
+
+            if (event.keyCode == 13) {
+                return true;
+
+            }
+            else {
+                var regex = new RegExp("^[a-zA-Z 0-9\.\_\-]*$");
+                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+
+                    event.preventDefault();
+                    return false;
+                }
+            }
+            
+        }
+    </script>
+    <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $('tfoot a').click(function () {
+                var page = this.href.match(/page=([0-9])+/)[1];
+                page = page - 1;
+                $("#pgindex").val(page);
+                $('#pageindex_btn').click();
+                return false;
+            });
+
+            @*$('.webgrid-header').click(function () {
+                var aa = '@grid.SortColumn';
+                 var bb = '@grid.SortFieldName';
+                    alert('aa ' + aa+ '<<bb<<' + bb);
+            });*@
+
+            $('th a').click(function () {
+            var link = this.href;
+            var linkArr = link.split('?');
+         
+            if (linkArr.length  == 2)
+                {
+                    var linkfir = linkArr[1].split('&');
+                  
+                    if (linkfir.length == 2)
+                    {
+                        //sort
+                        var sortArr = linkfir[0].split('=');                      
+                        var sort = sortArr[sortArr.length - 1];                       
+                        $("#sort").val(sort);
+                        $('#sortOrder_btn').click();                           
+                        return false;
+                        
+                    }
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    @if (TempData["com_msg"] != null)
+    {
+        <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+        <script>
+                $(document).ready(function(){
+                    alert('@TempData["com_msg"]');
+                });
+        </script>
+    }
+    @if (Session["isAuthenticated"] != null)
+    {
+        using (Html.BeginForm("Shain", "Shain", FormMethod.Post))
+        {
+        <div id="maindiv" class="panel panel-info" style="overflow:auto; ">
+            <div class="panel-heading" style="background-color: rgb(34, 148, 172);" align="center">
+                <!--class="modal-header"-->
+                <h4 style="color:white">社員マスター </h4>
+            </div>
+
+            <div class="container">
+                <div class="row" style="margin-top:10px; ">
+                    <div class="col-sm-12 ">
+                        <div class="div1">
+                            @Html.LabelFor(m => m.S_cSHAIN, new { style = " font-weight: normal !important;" })
+                            @Html.TextBoxFor(m => m.S_cSHAIN, new
+                            {
+                                @id = "S_cSHAIN",
+                                type = "number",
+                                min = "0",
+                                step = "1",
+                                style = "width:55px;ime-mode:disabled; margin-left:5px;margin-right:12px;",
+                                maxlength = "4",
+                                @size = "4",
+                                onkeypress = "return isNumberKey(event)",
+                                //@onblur = "return ShiftNumber()",
+                                oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);",
+                                autofocus="autofocus"
+                            })
+                        </div>
+                        <div class="div2">
+                            @Html.LabelFor(m => m.S_sSHAIN, new { style = " font-weight: normal !important; " })
+                            @Html.TextBoxFor(m => m.S_sSHAIN, new { @id = "S_sSHAIN", style = "width:200px;margin-left:5px;margin-right:12px;", maxlength = "20", onkeypress = "isSpecialKey(event)" })
+
+                        </div>
+                        <div class="div3">
+                            @Html.Label(Model.S_busho_lbl ?? "", new { style = "font-weight: normal !important;margin-right:2px;margin-bottom:2px;" })
+                            @Html.DropDownListFor(m => m.S_cBUSHO, Model.bushoList, new { id = "S_cBUSHO", style = "width:85px;margin-left:5px;", @class = "bushocss" })
+
+                        </div>
+                        <div class="div4">
+                            @Html.LabelFor(m => m.S_cKUBUN, new { style = " font-weight: normal !important;margin-right:2px; ", align = "left" })
+                            @Html.DropDownListFor(m => m.S_cKUBUN, Model.kubunList, "", new { id = "S_sKUBUN", style = "width:170px;margin-left:5px;margin-right:12px;" })
+
+                        </div>
+                        <div class="div5">
+                            <input type="submit" id="displayBtn" value="検索" name="shain_btn" class="btncss" style="margin-right:10px; height:35px;" />
+
+                            <input type="submit" value="クリア" name="shain_btn" class="btncss" style="margin-right:45px;height:35px;" />
+
+                            <input type="submit" value="社員追加" name="shain_btn" class="btncss" style=" height:35px;" /> <!--ShainMaster-->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            @Html.HiddenFor(m => m.pgindex, new { id = "pgindex", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.sort, new { id = "sort", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.sortdir_cShain, new { id = "sortdir_cShain", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.sortdir_sShain, new { id = "sortdir_sShain", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.sortdir_slogin, new { id = "sortdir_slogin", style = " position: absolute;" })
+            @Html.HiddenFor(m => m.sortdir_kubun, new { id = "sortdir_kubun", style = " position: absolute;" })
+            <input type="submit" value="ページ番号" id="pageindex_btn" name="shain_btn" class="btncss" style=" position: absolute; visibility:hidden" />
+            <input type="submit" value="順番" id="sortOrder_btn" name="shain_btn" class="btncss" style=" position: absolute; visibility:hidden" />
+            <div id="gridContent" align="center" style="margin:10px;" class="gridContent">
+                @grid.GetHtml(
+                      tableStyle: "webgrid-table",
+                      headerStyle: "webgrid-header",
+                      footerStyle: "webgrid-footer",
+                      alternatingRowStyle: "webgrid-alternating-row",
+                      rowStyle: "webgrid-row-style",
+                      columns: grid.Columns(
+                              grid.Column(header: "No.", format: @<text> <div> @(item.WebGrid.Rows.IndexOf(item) + 1 + (grid.RowsPerPage * grid.PageIndex))</div></text>)
+                       , grid.Column(columnName: "cSHAIN", header: "社員No")
+                       , grid.Column(columnName: "sSHAIN", header: "社員名")
+                       , grid.Column(columnName: "sLOGIN", header: "ログイン名")
+                       , grid.Column(columnName: "cKUBUN", header: "")
+                       , grid.Column(columnName: "sKUBUN", header: "考課区分")
+                       , grid.Column(" ", "　", canSort: false, format: @<text> @Html.ActionLink("変更", "ShainMaster", "Shain"
+, new
+{
+cSHAIN = item.cSHAIN          }, null)</text>)
+                    @*, grid.Column(columnName: "test", header: "test", format:@<text > @Html.ActionLink("Shain", "Shain", null, new { @class="ImgAddition", @onclick="SomeScript(this);"})</text>)*@
+                    ))
+            </div>
+        </div>
+        }
+    }
+</body>
+</html>
+
+

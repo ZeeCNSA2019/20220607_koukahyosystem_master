@@ -1,0 +1,132 @@
+﻿@*/*
+     * 作成者　:テテ
+    * 日付：20200723
+    * 機能　：管理者画面
+    * その他PGからパラメータ：Session["curr_nendou"]
+    */*@
+@model koukahyosystem.Models.LeaderModel
+
+@using System.Data
+@{
+    ViewBag.Title = "LeaderExport";
+    //Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    button {
+        color: black;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        border: 0.5px solid #555555;
+        border-radius: 4px;
+    }
+</style>
+
+@if (Session["isAuthenticated"] != null)
+{
+    <div id='divElement' class="panel panel-info" align="center">
+        <div class="panel-heading" style="background-color: rgb(34, 148, 172);" align="center">
+            <h4 style="color:white ; display: inline-block;">出力画面</h4>
+        </div>
+        <table class="date_tbl" id="DateTable" cellpadding="5" align="center">
+            <tr>
+                <td>
+                    @Html.Label("年度", new { style = "color:black;font-weight: normal !important;margin-right:5px;" })
+                </td>
+                <td>
+                    <button id="btnprev" name="btnprev" onclick="btnprev()" value="" style="display:inline-block;width:29px;height:29px;text-align:center;border-radius: 4px;"><</button>
+
+                    @*@Html.DropDownList("Years", new SelectList(Model.yearList, "Value", "Text", Model.selectcode), new { @id = "sYear", style = "width:60px;Height:22px;" })*@
+                    @Html.DropDownListFor(m => m.year, Model.yearList,
+             new { @id = "year", style = "width:70px;Height:22px;", onchange = "return OnChanged()" })
+
+                    <button id="btnnext" name="btnnext" onclick="btnnext()" value="" style="display:inline-block;width:29px;height:29px;text-align:center;border-radius: 4px;">></button>
+                </td>
+               
+            </tr>
+
+            <tr>
+
+                <td> </td>
+                <td align="center">
+                    <button id="btnok" name="btnok" value="" onclick="btnok()" style="width:60px;height:35px;text-align:center;border-radius: 4px;" autofocus>出力</button>
+
+                    @*<button id="btncancel" name="btncancel" value="" style="width:60px;height:35px;text-align:center;border-radius: 4px;"
+                            onclick="location.href='@Url.Action("Home", "Home")';return false;">
+                        戻る
+                    </button>*@
+                </td>
+            <td>
+                    <input type="hidden" id="hdnSession" data-value="@Request.RequestContext.HttpContext.Session["curr_nendou"]" />
+                </td>
+
+            </tr>
+        </table>
+    </div>
+}
+@*<div id="loader" style="display:none">
+        <img src="@Url.Content("~/Img/tenor.gif")" style="width:100px; height:100px;top:150px;left:0;margin-left:80px" class="img-responsive" />
+    </div>*@
+    <div id='loader' style='display: none;' align="center">
+        <img src="@Url.Content("~/Img/pic/tenor.gif")"  class="img-responsive" />
+    </div>
+<script>
+
+    function btnprev() {
+        var year = $("#year").val();
+        var minimumYear = 2020;
+        if (year > minimumYear) {
+            year--
+        }
+        document.getElementById('year').value = year;
+    }
+
+    function btnnext() {
+        var year = $("#year").val();
+        var sessionValue = $("#hdnSession").data('value');
+        if (year < sessionValue) {
+            year++
+        }
+        document.getElementById('year').value = year;
+    }
+
+    function btnok() {
+
+        var itemlist = [];
+        var itemlist1;
+        var year = $("#year").val();
+
+        itemlist1 = year;
+
+        itemlist = JSON.stringify({ 'itemlist1': itemlist1 });
+
+        $.ajax({
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: "POST",
+            url: '@Url.Action("LeaderExports", "LeaderExport")',
+            data: itemlist,
+            beforeSend: function () {
+                $('#divElement').hide();
+                $('#loader').show();
+            },
+            complete: function (data) {
+                $('#divElement').show();
+                $('#loader').hide();
+            }
+
+        }).done(function (result) {
+            if (result == "ok") {
+                // window.location = "/kanrisha/Download";
+                window.location = '@Url.Action("Download", "LeaderExport")';
+            }
+            else {
+                alert("データがありません。")
+            }
+
+        }).fail(function (response) {
+            alert('Error: ' + response);
+        });
+    }
+</script>

@@ -1,0 +1,1059 @@
+﻿@model koukahyosystem.Models.MasterKisoModel
+
+@{
+    ViewBag.Title = "KisoMaster";
+}
+<head>
+    <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+    
+    <meta name="viewport" content="width=device-width" />
+    <style>
+
+        /*button {
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+            
+        }*/
+        .btncss {
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+            width: auto;
+            padding: 5px 10px 5px 10px;
+        }
+            button:hover {
+                background-color: lightblue
+            }
+
+            button:active {
+                background-color: lightblue;
+                transform: translateY(4px);
+            }
+        #kiso_tbl {
+            border-collapse: separate;
+            border-spacing: 0;
+            table-layout: fixed;
+            /*border: 0.5px solid #cccccc;*/
+        }
+
+            #kiso_tbl th, #kiso_tbl td {
+                /*border: 0.5px solid #cccccc;*/
+            }
+        #kiso_tbl thead th {
+            border: 1px solid white;
+            text-align: center;
+            background-color: #C1ECFA;
+        }
+
+        #kiso_tbl tbody tr td {
+            border: 1px solid white;
+        }
+
+        table#kiso_tbl tr:nth-child(even) {
+            background-color: #C1ECFA;
+        }
+        #kiso_tbl th {
+            position: sticky;
+            z-index: 3;
+            top: 0;
+        }
+        #kiso_tbl td {
+            vertical-align: top;
+            text-align: center;
+        }
+        
+        .kubuncss {
+            margin: auto;
+            width: 60%;
+        }
+        .div_dropdown {
+            display: inline-block;
+            margin-left: 25px;
+            margin-bottom: 10px;
+        }
+        .div_kubun_dropdown {
+            display: inline-block;
+            margin-left: 10px;
+            margin-bottom: 10px;
+        }
+        .div_textbox {
+            margin-left: 10px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .div_buttons {
+            margin-left: 20px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .lbl_kubun {
+            font-weight: normal;
+        }
+
+        .number_textbox {
+            width: 20px;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            text-align: center;
+        }
+        .txt_search {
+            text-align: left;
+            width: 200px;
+        }
+        .lbl_kansaku {
+            font-weight: normal;
+        }
+        .lbl_shitsumon {
+            font-weight: normal;
+        }
+        /*.btn_search {
+            margin-left: 20px;
+        }*/
+        .btn_search ,.btn_clear, .btn_hozone ,.btn_copyMaster, .btn_new {
+            padding:5px 10px;
+        }
+        
+        .btn_clear {
+            margin-left: 5px;
+        }
+        .btn_hozone {
+            margin-left: 5px;
+        }
+        .btn_copyMaster{
+            margin-left:5px;
+        }
+        .btn_new {
+            margin-left: 25px;
+        }
+        .txt_qCount {
+            width:40px;
+            border: none;
+            outline: none;
+            margin-left: 10px;
+        }
+        .para {
+            margin-left: 185px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .th_no{
+            width:90px;
+            min-width:90px;
+        }
+        .th_question {
+            width: 450px;
+            min-width: 90px;
+        }
+        .th_junban{
+            width:40px;
+            min-width:40px;
+        }
+        .th_btn{
+            width:30px;
+        }
+        .kMark_table{
+            width:400px;
+        }
+        .kMark_table thead th {
+            border: 1px solid white;
+            text-align: center;
+            background-color: #C1ECFA;
+        }
+        .txt_kubunMark {
+            width: 40px;
+            margin-left: 10px;
+            margin-right:25px;
+            font-weight: normal;
+        }
+        .dp_kubunMark{
+            width:60px;
+            height:22px;
+            margin-left:10px;
+        }
+        .txt_kubunKijun {
+            width: 40px;
+            border: none;
+            outline: none;
+            margin-left: 10px;
+            font-weight: normal;
+        }
+        .lbl_year{
+            font-weight:normal;
+        }
+        .lbl_kubun_tensuu {
+            font-weight: normal;
+        }
+        .lbl_kubun_kijun {
+            font-weight: normal;
+        }
+        .txt_codeKubun{
+            width:100%;
+            border:none;
+            outline:none;
+        }
+        .txt_nameKubun {
+            width: 100%;
+            border: none;
+            outline: none;
+        }
+        .txt_kisoMark {
+            width: 100%;
+            text-align:right;
+            ime-mode: disabled;
+        }
+        .txt_kisoType {
+            width: 100%;
+            border: none;
+            outline: none;
+        }
+        .mDp{
+            vertical-align:top;
+        }
+        .mycontent {
+            height: 58.5vh;
+            overflow: auto;
+        }
+        .divCount{
+            display:inline-block;
+            width:28%;
+            text-align:right;
+            margin-bottom:10px;
+        }
+        .divMark {
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .divType {
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        @@media only screen and (max-width: 1024px) {
+
+            .div_dropdown {
+                margin-left: 0px;
+            }
+
+            .div_kubun_dropdown {
+                margin-left: 15px;
+            }
+
+            .div_textbox {
+                margin-left: 15px;
+            }
+
+            .div_buttons {
+                margin-right: 0px;
+            }
+
+            .btn_search {
+                margin-left: 0px;
+            }
+
+            .btn_new {
+                margin-left: 15px;
+            }
+
+            .para {
+                margin-left: 0px;
+            }
+
+            .txt_qDelete {
+                position: absolute;
+            }
+
+            .dropdown_junban {
+                position: absolute;
+            }
+            .divCount{
+                width:auto;
+            }
+            .div_dropdown{
+                margin-left:15px;
+            }
+            .divCount{
+                margin-left:15px;
+            }
+            
+        }
+        @@media only screen and (max-width: 768px) {
+
+            .kmodal {
+                width: 100%;
+            }
+
+            .div_dropdown {
+                margin-left: 0px;
+            }
+
+            .div_kubun_dropdown {
+                margin-left: 0px;
+            }
+
+            .div_textbox {
+                margin-left: 0px;
+            }
+
+            .div_buttons {
+                margin-right: 0px;
+            }
+
+            .btn_search {
+                margin-left: 0px;
+            }
+
+            .btn_new {
+                margin-left: 15px;
+            }
+
+            .para {
+                margin-left: 0px;
+            }
+
+            .txt_qDelete {
+                position: absolute;
+            }
+
+            .dropdown_junban {
+                position: absolute;
+            }
+
+            .btn {
+                padding: 0px;
+            }
+
+            .lbl_kubun {
+                margin-left: 15px;
+            }
+
+            .lbl_kansaku {
+                margin-left: 15px;
+            }
+
+            .lbl_year {
+                margin-left: 15px;
+            }
+            .btn_new{
+                margin-left:0px;
+                margin-top:10px;
+            }
+            .lbl_shitsumon{
+                margin-left:15px;
+            }
+            .divCount{
+                width:auto;
+            }
+        }
+        @@media only screen and (max-width: 375px) {
+            .kMark_table {
+                width: 100%;
+            }
+
+            .div_dropdown {
+                margin-left: 0px;
+            }
+
+            .div_kubun_dropdown {
+                margin-left: 0px;
+            }
+
+            .div_textbox {
+                margin-left: 0px;
+            }
+
+            .div_buttons {
+                margin-right: 0px;
+            }
+
+            .btn_search {
+                margin-left: 0px;
+            }
+
+            .btn_new {
+                margin-left: 0px;
+            }
+
+            .para {
+                margin-left: 0px;
+            }
+
+            .txt_qDelete {
+                position: absolute;
+            }
+
+            .dropdown_junban {
+                position: absolute;
+            }
+
+            .btn {
+                padding: 0px;
+            }
+            .divCount {
+                margin-left: 0px;
+            }
+            .divType{
+                margin-left:15px;
+            }
+        }
+        @@media only screen and (max-width: 320px) {
+            .btn_copyMaster{
+                margin-left:0px;
+            }
+        }
+        @@media (min-height: 758px) {
+            .mycontent {
+                height: 69.8vh;
+                overflow: auto;
+            }
+        }
+
+        
+
+        
+    </style>
+</head>
+<body>
+
+    <div class="panel panel-info" style="overflow:auto">
+
+        <div class="panel-heading" style="background-color: rgb(34, 148, 172); width:100%">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 " align="center">
+                        <h4 style="color:white ; display: inline-block;">基礎評価設問</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @using (Html.BeginForm("MasterKiso", "MasterKiso", FormMethod.Post))
+        {
+            <div class="container">
+                <div class="row" style="margin-top:10px">
+
+                    <div class="div_dropdown" >
+                        @Html.Label("年度", new { @class = "lbl_year" })
+                        <button id="btnPrevious" name="btnPrevious" value=@Model.year class="btncss" style="width:29px;height:29px;"> < </button>
+                        @Html.DropDownListFor(m => m.year, Model.yearList, new { @id = "year", style = "width:70px;Height:22px;", onchange = "return OnChanged()" })
+                        <button id="btnNext" name="btnNext" value=@Model.year class="btncss" style="width:29px;height:29px;"> > </button>
+                        <button id="btnSearch" name="btnSearch" value="add" style="position: absolute; visibility:hidden">add</button>
+
+                    </div>
+                    <div class="div_kubun_dropdown">
+                        <label class="lbl_kubun">区分</label>
+                        @Html.DropDownListFor(m => m.kubun_name, Model.kubun_list, new { @id = "kubun", style = "width:150px;Height:22px;", onchange = "return OnChangedSelect()", @autofocus = true })
+
+                        <button id="btnSelect" name="btnSelect" value="select" class="btncss" style="position: absolute; visibility:hidden">select</button>
+                    </div>
+                    <div class="div_textbox">
+                        <label class="lbl_kansaku">検索</label>
+                        @Html.TextBoxFor(model => model.question_name, new { @id = "txt_search", @class = "txt_search" })
+
+                    </div>
+                    <div class="div_buttons">
+
+                        <button type="submit" id="btn_search" name="btn_search" value="search" class="btncss btn_search" style="height:35px;width:60px;">検索</button>
+
+                        <button type="submit" id="btn_clear" name="btn_clear" value="clear" class="btncss btn_clear" style="height:35px;">クリア</button>
+                        
+                        <button type="submit" id="btn_hozone" name="btn_hozone" value="hozone" class="btncss btn_hozone" style="height:35px;width:60px;">保存</button>
+
+                        <button type="submit" id="btn_copyMaster" name="btn_copyMaster" value="copyMaster" class="btncss btn_copyMaster" style="height:35px;" @*onclick="copyFunction()"*@>設問コピー</button>
+
+                        <button type="submit" id="btn_new" name="btn_new" value="new" class="btncss btn_new" style="height:35px;" onclick="newFunction()">設問追加</button>
+
+                        @*<button type="submit" id="btn_kisoMark" name="btn_kisoMark" value="btn_kisoMark" style="text-align:center;" onclick="kisoMark()">基礎点数</button>*@
+                    </div>
+
+                </div>
+                <div>
+                    <div class="row">
+                        <div class="divCount">
+                            <label class="lbl_shitsumon">設問件数 :</label>
+                            @Html.TextBoxFor(model => model.question_count, new { @id = "txt_qCount", @class = "txt_qCount", @readonly = "readonly" })
+
+                        </div>
+                        <div class="divMark">
+                            <label class="lbl_kubun_tensuu">点数 :</label>
+                            @Html.TextBoxFor(model => model.kubunMark, new
+                                                      {
+                                                          @class = "txt_kubunMark fullwidth_halfwidth",
+                                                          //@type = "number",
+                                                          @id = "txt_kubunMark",
+                                                          maxlength = 2,
+                                                          onkeyup = "edValueKeyPress(id)",
+                                                          onkeypress = "isSpecialKey(event)",
+                                                          oninput = "edValueKeyPress(id)"
+                                                          // oninput = "if (this.value != '') this.style.borderColor= '';(!validity.rangeOverflow||(value=999)) && (!validity.rangeUnderflow||(value=1)) &&(!validity.stepMismatch || (value = parseInt(this.value)));if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength)",
+                                                          //style = "width:50px;text-align: right; margin-bottom:6px;"
+                                                      })
+                        </div>
+                        <div class="divType">
+                            <label class="lbl_kubun_kijun">基準 :</label>
+                            @Html.DropDownListFor(m => m.kubunKijun, Model.type_list, new { @id = "kijunVal", @class = "dp_kubunMark" })
+                            @Html.TextBoxFor(model => model.click_search, new { @id = "txt_clickSearch", @class = "txt_clickSearch", @readonly = "readonly", style = "visibility:hidden;position:absolute;" })
+                            @Html.TextBoxFor(model => model.delete_question, new { @id = "txt_qDelete", @class = "txt_qDelete", @readonly = "readonly", style = "visibility:hidden;position:absolute;" })
+                            @Html.DropDownListFor(m => m.junban_name, Model.junban_list, new { @id = "junban", @class = "dropdown_junban", style = "width:100px;Height:22px;visibility:hidden;position:absolute;", onchange = "return OnChangedJunbanSelect()", @autofocus = true })
+
+                        </div>
+                    </div>
+
+                    <div style="overflow:auto;" class="mycontent">
+                        <table id="kiso_tbl" align="center" class="tscroll">
+                            <thead>
+                                <tr>
+                                    <th onclick="sortTable(0,this)" class="th_no">コード番号</th>
+                                    <th onclick="sortTable(1,this)" class="th_question">設問 </th>
+                                    <th onclick="sortTable(2,this)" class="th_junban">順番</th>
+                                    <th class="th_btn"></th>
+                                    <th class="th_btn"></th>
+                                    <th class="th_btn"></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @for (int i = 0; i < Model.KisoList.Count; i++)
+                                {
+                                    var idx = i + 1;
+                                    <tr>
+                                        <td id="td_no" class="first-col">
+                                            @Html.TextBoxFor(model => model.KisoList[i].k_qCode, new { @id = "txt_no" + idx, @class = "number_textbox", @readonly = "readonly" })
+                                        </td>
+                                        <td style="text-align: left;" class="second-col">
+
+                                            @Html.TextAreaFor(model => model.KisoList[i].k_question, new
+                                            {
+                                                @class = "ta_question",
+                                                id = "ta_question" + idx,
+                                                cols = "30",
+                                                maxlength = 100,
+                                                style = "width: 100%;max-width: 100%;border:none;background-color:transparent;resize: none;",
+                                                oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                            })
+                                        </td>
+                                        <td>
+                                            @Html.TextBoxFor(model => model.KisoList[i].k_junban, new { @id = "txt_junban" + idx, @class = "number_textbox", @readonly = "readonly" })
+                                        </td>
+                                        <td>
+                                            <button type="button" id="up" class="btn btn-link"><span class="glyphicon glyphicon-arrow-up"></span></button>
+                                        </td>
+                                        <td>
+                                            <button type="button" id="down" class="btn btn-link"><span class="glyphicon glyphicon-arrow-down"></span></button>
+                                        </td>
+                                        <td>
+                                            <button type="submit" id="@idx" name="btn_delete" value="delete" class="btn btn-link"><span class=" glyphicon glyphicon-trash "></span></button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true" align="center" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog mlgocss" style="margin-top:20px;width:50% ">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color: rgb(34, 148, 172);  ">
+                            <h4 style="color:white" class="modal-title" id="myModalLabel">基礎評価設問入力画面</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+
+                            <table class="data_tbl" id="datatbl" cellpadding="5">
+
+                                <tbody>
+                                    <tr>
+                                        <td valign="top">@Html.Label("設問", new { style = "color:black;font-weight: normal !important;" })</td>
+                                        <td style="width:450px;">
+                                            @Html.TextAreaFor(model => model.new_question, new
+                                            {
+                                                @id = "new_question",
+                                                rows = "5",
+                                                cols = "30",
+                                                maxlength = 100,
+                                                style = "width:450px;max-width:100%;background-color:transparent;resize: none;",
+                                                @autofocus = true,
+                                                oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                            })
+
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                        <div class="modal-footer" align="center">
+                            <button type="submit" id="new_saveBtn" name="new_saveBtn" value="newSave" class="btncss" style=" width:60px;height:35px; text-align:center; margin-right:10px;">保存</button>
+                            <button type="submit" id="new_backBtn" name="new_backBtn" value="newBack" class="btncss" style="height:35px; width:60px;">戻る</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+           
+        }
+    </div>
+    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+
+    <script src="@Url.Content("~/Scripts/jquery-1.12.4.min.js")"></script>
+    <script>
+        //$(function () {
+        //    $('th > :checkbox').click(function () {
+        //        $(this).closest('table')
+        //            .find('td > :checkbox')
+        //            .attr('checked', $(this).is(':checked'));
+        //    });
+        //});
+    </script>
+    <script>
+        $(document).ready(function () {
+            
+             if ('@Model.KisoList.Count' == 1) {
+                 $(document.getElementById('kiso_tbl').rows[1].cells[3].children[0]).prop('disabled', true);
+                 $(document.getElementById('kiso_tbl').rows[1].cells[4].children[0]).prop('disabled', true);
+            }
+            if ('@Model.KisoList.Count' > 1) {
+                //alert("aa");
+                $(document.getElementById('kiso_tbl').rows[1].cells[3].children[0]).prop('disabled', true);
+                $(document.getElementById('kiso_tbl').rows['@Model.KisoList.Count'].cells[4].children[0]).prop('disabled', true);
+            }
+            
+            //else {
+                if ('@Model.kubun_name' == "" || '@Model.allow_year' == "notallow") {
+                   
+                    $('#btn_new').attr('disabled', 'disabled');
+                    $('#btn_new').css("opacity", "0.6");
+                    $('#btn_new').css("cursor", "not-allowed");
+                    $('#btn_kisoMark').attr('disabled', 'disabled');
+                    $('#btn_kisoMark').css("opacity", "0.6");
+                    $('#btn_kisoMark').css("cursor", "not-allowed");
+                    $('#btn_copyMaster').attr('disabled', 'disabled');
+                    $('#btn_copyMaster').css("opacity", "0.6");
+                    $('#btn_copyMaster').css("cursor", "not-allowed");
+                }
+                else {
+                    $('#btn_new').removeAttr('disabled');
+                    $('#btn_kisoMark').removeAttr('disabled');
+                    $('#btn_copyMaster').removeAttr('disabled');
+
+                    if ('@Model.question_count' == 20 || '@Model.allow_btnNew'=="notallow") {
+                        $('#btn_new').attr('disabled', 'disabled');
+                        $('#btn_new').css("opacity", "0.6");
+                        $('#btn_new').css("cursor", "not-allowed");
+                        $('#btn_copyMaster').attr('disabled', 'disabled');
+                        $('#btn_copyMaster').css("opacity", "0.6");
+                        $('#btn_copyMaster').css("cursor", "not-allowed");
+                    }
+                    else {
+                        if ('@Model.kisohyouka_check' == "exist") {
+                            //alert("exist");
+                            $('#btn_new').attr('disabled', 'disabled');
+                            $('#btn_new').css("opacity", "0.6");
+                            $('#btn_new').css("cursor", "not-allowed");
+                            $('#btn_kisoMark').attr('disabled', 'disabled');
+                            $('#btn_kisoMark').css("opacity", "0.6");
+                            $('#btn_kisoMark').css("cursor", "not-allowed");
+                            $('#txt_kubunMark').attr('disabled', 'disabled');
+                            $('#kijunVal').attr('disabled', 'disabled');
+                            $('#btn_copyMaster').attr('disabled', 'disabled');
+                            $('#btn_copyMaster').css("opacity", "0.6");
+                            $('#btn_copyMaster').css("cursor", "not-allowed");
+
+                        }
+                        else {
+                            //alert("no exist");
+                            $('#btn_new').removeAttr('disabled');
+                            $('#btn_kisoMark').removeAttr('disabled');
+                            if ('@Model.allow_btnCopy' != "allow") {
+                                $('#btn_copyMaster').attr('disabled', 'disabled');
+                                $('#btn_copyMaster').css("opacity", "0.6");
+                                $('#btn_copyMaster').css("cursor", "not-allowed");
+                            }
+                            else {
+                                $('#btn_copyMaster').removeAttr('disabled');
+                            }
+                        }
+                    }
+                    //$('#btn_kisoMark').removeAttr('disabled');
+                }
+            //}
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $(".mDp").change(function () {
+                row = $(this).closest("tr");
+                var idx = row.index();
+                idx = parseInt(idx) + 1;
+                var selValue = $(this).val();
+                document.getElementById("txt_markDp" + idx).value = selValue;
+            });
+
+            var n1 = document.getElementById("kMark_table").rows.length;
+            for (var i = 1; i < n1; i++) {
+                var kubun_name = document.getElementById("txt_name" + i).value;
+                kubun_name = kubun_name.replace(/\r?\n?/g, '');
+                kubun_name = kubun_name.trim();
+                if (kubun_name == "役員") {
+                    $("#txt_mark"+i).prop("disabled", true);
+                    $("#mark_dp"+i).prop("disabled", true); 
+                    document.getElementById("txt_mark" + i).value = "0";
+                    document.getElementById("mark_dp" + i).value = "年間";
+                    document.getElementById("txt_markDp" + i).value = "年間";
+                    //event.preventDefault();
+                }
+                //else {
+                //    //if (i > 1) {
+                //    //    document.getElementById("txt_mark" + i).style.border = "2px solid black";
+                //    //}
+                //}
+            }
+            //$("#txt_mark1").prop("disabled", true); 
+            //$("#mark_dp1").prop("disabled", true); 
+        });
+        
+    </script>
+    <script>
+
+        $(document).on('click', '#up, #down', function () {
+
+            button_choice = $(this).attr('id');
+            row = $(this).closest("tr");
+            if (button_choice == 'up') {
+                if (row.index() > 0) {
+                    row.insertBefore(row.prev())
+                }
+            }
+            if (button_choice == 'down') {
+                row.insertAfter(row.next())
+            }
+            var x = document.getElementById("junban");
+            var i;
+            for (i = 0; i < x.length; i++) {
+                document.getElementById('kiso_tbl').rows[i + 1].cells[2].children[0].value = x.options[i].value;
+            }
+
+            var n1 = document.getElementById("kiso_tbl").rows.length;
+            if (n1 > 2) {
+                for (var i = 1; i < n1; i++) {
+                    $(document.getElementById('kiso_tbl').rows[i].cells[3].children[0]).prop('disabled', false);
+                    $(document.getElementById('kiso_tbl').rows[i].cells[4].children[0]).prop('disabled', false);
+                    if (i == 1) {
+                        //alert("r1");
+                        //  $(document.getElementById('kiso_tbl').rows[i].cells[3].children[0]).addClass('disabled');
+                        $(document.getElementById('kiso_tbl').rows[i].cells[3].children[0]).prop('disabled', true);
+                        $(document.getElementById('kiso_tbl').rows[i].cells[4].children[0]).prop('disabled', false);
+                    }
+                    else {
+                        if (i == n1 - 1) {
+                            $(document.getElementById('kiso_tbl').rows[i].cells[4].children[0]).prop('disabled', true);
+                        }
+                        else {
+                            $(document.getElementById('kiso_tbl').rows[i].cells[4].children[0]).prop('disabled', false);
+                        }
+                        $(document.getElementById('kiso_tbl').rows[i].cells[3].children[0]).prop('disabled', false);
+                    }
+                }
+            }
+            else {
+                $(document.getElementById('kiso_tbl').rows[i].cells[3].children[0]).prop('disabled', true);
+                $(document.getElementById('kiso_tbl').rows[i].cells[4].children[0]).prop('disabled', true);
+            }
+            event.preventDefault();
+        });
+
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            var n1 = document.getElementById("kiso_tbl").rows.length;
+            for (var i = 1; i < n1; i++) {
+                autosize(document.getElementById("ta_question"+i));
+            }
+
+            @*if ('@Model.question_count' == "0") {
+                $('#btn_hozone').attr('disabled', 'disabled');
+                $('#btn_hozone').css("opacity", "0.6");
+                $('#btn_hozone').css("cursor", "not-allowed");
+            }
+            else {
+                $('#btn_hozone').removeAttr('disabled');
+            }*@
+            
+        });
+
+    </script>
+    <script>
+        $('#kiso_tbl').on('click', 'button', function () {
+            var r_idx = $(this).closest("tr").index();
+            var col_val = document.getElementById('kiso_tbl').rows[r_idx + 1].cells[0].children[0].value;
+            var btn_name = $(this).attr('name');
+            document.getElementById("txt_qDelete").value = col_val;
+            if (btn_name == "btn_delete") {
+                if (confirm("削除してもよろしいでしょうか？")) {
+
+                }
+                else {
+                    event.preventDefault();
+
+                }
+            }
+        });
+
+    </script>
+    <script>
+        $("#btn_hozone").click(function () {
+            
+            var n1 = document.getElementById("kiso_tbl").rows.length;
+            for (var i = 1; i < n1; i++) {
+
+                var save_que_val = document.getElementById("ta_question" + i).value;
+                save_que_val = save_que_val.replace(/\r?\n?/g, '');
+                save_que_val = save_que_val.trim();
+                if (save_que_val == "") {
+                    document.getElementById("ta_question" + i).style.border = "1px solid #f3172d";
+                    event.preventDefault();
+                }
+                else {
+                    document.getElementById("ta_question" + i).style.border = "none";
+                }
+            }
+
+            if ('@Model.kisohyouka_check' == "exist") {
+                alert("exist");
+                event.preventDefault();
+            }
+            else {
+                var typeVal = document.getElementById("kijunVal").value;
+                //alert(typeVal);
+                if (typeVal == "") {
+                    document.getElementById("kijunVal").style.border = "1px solid #f3172d";
+                    event.preventDefault();
+                }
+                else {
+                    document.getElementById("kijunVal").style.border = "none";
+                }
+
+                var markVal = document.getElementById("txt_kubunMark").value;
+                if (markVal == "") {
+                    //alert("aa");
+                    document.getElementById("txt_kubunMark").style.border = "1px solid #f3172d";
+                    event.preventDefault();
+                }
+                else {
+                    document.getElementById("txt_kubunMark").style.border = "none";
+                }
+            }
+        });
+        $("#new_saveBtn").click(function () {
+
+            var new_que_val = document.getElementById("new_question").value;
+            new_que_val = new_que_val.replace(/\r?\n?/g, '');
+            new_que_val = new_que_val.trim();
+            if ( new_que_val == "") {
+                document.getElementById("new_question").style.border = "1px solid #f3172d";
+                event.preventDefault();
+            }
+            else {
+                document.getElementById("new_question").style.border = "none";
+            }
+        });
+        $("#btn_new").click(function () {
+            document.getElementById("new_question").value = "";
+            document.getElementById("new_question").style.border = "1px solid black";
+        });
+        $("#kisoMark_saveBtn").click(function () {
+            var n1 = document.getElementById("kMark_table").rows.length;
+            for (var i = 1; i < n1; i++) {
+                var save_que_val = document.getElementById("txt_mark" + i).value;
+                save_que_val = save_que_val.replace(/\r?\n?/g, '');
+                save_que_val = save_que_val.trim();
+                if (save_que_val == "") {
+                    document.getElementById("txt_mark" + i).style.border = "1px solid #f3172d";
+                    event.preventDefault();
+                }
+                else {
+                    if (i > 1) {
+                        document.getElementById("txt_mark" + i).style.border = "2px solid black";
+                    }
+                }
+            }
+        });
+    </script>
+    <script>
+        function OnChanged(evt) {
+            $('#btnSearch').click();
+        }
+        
+        function newFunction() {
+            if ('@Model.kisohyouka_check' == "exist") {
+                
+            }
+            else {
+                event.preventDefault();
+                $('#myModal').modal('show');
+                return false;
+            }
+
+        }
+        
+        function kisoMark() {
+            
+            $('#kisoMarkModal').modal('show');
+            event.preventDefault();
+        }
+
+        function OnChangedSelect(evt) {
+            $('#btnSelect').click();
+        }
+        function OnChangedJunbanSelect(evt) {
+            $('#btnJunbanSelect').click();
+        }
+        
+        function isSpecialKey(event) {
+
+            var regex = new RegExp("^[0-9]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+
+            if (!regex.test(key)) {
+
+                event.preventDefault();
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function edValueKeyPress(id) {
+            
+            var val = document.getElementById(id).value;
+            if (val == "0") {
+                document.getElementById(id).value="";
+            }
+        }
+
+        function edValueKeyPress(id) {
+
+            var val = document.getElementById(id).value;
+            if (val == "0") {
+                document.getElementById(id).value = "";
+            }
+        }
+    </script>
+    <script>
+
+        function sortTable(n,e) {
+            var table;
+            var headcol = e.id;
+
+            table = document.getElementById("kiso_tbl");
+            var rows, i, x, y, count = 0;
+            var switching = true;
+
+            // Order is set as ascending
+            var direction = "asc";
+
+            // Run loop until no switching is needed
+            while (switching) {
+                switching = false;
+                var rows = table.rows;
+                //Loop to go through all rows
+                for (i = 1; i < (rows.length - 1); i++) {
+                    var Switch = false;
+
+                    // Fetch 2 elements that need to be compared
+                    x = rows[i].getElementsByTagName("TD")[n].children[0].value;
+                    y = rows[i + 1].getElementsByTagName("TD")[n].children[0].value;
+                    //alert('x ;' + x + 'y :' + y)
+                    // Check the direction of order
+                    if (direction == "asc") {
+                        if (headcol == "nJUNBAN") {
+                            // Check if 2 rows need to be switched
+                            if (parseInt(x, 10) > parseInt(y, 10)) {
+                                // If yes, mark Switch as needed and break loop
+                                Switch = true;
+                                break;
+                            }
+                        }
+                        else {
+                            // Check if 2 rows need to be switched
+                            if (x.toLowerCase() > y.toLowerCase()) {
+                                // If yes, mark Switch as needed and break loop
+                                Switch = true;
+                                break;
+                            }
+                        }
+                    } else if (direction == "desc") {
+                        if (headcol == "nJUNBAN") {
+                            if (parseInt(x, 10) < parseInt(y, 10)) {
+                                // If yes, mark Switch as needed and break loop
+                                Switch = true;
+                                break;
+                            }
+                        }
+                        else {
+                            // Check direction
+                            if (x.toLowerCase() < y.toLowerCase()) {
+                                // If yes, mark Switch as needed and break loop
+                                Switch = true;
+                                break;
+                            }
+                        }
+
+                    }
+                }
+                if (Switch) {
+                    // Function to switch rows and mark switch as completed
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+
+                    // Increase count for each switch
+                    count++;
+                } else {
+                    // Run while loop again for descending order
+                    if (count == 0 && direction == "asc") {
+                        direction = "desc";
+                        switching = true;
+                    }
+                }
+            }
+
+            //after sorting
+                $('#kiso_tbl > tbody  > tr').each(function (index, tr) {
+                    var rowindex = index + 1;
+                    //$(this.cells[2].children[0]).val(rowindex);
+                    $(this.cells[3].children[0]).prop('disabled', false);
+                    $(this.cells[4].children[0]).prop('disabled', false);
+                    if (index == 0) {
+                        $(this.cells[3].children[0]).prop('disabled', true);
+                    }
+                    else if ('@Model.KisoList.Count' == rowindex) {
+                        $(this.cells[4].children[0]).prop('disabled', true);
+                    }
+                });
+        }
+    </script>
+
+    @if (TempData["com_msg"] != null)
+    {
+        <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+        <script>
+            $(document).ready(function(){
+
+                alert('@TempData["com_msg"]');
+            });
+        </script>
+    }
+</body>
