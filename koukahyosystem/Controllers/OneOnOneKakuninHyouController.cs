@@ -16,6 +16,7 @@ namespace koukahyosystem.Controllers
         {
             if (Session["isAuthenticated"] != null)
             {
+                //zeee
                 if (Session["LoginName"] != null)
                 {
                     loginUser = Session["LoginName"].ToString();
