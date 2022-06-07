@@ -624,7 +624,6 @@
         });
 
         function isSpecialKey(event) {
-
             var regex = new RegExp("^[1-5]+$");
             var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
             if (!regex.test(key)) {

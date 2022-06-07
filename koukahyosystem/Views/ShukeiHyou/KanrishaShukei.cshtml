@@ -65,17 +65,37 @@
             //        });
             //    }
             //});
-            //$('#DataTable tr').each(function () {
-            //    var customerId = $(this).find(".jyouikoka").html();
-            //    if (customerId != "情意考課入力") {
-            //        var col = document.getElementById('txt_jyoudata').innerHTML;
-            //        alert(col);
-            //    }
-            //});
-            $("#DataTable tbody tr").find('td:eq(6)').each(function () {
-                var thiskubun = $(this).find("input").val();
-                alert(thiskubun);
-                //testtooooo
+
+           
+            $("#hozonBtn").click(function (event) {
+                var showmsg;
+                $("#DataTable tbody tr").each(function (i, el) {
+                    var $tds = $(this).find('td'),
+                        
+                    p5_text1 = $tds.eq(5).find('input[type=text][id$="txt_jyoudata"]').val();
+                    p5_text2 = $tds.eq(5).find('input[type=text][id$="jyouikouka"]').val();
+                    var jyouka;
+                    var nhai;
+                    if (p5_text1 != "undefined") {
+                        jyouka = parseInt(p5_text1);
+                    }
+                    if (p5_text2 != "undefined") {
+                        nhai = parseInt(p5_text2);
+                    }
+                    if (jyouka > nhai) {
+                        showmsg = "yes";
+                        $tds.eq(5).find('input[type=text][id$="txt_jyoudata"]').css('border', '1px solid #f3172d');
+                        $tds.eq(5).find('input[type=text][id$="txt_jyoudata"]').css('border-radius', '4px');
+                        event.preventDefault();
+                    }
+                    else {
+                        $tds.eq(5).find('input[type=text][id$="txt_jyoudata"]').css('border', '0.5px solid black');
+                        $tds.eq(5).find('input[type=text][id$="txt_jyoudata"]').css('border-radius', '4px');
+                    }
+                });
+                if (showmsg == "yes") {
+                    alert("決めた点数を超えています。調整してください。");
+                }
             });
         });
     </script>
@@ -84,28 +104,35 @@
             $('#Btn_display').click();
         }
 
-        function isSpecialKey(event) {
-
-            var regex = new RegExp("^[0-9]+$");
-            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
-
-            if (!regex.test(key)) {
-
-                event.preventDefault();
-                return false;
+        function isSpecialKey(evt) {
+            alert("Hello");
+            if (isNaN(evt.val)) {
+                return true;
+                evt.preventDefault();
             }
-
-
         }
 
         function isNumberKey(evt) {
-
             var charCode = (evt.which) ? evt.which : evt.keyCode
             if (charCode > 31 && (charCode < 48 || charCode > 57))
                 return false;
             return true;
         }
-
+        //function getShiftJISByteLength(event) {
+        //    alert("hello");
+        //    var regex = new RegExp("^[1-5]+$");
+        //    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        //    if (!regex.test(key)) {
+        //        event = key.val();
+        //        alert("test1");
+        //        event.preventDefault();
+        //        return false;
+        //    }
+        //    else {
+        //        alert("test2");
+        //        return true;
+        //    }
+        //}
     </script>
     @if (TempData["com_msg"] != null)
     {
@@ -141,7 +168,7 @@
 
 
                 <div align="center">
-
+                    <input type="submit" value="display" id="Btn_display" name="year_btn" class="btncss" style="display:none" />
                     @Html.Label("年度", new { style = "color:black;font-weight: normal !important;margin-right:5px;" })
                     <button id="preBtn" name="year_btn" value="<" style="width:29px;height:29px;"><</button>
                     @Html.DropDownListFor(m => m.cur_year, Model.YearList, new { @id = "year", style = "width:70px;Height:22px;margin-bottom:4px;", onchange = "SelectedIndexChanged()", autofocus = "autofocus" })
@@ -163,7 +190,7 @@
                             <th>基礎評価</th>
                             <th>目標評価</th>
                             <th>360度評価</th>
-                            <th class="jyouikoka" style="width:100px;">情意考課入力</th>
+                            <th class="jyouikoka" style="width:115px;">情意考課</th>
                             <th>合計</th>
                             <th style="display:none;">区分</th>
                         </tr>
@@ -174,40 +201,51 @@
                         {
                             if (i % 2 == 0)
                             {
-                                <tr>
-                                    <td style="display:none;">@Html.EditorFor(m=>m.KanriShukeiList[i].cSHAIN)</td>
-                                    <td rowspan="2">@Model.KanriShukeiList[i].sSHAIN</td>
-                                    <td style="text-align:left">@Model.KanriShukeiList[i].description</td>
-                                    <td style="text-align:center">@Model.KanriShukeiList[i].sandankaihyouka</td>
-                                    <td style="text-align:center">@Model.KanriShukeiList[i].kokahyou</td>
-                                    <td style="text-align:center">@Model.KanriShukeiList[i].hyouka360</td>
-                                    <td style="text-align:center;width:100px;" class="jyouikoka crossed">@Model.KanriShukeiList[i].jyouikouka</td>
-                                    <td style="text-align:center">@Model.KanriShukeiList[i].total</td>
-                                    <td style="text-align:center; display:none;">@Html.TextBoxFor(m => m.KanriShukeiList[i].cKUBUN)</td>
-                                </tr>
+                        <tr>
+                            <td style="display:none;">@Html.EditorFor(m => m.KanriShukeiList[i].cSHAIN)</td>
+                            <td rowspan="2">@Model.KanriShukeiList[i].sSHAIN</td> @**@
+                            <td style="text-align:left">@Model.KanriShukeiList[i].description</td>
+                            <td style="text-align:center">@Model.KanriShukeiList[i].sandankaihyouka</td>
+                            <td style="text-align:center">@Model.KanriShukeiList[i].kokahyou</td>
+                            <td style="text-align:center">@Model.KanriShukeiList[i].hyouka360</td>
+                            <td style="text-align:center;width:115px;" class="jyouikoka crossed">@Model.KanriShukeiList[i].jyouikouka</td>
+                            <td style="text-align:center">@Model.KanriShukeiList[i].total</td>
+                            <td style="text-align:center; display:none;">@Html.TextBoxFor(m => m.KanriShukeiList[i].cKUBUN)</td>
+                        </tr>
                             }
                             else
                             {
-                                <tr>
-                                    <td style="display:none;">@Html.EditorFor(m => m.KanriShukeiList[i].cSHAIN)</td>
+                                <tr id="tr_id">
+                                    <td style="display:none;">@Html.EditorFor(m => m.KanriShukeiList[i].cSHAIN)</td>                                    
                                     <td style="text-align:left">@Model.KanriShukeiList[i].description</td>
                                     <td style="text-align:center">@Model.KanriShukeiList[i].sandankaihyouka</td>
                                     <td style="text-align:center">@Model.KanriShukeiList[i].kokahyou</td>
                                     <td style="text-align:center">@Model.KanriShukeiList[i].hyouka360</td>
 
-                                    <td style="text-align:center;width:100px;" class="jyouikoka">
-                                            @Html.TextBoxFor(m => m.KanriShukeiList[i].txt_jyoudata, new
+                                    <td style="text-align:center;width:115px;" class="jyouikoka">
+                                        
+                                        @Html.TextBoxFor(m => m.KanriShukeiList[i].txt_jyoudata, new
                                    {
                                        @id="txt_jyoudata",
+                                       @onkeypress = "return isNumberKey(evt);",
+                                       maxlength = 4,
+                                       @size = "4",
+                                       style = "margin-left:0px;width:50%;text-align:right;border:0.5px solid black;background-color:transparent;border-radius:4px;",
+                                       oninput = "value = value.replace(/[０-９]/g,s => String.fromCharCode(s.charCodeAt(0) - 65248)).replace(/\\D/g,'');"
+
+                                   })
+                                        /
+                                        @Html.TextBoxFor(m => m.KanriShukeiList[i].jyouikouka, new
+                                   {
+                                       @id= "jyouikouka",
                                        @onkeypress = "return isNumberKey(event)",
                                        maxlength = 4,
                                        @size = "4",
-                                       style = "margin:left:0px;width:50%;text-align:right;border:none;",
-                                       oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
-
+                                       @tabindex="-1",
+                                       style = "margin:left:0px;width:35%;text-align:right;border:none;",
+                                       oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);",
+                                       @readonly = "readonly"
                                    })
-                                        /  @Model.KanriShukeiList[i].jyouikouka
-
                                     </td>
                                 <td style="text-align:center">@Model.KanriShukeiList[i].total</td>
                                 <td style="text-align:center;display:none;">@Html.TextBoxFor(m => m.KanriShukeiList[i].cKUBUN)</td>
@@ -216,6 +254,11 @@
 
                         }
                     </tbody>
+                </table>
+            </div>
+            <div>
+                <table style="display:none;">
+                    <thead></thead>
                 </table>
             </div>
             @Html.HiddenFor(m => m.fjyoicol, new { id = "fjyoicol" })

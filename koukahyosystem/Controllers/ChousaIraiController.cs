@@ -570,7 +570,7 @@ namespace koukahyosystem.Controllers
 
                 }
 
-                return Json(result,JsonRequestBehavior.AllowGet);
+                return Json(result, JsonRequestBehavior.AllowGet);
             }
             else
             {
