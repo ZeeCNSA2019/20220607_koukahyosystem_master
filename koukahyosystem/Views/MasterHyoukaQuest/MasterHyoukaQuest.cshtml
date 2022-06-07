@@ -1,0 +1,968 @@
+﻿@model koukahyosystem.Models.MasterHyoukaQuestModel
+@{
+    ViewBag.Title = "MasterHyoukaQuest";
+}
+
+<head>
+    <style>
+        .btncss {
+            padding: 5px 10px;
+            text-align: center;
+            color: black;
+            border: none;
+            border-radius: 3px;
+            border: 0.5px solid #555555;
+            height: 35px;
+        }
+
+        #btnNext, #btn_cp_Next, #btnPrevious, #btn_cp_Previous, #btn_back_copied {
+            padding: 5px 10px;
+            text-align: center;
+            color: black;
+            border: none;
+            border-radius: 3px;
+            border: 0.5px solid #555555;
+            height: 35px;
+        }
+
+        .button:hover {
+            background-color: lightblue
+        }
+
+        .button:active {
+            background-color: lightblue;
+            transform: translateY(4px);
+        }
+
+        .kubuntable thead, th {
+            border: 1px solid white;
+            text-align: center;
+            background-color: #C1ECFA;
+        }
+
+        .kubuntable tbody, tr, td {
+            border: 1px solid white;
+        }
+
+        table#kubuntable tr:nth-child(even) {
+            background-color: #C1ECFA;
+        }
+
+        table#copy_dt tr:nth-child(even) {
+            background-color: #C1ECFA;
+        }
+
+        /*#copy_dt tbody tr td {
+            border: 1px solid black;
+        }
+        #copy_dt thead,th{
+            border: 1px solid black;
+        }*/
+        .div_kubundropdown {
+            display: inline-block;
+        }
+
+        .div_textbox {
+            margin-left: 15px;
+            display: inline-block;
+        }
+
+        .div_search {
+            margin-left: 15px;
+            display: inline-block;
+        }
+
+        .div_clear {
+            margin-left: 10px;
+            display: inline-block;
+        }
+
+        .div_save {
+            margin-left: 10px;
+            display: inline-block;
+        }
+
+        .div_copy {
+            margin-left: 10px;
+            margin-right: 25px;
+            display: inline-block;
+        }
+
+        .div_year {
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .div_new {
+            display: inline-block;
+        }
+
+        /*.scroll td {
+            height: 30px;
+            text-align: center;
+        }
+
+        .scroll th {
+            height: 30px;
+        }*/
+        #kubuntable {
+            border-collapse: separate;
+        }
+
+            #kubuntable th{
+                height: 30px;
+                text-align: center;
+            }
+
+
+            #kubuntable thead th {
+                position: sticky;
+                top: 0;
+                z-index: 3;
+                background-color: rgb(189, 233, 242);
+                
+                /*border-top: 2px solid white !important;
+                border-bottom: 2px solid white !important;*/
+            }
+
+    
+
+        .mycontent {
+            height: 58.5vh;
+            overflow: auto;
+        }
+        @@media only screen and (max-width: 768px) {
+            .div_searh_cl_save {
+                margin-left:0px;
+                margin-top: 7px;
+            }
+
+            .div_year {
+                margin-left: 0px;
+            }
+            .div_kubundropdown {
+                margin-left: 0px;
+                margin-top:7px;
+            }
+
+            .div_textbox {
+                margin-left: 0px;
+                margin-top: 7px;
+            }
+
+            .div_search {
+                margin-left: 0px;
+            }
+            .div_copy {
+                margin-left: 10px;
+                margin-top: 7px;
+            }
+            .div_new {
+                margin-top: 7px;
+            }
+        }
+
+        @@media (min-height: 758px) {
+            .mycontent {
+                height: 69.8vh;
+                overflow: auto;
+            }
+        }
+        @@media only screen and (max-width: 568px) {
+            .div_copy {
+                margin-left: 0px;
+                margin-top: 7px;
+            }
+        }
+        @@media only screen and (max-width: 812px) {
+            .div_copy {
+                margin-left: 10px;
+                margin-top: 7px;
+            }
+        }
+        @@media only screen and (max-width: 576px) {
+            .div_copy {
+                margin-left: 0px;
+                margin-top: 7px;
+            }
+        }
+       
+       
+    </style>
+
+</head>
+<body>
+    <div id='div_main' class="panel panel-info" style="overflow:auto;">
+        @using (Html.BeginForm("MasterHyoukaQuest", "MasterHyoukaQuest", FormMethod.Post))
+        {
+            <div class="panel-heading text-center" style="background-color: rgb(34, 148, 172); width:100%;">
+                <div class="container">
+                    <h4 style="color:white">360度評価設問画面</h4>
+                </div>
+            </div>
+            <div class="filter1" style="margin:10px;" align="left">
+                <div style="display:none">
+                    @Html.DropDownListFor(m => m.selectjuban, Model.jubanList, new
+                    {
+                        @id = "selectjuban",
+                        style = "width:70px;Height:22px;",
+                        onchange = "return OnChangedjuban()"
+                    })
+                </div>
+                <div class="div_year">
+                    @Html.Label("年度", new { style = "color:black;font-weight: normal !important;" })
+                    <button class="btncss" id="btnPrevious" name="btnPrevious" value=@Model.Year style="width:29px;height:29px;"> < </button>
+                    @Html.DropDownListFor(m => m.Year, Model.yearList, new
+                    {
+                        @id = "selectyear",
+                        @autofocus = true,
+                        style = "width:60px;Height:22px;",
+                        onchange = "return OnChangedYear()"
+                    })
+                    <button class="btncss" id="btnNext" name="btnNext" value=@Model.Year style="width:29px;height:29px;margin-right:15px;"> > </button>
+                </div>
+                <div class="div_kubundropdown">
+                    @Html.Label("区分", new { style = "color:black;font-weight: normal !important;" })
+
+                    @Html.DropDownListFor(m => m.dd_kubuncode, Model.kubun_list, new
+                    {
+                        @id = "selectkubun",
+                        @autofocus = true,
+                        style = "width:150px;Height:22px;",
+                        onchange = "return OnChangedSelect()"
+                    })
+                </div>
+                <div class="div_textbox">
+                    @Html.Label("検索", new { style = "color:black;font-weight: normal !important;" })
+
+                    @Html.TextBoxFor(Model => Model.questname, new
+                    {
+                        @id = "questname",
+                        style = "width:200px;margin-left:5px;",
+                        maxlength = "10",
+                        onkeydown = "if (event.keyCode == 13) { return false;}",
+                        oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                    })
+                </div>
+                <div style="display:inline-block;" class="div_searh_cl_save">
+                    <div class="div_search">
+                        <button class="btncss" type="submit" id="searchBtn" value="search" name="searchBtn" style="text-align:center;">検索</button>
+                    </div>
+                    <div class="div_clear">
+                        <button class="btncss" type="submit" id="clearBtn" value="clear" name="clearBtn" style="text-align:center;  ">クリア</button>
+                    </div>
+                    <div class="div_save">
+                        <button class="btncss" type="submit" id="SaveBtn" value="save" name="SaveBtn" style="text-align:center; ">保存</button>
+
+                    </div>
+                </div>
+                <div class="div_copy">
+                    <button class="btncss" type="submit" id="Btn_Copy" value="create" name="Btn_Copy" style="text-align:center; ">設問コピー</button>
+
+                </div>
+                <div class="div_new">
+                    <button class="btncss" type="submit" id="newBtn" value="create" name="newBtn" style="text-align:center; ">設問追加</button>
+
+                </div>
+            </div>
+            <div class="container" style="margin-top:10px;">
+                <table align="center" style="width:730px">
+                    <tbody>
+                        <tr style="">
+                            <td align="left" style="">
+                                @Html.Label(TempData["status"].ToString(), new { style = "color:black;font-weight: normal !important;" })
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="mycontent">
+                    <table id="kubuntable" align="center" style="">
+                        <thead>
+                            <tr style="height:30px;">
+                                <th class="first-col" style="width:90px;min-width:90px" onclick="sortTable(0)">コード番号</th>
+                                <th class="th_question" style="width:450px;min-width:170px" onclick="sortTable1(1)">設問</th>
+                                <th style="width:40px;min-width:40px;" onclick="sortTable2(2)">順番</th>
+                                <th style="width:30px;"></th>
+                                <th style="width:30px;"></th>
+                                <th style="width:50px;"></th>
+                                <th style="visibility:hidden"></th>
+                                <th style="visibility:hidden"></th>
+                                <th style="visibility:hidden"></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @for (int i = 0; i < Model.Quest_List.Count; i++)
+                            {
+                                var rowid = i + 1;
+                                <tr>
+                                    <td style="width:90px;max-width:100%;" class="first-col">@Model.Quest_List[i].quest_code</td>
+                                    <td class="second-col" style="width:450px;">
+                                        @Html.TextAreaFor(model => model.Quest_List[i].quest_name, new
+                                        {
+                                            id = "manzo_question" + rowid,
+                                            cols = "30",
+                                            maxlength = 100,
+                                            @autosize = true,
+                                            style = "width:100%;max-width:100%;border:none;background-color:transparent;",
+                                            oninput = "if (this.value != '') this.style.border= 'none';if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                        })
+                                    </td>
+
+                                    <td style="text-align: center;width:40px;">@Model.Quest_List[i].njubun</td>
+                                    <td style="text-align: center;width:30px;">
+                                        <button class="btn btn-link" id="up">
+                                            <span class="glyphicon glyphicon-arrow-up"></span>
+                                        </button>
+                                    </td>
+                                    <td style="text-align: center;width:30px;">
+                                        <button class="btn btn-link" id="down">
+                                            <span class="glyphicon glyphicon-arrow-down"></span>
+                                        </button>
+                                    </td>
+                                    <td style="text-align: center;width:50px;">
+                                        <button type="submit" onclick="dele(this)" class="btn btn-link" id=@rowid name="deleteBtn"><span class=" glyphicon glyphicon-trash "></span></button>
+                                    </td>
+                                    <td style="visibility:hidden"> @Html.HiddenFor(model => model.Quest_List[i].quest_code, new { style = " " })</td>
+                                    <td style="visibility:hidden"> @Html.HiddenFor(model => model.Quest_List[i].alreadyuse, new { style = "" })</td>
+                                    <td style="visibility:hidden"> @Html.HiddenFor(model => model.Quest_List[i].njubun, new { style = "" })</td>
+
+                                </tr>
+                            }
+
+
+                        </tbody>
+
+                    </table>
+                </div>
+                <input type="hidden" id="rowindex" name="rowindex" value="" />
+                <input type="hidden" id="newsaveflag" name="newsaveflag" value="@Model.save_allow" />
+                @Html.HiddenFor(model => Model.searchname, new { style = " " })
+                <input type="hidden" id="headername" name="headername" value="@TempData["headername"]" />
+                <input type="hidden" id="sortdir" name="sortdir" value="@TempData["sortdir"]" />
+                <button id="DropdwonSearch" name="DropdwonSearch" value="select" style="position: absolute; visibility:hidden">OK</button>
+                <button id="DropdownYear" name="DropdownYear" value="select" style="position: absolute; visibility:hidden">OK</button>
+            </div>
+
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true" align="center" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog mlgocss" style="margin-top:20px;">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color: rgb(34, 148, 172);  ">
+                            <h4 class="modal-title" id="myModalLabel" style="color:white">360度評価設問入力画面</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="data_tbl" id="datatbl" cellpadding="5">
+                                <tbody>
+                                    <tr>
+                                        <td valign="top">@Html.Label("設問", new { style = "color:black;font-weight: normal !important;" })</td>
+                                        <td style="width:450px;">
+                                            @Html.TextAreaFor(model => model.newquestname, new
+                                       {
+                                           @id = "question",
+                                           rows = "5",
+                                           //cols = "30",
+                                           maxlength = 100,
+                                           style = "width:100%;max-width:100%;background-color:transparent;",
+                                           @autofocus = true,
+                                           oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                       })
+
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                        <div class="modal-footer" align="center">
+                            <button type="submit" id="save" class="btncss " name="save" value="hozon" style="width:60px; height:35px; text-align:center; margin-right:10px;">保存</button>
+                            <button type="submit" id="backBtn" class="btncss  " name="backBtn" value="back" style="height:35px; width:60px;">戻る</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          
+        }
+    </div>
+    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+    <script src="@Url.Content("~/Scripts/jquery-1.12.4.min.js")"></script>
+    <script>
+        $(document).ready(function () {
+            if ('@Model.Year' < '@Session["curr_year"].ToString()'){
+                var n1 = document.getElementById("kubuntable").rows.length;
+                for (var i = 1; i < n1; i++) {
+                    $(document.getElementById('kubuntable').rows[i].cells[5].children[0]).prop('disabled', true);
+                }
+            }
+            if ('@Model.Year' < '@Session["curr_year"].ToString()'){
+
+                $('#newBtn').attr('disabled', 'disabled');
+                $('#newBtn').css("opacity", "0.6");
+                $('#newBtn').css("cursor", "not-allowed");
+                $('#SaveBtn').attr('disabled', 'disabled');
+                $('#SaveBtn').css("opacity", "0.6");
+                $('#SaveBtn').css("cursor", "not-allowed");
+                $('#Btn_Copy').attr('disabled', 'disabled');
+                $('#Btn_Copy').css("opacity", "0.6");
+                $('#Btn_Copy').css("cursor", "not-allowed");
+            }
+            else {
+
+                if ('@TempData["msg"]' == "1"){
+                    alert("評価する途中で、追加できません。")
+                    $('#newBtn').attr('disabled', 'disabled');
+                    $('#newBtn').css("opacity", "0.6");
+                    $('#newBtn').css("cursor", "not-allowed");
+                    $('#Btn_Copy').attr('disabled', 'disabled');
+                    $('#Btn_Copy').css("opacity", "0.6");
+                    $('#Btn_Copy').css("cursor", "not-allowed");
+                }
+                 if('@TempData["msg"]' == "3"){
+                     alert("評価する途中で、コピーできません。")
+                    $('#newBtn').attr('disabled', 'disabled');
+                    $('#newBtn').css("opacity", "0.6");
+                    $('#newBtn').css("cursor", "not-allowed");
+                    $('#Btn_Copy').attr('disabled', 'disabled');
+                    $('#Btn_Copy').css("opacity", "0.6");
+                    $('#Btn_Copy').css("cursor", "not-allowed");
+                }
+                 else if('@TempData["msg"]'=="0"){
+                    document.getElementById('question').value = "";
+                    $(document.getElementById('question')).css('borderColor', '');
+                    $('#myModal').modal('show');
+                    $('#question').focus();
+                    //return false;
+                    event.preventDefault();
+                }
+                if('@Session["kcount"]'>= 100){
+                    $('#newBtn').attr('disabled', 'disabled');
+                    $('#newBtn').css("opacity", "0.6");
+                    $('#newBtn').css("cursor", "not-allowed");
+                    $('#Btn_Copy').attr('disabled', 'disabled');
+                    $('#Btn_Copy').css("opacity", "0.6");
+                    $('#Btn_Copy').css("cursor", "not-allowed");
+                }
+
+                if('@Session["copyqcount"]' == "0"){
+                    $('#Btn_Copy').attr('disabled', 'disabled');
+                    $('#Btn_Copy').css("opacity", "0.6");
+                    $('#Btn_Copy').css("cursor", "not-allowed");
+                }
+
+                if('@Model.save_allow' == "1"){
+                    $('#newBtn').attr('disabled', 'disabled');
+                    $('#newBtn').css("opacity", "0.6");
+                    $('#newBtn').css("cursor", "not-allowed");
+                    $('#Btn_Copy').attr('disabled', 'disabled');
+                    $('#Btn_Copy').css("opacity", "0.6");
+                    $('#Btn_Copy').css("cursor", "not-allowed");
+                }
+
+             if('@Model.Quest_List.Count'== 1) {
+                 $(document.getElementById('kubuntable').rows[1].cells[3].children[0]).prop('disabled', true);
+                 $(document.getElementById('kubuntable').rows[1].cells[4].children[0]).prop('disabled', true);
+            }
+            if('@Model.Quest_List.Count'> 1) {
+                 $(document.getElementById('kubuntable').rows[1].cells[3].children[0]).prop('disabled', true);
+                 $(document.getElementById('kubuntable').rows['@Model.Quest_List.Count'].cells[4].children[0]).prop('disabled', true);
+            }
+            }
+     });</script>
+    <script>
+        $(document).ready(function () {
+            var n1 = document.getElementById("kubuntable").rows.length;
+            for (var i = 1; i < n1; i++) {
+                autosize(document.getElementById("manzo_question" + i));
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#up,#down").click(function () {
+                var row = $(this).parents("tr:first");
+                var n1 = document.getElementById("kubuntable").rows.length;
+                if ($(this).is("#up")) {
+                    row.insertBefore(row.prev());
+
+                } else {
+                    row.insertAfter(row.next());
+
+                }
+                var n1 = document.getElementById("kubuntable").rows.length;
+                if (n1 > 2) {
+                    for (var i = 1; i < n1; i++) {
+                        $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                        $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                        if (i == 1) {
+                            //  $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).addClass('disabled');
+                            $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                            $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                        }
+                        else {
+                            if (i == n1 - 1) {
+                                $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+                            }
+                            else {
+                                $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                            }
+                            $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                        }
+                    }
+                }
+                else {
+                    $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                    $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+                }
+                var x = document.getElementById("selectjuban");
+                var i;
+                for (i = 0; i < x.length; i++) {
+                    document.getElementById('kubuntable').rows[i + 1].cells[2].innerHTML = x.options[i].value;
+                    document.getElementById('kubuntable').rows[i + 1].cells[8].children[0].value = x.options[i].value;
+                }
+                event.preventDefault();
+            });
+        });
+        function sortTable2(n) {
+            var table;
+
+            document.getElementById('headername').value = "nJUNBAN"
+
+            table = document.getElementById("kubuntable");
+            var rows, i, x, y, count = 0;
+            var switching = true;
+
+            // Order is set as ascending
+            var direction = "asc";
+
+            // Run loop until no switching is needed
+            while (switching) {
+                switching = false;
+                var rows = table.rows;
+                //Loop to go through all rows
+                for (i = 1; i < (rows.length - 1); i++) {
+                    var Switch = false;
+
+                    // Fetch 2 elements that need to be compared
+                    x = rows[i].getElementsByTagName("TD")[n].innerHTML;
+                    y = rows[i + 1].getElementsByTagName("TD")[n].innerHTML;
+                    // Check the direction of order
+                    if (direction == "asc") {
+
+                        // Check if 2 rows need to be switched
+                        if (parseInt(x, 10) > parseInt(y, 10)) {
+                            // If yes, mark Switch as needed and break loop
+                            Switch = true;
+                            break;
+                        }
+                    } else if (direction == "desc") {
+
+                        // Check direction
+                        if (parseInt(x, 10) < parseInt(y, 10)) {
+                            // If yes, mark Switch as needed and break loop
+                            Switch = true;
+                            break;
+                        }
+                    }
+                }
+                if (Switch) {
+                    // Function to switch rows and mark switch as completed
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+
+                    // Increase count for each switch
+                    count++;
+                } else {
+                    // Run while loop again for descending order
+                    if (count == 0 && direction == "asc") {
+                        direction = "desc";
+                        switching = true;
+                    }
+                }
+            }
+            document.getElementById('sortdir').value = direction;
+            removeOptions(document.getElementById('selectjuban'));
+            var ddl = document.getElementById("selectjuban");
+            var n1 = document.getElementById("kubuntable").rows.length;
+            var row_count = 0;
+            for (var i = 1; i < n1; i++) {
+
+
+                var option = document.createElement("OPTION");
+                option.innerHTML = document.getElementById('kubuntable').rows[i].cells[8].children[0].value;
+                option.value = document.getElementById('kubuntable').rows[i].cells[8].children[0].value;
+                ddl.options.add(option);
+            }
+            // var n1 = document.getElementById("kubuntable").rows.length;
+
+            if (n1 > 2) {
+                for (var i = 1; i < n1; i++) {
+                    $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                    $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                    if (i == 1) {
+                        //  $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).addClass('disabled');
+                        $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                        $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                    }
+                    else {
+                        if (i == n1 - 1) {
+                            $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+                        }
+                        else {
+                            $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                        }
+                        $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                    }
+                }
+            }
+            else {
+                $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+            }
+        }
+        function sortTable1(n) {
+            var table;
+
+            document.getElementById('headername').value = "sKOUMOKU";
+
+            table = document.getElementById("kubuntable");
+            var rows, i, x, y, count = 0;
+            var switching = true;
+
+            // Order is set as ascending
+            var direction = "asc";
+
+            // Run loop until no switching is needed
+            while (switching) {
+                switching = false;
+                var rows = table.rows;
+                //Loop to go through all rows
+                for (i = 1; i < (rows.length - 1); i++) {
+                    var Switch = false;
+
+                    // Fetch 2 elements that need to be compared
+                    x = rows[i].getElementsByTagName("TD")[n].children[0].value;
+                    y = rows[i + 1].getElementsByTagName("TD")[n].children[0].value;
+                    // Check the direction of order
+                    if (direction == "asc") {
+
+                        // Check if 2 rows need to be switched
+                        if (x.toLowerCase() > y.toLowerCase()) {
+                            // If yes, mark Switch as needed and break loop
+                            Switch = true;
+                            break;
+                        }
+                    } else if (direction == "desc") {
+
+                        // Check direction
+                        if (x.toLowerCase() < y.toLowerCase()) {
+                            // If yes, mark Switch as needed and break loop
+                            Switch = true;
+                            break;
+                        }
+                    }
+                }
+                if (Switch) {
+                    // Function to switch rows and mark switch as completed
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+
+                    // Increase count for each switch
+                    count++;
+                } else {
+                    // Run while loop again for descending order
+                    if (count == 0 && direction == "asc") {
+                        direction = "desc";
+                        switching = true;
+                    }
+                }
+            }
+            document.getElementById('sortdir').value = direction;
+            removeOptions(document.getElementById('selectjuban'));
+            var ddl = document.getElementById("selectjuban");
+            var n1 = document.getElementById("kubuntable").rows.length;
+            var row_count = 0;
+            for (var i = 1; i < n1; i++) {
+                var option = document.createElement("OPTION");
+                option.innerHTML = document.getElementById('kubuntable').rows[i].cells[8].children[0].value;
+                option.value = document.getElementById('kubuntable').rows[i].cells[8].children[0].value;
+                ddl.options.add(option);
+            }
+            if (n1 > 2) {
+                for (var i = 1; i < n1; i++) {
+                    $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                    $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                    if (i == 1) {
+                        //  $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).addClass('disabled');
+                        $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                        $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                    }
+                    else {
+                        if (i == n1 - 1) {
+                            $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+                        }
+                        else {
+                            $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                        }
+                        $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                    }
+                }
+            }
+            else {
+                $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+            }
+        }
+        function sortTable(n) {
+            var table,
+                rows,
+                switching,
+                i,
+                x,
+                y,
+                shouldSwitch,
+                dir,
+                switchcount = 0;
+
+            document.getElementById('headername').value = "cKOUMOKU";
+
+            table = document.getElementById("kubuntable");
+
+            switching = true;
+            //Set the sorting direction to ascending:
+            dir = "asc";
+            /*Make a loop that will continue until
+            no switching has been done:*/
+            while (switching) {
+                //start by saying: no switching is done:
+                switching = false;
+                rows = table.getElementsByTagName("TR");
+                /*Loop through all table rows (except the
+                first, which contains table headers):*/
+                for (i = 1; i < rows.length - 1; i++) { //Change i=0 if you have the header th a separate table.
+                    //start by saying there should be no switching:
+                    shouldSwitch = false;
+                    /*Get the two elements you want to compare,
+                    one from current row and one from the next:*/
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    /*check if the two rows should switch place,
+                    based on the direction, asc or desc:*/
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            //if so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            //if so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    /*If a switch has been marked, make the switch
+                    and mark that a switch has been done:*/
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    //Each time a switch is done, increase this count by 1:
+                    switchcount++;
+                } else {
+                    /*If no switching has been done AND the direction is "asc",
+                    set the direction to "desc" and run the while loop again.*/
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+            document.getElementById('sortdir').value = dir;
+            removeOptions(document.getElementById('selectjuban'));
+            var ddl = document.getElementById("selectjuban");
+            var n1 = document.getElementById("kubuntable").rows.length;
+            var row_count = 0;
+            for (var i = 1; i < n1; i++) {
+
+
+
+                var option = document.createElement("OPTION");
+                option.innerHTML = document.getElementById('kubuntable').rows[i].cells[8].children[0].value;
+                option.value = document.getElementById('kubuntable').rows[i].cells[8].children[0].value;
+                ddl.options.add(option);
+            }
+            if (n1 > 2) {
+                for (var i = 1; i < n1; i++) {
+
+                    $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                    $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                    if (i == 1) {
+                        //  $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).addClass('disabled');
+                        $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                        $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                    }
+                    else {
+                        if (i == n1 - 1) {
+                            $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+                        }
+                        else {
+                            $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                        }
+                        $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                    }
+                }
+            }
+            else {
+                $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+            }
+
+        }
+        function removeOptions(selectElement) {
+            var i, L = selectElement.options.length - 1;
+            for (i = L; i >= 0; i--) {
+                selectElement.remove(i);
+            }
+        }
+    </script>
+    <script>
+
+        //$('#Btn_Copy').click(function (event) {
+
+        //    event.preventDefault();
+        //    var table = document.getElementById("copy_dt");
+        //    document.getElementById('headerchk').checked = false;
+
+        //    for (var i = 1; i < table.rows.length; i++) {
+        //        document.getElementById('copy_dt').rows[i].cells[0].children[0].checked = false;
+        //        }
+
+
+        //    $('#Copy_Modal').modal('show');
+        //    event.preventDefault();
+        //});
+    </script>
+    <script>
+        function dele(element) {
+            // var rowjQuery = this.closest('tr').rowIndex;
+            // var rowjQuery = $(this).rowIndex;
+            var id = element.parentNode.parentNode.rowIndex;
+            var delevalue = document.getElementById('kubuntable').rows[id].cells[7].children[0].value;
+            var code = document.getElementById('kubuntable').rows[id].cells[6].children[0].value;
+
+            //if (delevalue == "1") {
+            //    alert("評価に使用されているため、削除できません。")
+            //    event.preventDefault();
+            //}
+            //else {
+            document.getElementById('rowindex').value = code;
+
+            if (confirm("削除してもよろしいでしょうか？")) {
+
+            }
+            else {
+                event.preventDefault();
+
+            }
+
+            // }
+            // event.preventDefault();
+
+        }
+    </script>
+    <script>
+       
+        $('#save').click(function (event) {
+            var kubunname = document.getElementById('question').value;
+            if (kubunname.trim().length > 0) {
+               
+            }
+            else {
+                $("#question").css("borderColor", "#f3172d");
+                event.preventDefault();
+            }
+
+        });
+
+        $('#backBtn').click(function (event) {
+
+            event.preventDefault();
+            $('#myModal').modal('hide');
+        });
+
+        $('#clearBtn').click(function (event) {
+            document.getElementById('questname').value = "";
+        });
+        $('#btnPrevious').click(function (event) {
+            //document.getElementById('questname').value = "";
+        });
+        $('#btnNext').click(function (event) {
+            // document.getElementById('questname').value = "";
+        });
+        $('#searchBtn').click(function (event) {
+            var ddloption = document.getElementById('selectkubun').options;
+            if (ddloption.length > 0) {
+
+            }
+            else {
+
+                event.preventDefault();
+            }
+        });
+       
+        $('#SaveBtn').click(function (event) {
+            var n1 = document.getElementById("kubuntable").rows.length;
+            if (n1 > 1) {
+                var row_count = 0;
+                for (var i = 1; i < n1; i++) {
+                    var kubunname = document.getElementById('kubuntable').rows[i].cells[1].children[0].value;
+                    if (kubunname.trim().length) {
+                        row_count++;
+                    }
+                    if (kubunname.trim().length == 0) {
+                        $(document.getElementById('kubuntable').rows[i].cells[1].children[0]).css('border', '1px solid #f3172d');
+                    }
+
+                    if (kubunname.trim().length > 0) {
+                        $(document.getElementById('kubuntable').rows[i].cells[1].children[0]).css('border', 'none');
+                    }
+                }
+
+                if (row_count == n1 - 1) {
+                   
+                }
+                else {
+                    event.preventDefault();
+                }
+            }
+            else {
+                event.preventDefault();
+            }
+        });
+        function OnChangedSelect(evt) {
+            $('#DropdwonSearch').click();
+        }
+
+
+        function OnChangedYear(evt) {
+            $('#DropdownYear').click();
+            // document.getElementById('questname').value = "";
+        }
+            //function checkAll(ele){
+            //    var table = document.getElementById("copy_dt");
+
+            //    if(ele.checked){
+            //        for (var i = 1; i < table.rows.length; i++){
+            //            document.getElementById('copy_dt').rows[i].cells[0].children[0].checked = true;
+            //        }
+            //    } else {
+            //        for (var i = 1; i < table.rows.length; i++) {
+            //            document.getElementById('copy_dt').rows[i].cells[0].children[0].checked = false;
+            //        }
+            //        }
+            //    }
+    </script>
+</body>
+

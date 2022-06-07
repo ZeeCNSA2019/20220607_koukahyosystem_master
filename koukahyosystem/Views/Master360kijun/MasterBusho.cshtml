@@ -1,0 +1,565 @@
+﻿@*/*
+    * 作成者　:  ナン
+    * 日付：20210108
+    * 機能　：部署マスタ画面
+    * 作成したパラメータ：
+    *
+    */*@
+@model koukahyosystem.Models.MasterBushoModel
+
+@{
+    ViewBag.Title = "BushoMaster";
+}
+
+<html>
+<head>
+
+
+    <style>
+
+        /*.button {
+            padding: 5px 10px;
+            text-align: center;
+            color: black;
+            border: none;
+            border-radius: 3px;
+            border: 0.5px solid #555555;
+            height: 35px;
+        }*/
+        .btncss {
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+            width: auto;
+            padding: 5px 10px 5px 10px;
+        }
+        .button:hover {
+            background-color: lightblue
+        }
+
+        .button:active {
+            background-color: lightblue;
+            transform: translateY(4px);
+        }
+        #bushotable {
+            border-collapse: separate;
+            border-spacing: 0;
+            table-layout: fixed;
+            border: 0.5px solid #cccccc;
+        }
+        #bushotable th, #bushotable td {
+            /*height: 30px;
+            text-align: center;*/
+            /*border-collapse: separate;
+                border-spacing: 0;*/
+            border: 0.5px solid #cccccc;
+            /*border: 1px solid black;*/
+            /*padding: 0.5rem 1rem;*/
+        }
+        #bushotable thead, th {
+            /*border: 1px solid white;*/
+            text-align: center;
+            background-color: #C1ECFA;
+        }
+
+        #bushotable tbody, tr, td {
+            /*border: 1px solid white;*/
+        }
+
+        table#bushotable tr:nth-child(even) {
+            background-color: #C1ECFA;
+        }
+
+
+
+        #ex1 {
+            border: 1px solid red;
+            align-content: flex-start;
+        }
+
+        .div_main {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -50px;
+            margin-left: -50px;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+            box-shadow: 5px 5px 10px rgb(34, 148, 172);
+        }
+
+        .div_textbox {
+            display: inline-block;
+        }
+
+        .div_search {
+            margin-left: 20px;
+            display: inline-block;
+        }
+
+        .div_clear {
+            margin-left: 10px;
+            display: inline-block;
+        }
+
+        .div_save {
+            margin-left: 10px;
+            margin-right: 45px;
+            display: inline-block;
+        }
+
+        .div_new {
+            display: inline-block;
+        }
+
+        .modalcss {
+            width: 30%;
+        }
+
+        .tab-content {
+            height: 60.5vh;
+            overflow: auto;
+            /*margin-bottom: 20px;*/
+        }
+
+        #bushotable thead th {
+            background-color: rgb(189, 233, 242);
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            /*border: 1pt solid white;*/
+            background-clip: padding-box;
+        }
+        .btnClear {
+            margin-left: 10px;
+        }
+
+        .btnSave {
+            margin-left: 10px;
+        }
+
+        .btnCreate {
+            margin-left: 50px;
+        }
+
+        .divTxt {
+            text-align: right;
+        }
+
+        .lbl_kensaku {
+            color: black;
+            font-weight: normal !important;
+            margin-left: 15px;
+        }
+        .lbl_kensuu {
+            color: black;
+            font-weight: normal !important;
+        }
+        @@media only screen and (max-width: 1024px) {
+            .modalcss {
+                width: 70%;
+            }
+
+        }
+        @@media only screen and (max-width: 768px) {
+           
+            .divTxt {
+                text-align: left;
+            }
+
+            /*.btnSearch {
+                margin-left: 15px;
+            }
+
+            .btnCreate {
+                margin-left: 15px;
+            }*/
+        }
+
+        @@media only screen and (max-width: 576px) {
+            .divTxt {
+                text-align: left;
+                margin-bottom: 5px;
+            }
+
+            .btnSearch {
+                margin-left: 15px;
+            }
+
+            .btnCreate {
+                margin-left: 15px;
+            }
+            .lbl_kensuu{
+                margin-left:10px;
+                margin-top:5px;
+            }
+            .modalcss {
+                width: 100%;
+            }
+        }
+
+        @@media only screen and (max-width: 320px) {
+
+            .btnSearch {
+                margin-left: 5px;
+            }
+
+            .btnClear {
+                margin-left: 0px;
+            }
+
+            .btnSave {
+                margin-left: 0px;
+            }
+
+            .btnCreate {
+                margin-left: 0px;
+            }
+        }
+        
+        @@media (min-height: 758px) {
+            .tab-content {
+                height: 71.2vh;
+                overflow: auto;
+                /*margin-bottom: 20px;*/
+            }
+        }
+       
+    </style>
+</head>
+<body>
+    <div id='div_main' class="panel panel-info">
+
+        @using (Html.BeginForm("MasterBusho", "MasterBusho", FormMethod.Post))
+        {
+            var headername = @Model.gamenStr + "マスタ";
+            var btnName = @Model.gamenStr + "追加";
+            <div class="panel-heading text-center" style="background-color: rgb(34, 148, 172); width:100%;">
+                <div class="container">
+                    <h4 style="color:white">@headername</h4>
+                </div>
+            </div>
+            @*<div class="kubuncss" align="center">*@
+
+            <div class="container">
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-sm-5 divTxt">
+                        @Html.Label("検索", new { @class = "lbl_kensaku" })
+
+                        @Html.TextBoxFor(Model => Model.kensaku, new
+                        {
+                            @id = "kensaku",
+                            style = "width:160px;margin-left:5px;",
+                            maxlength = "10",
+                            onkeydown = "if (event.keyCode == 13) { return false;}",
+                            oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                        })
+                    </div>
+                    <div class="col-sm-7" style="margin-bottom:5px">
+                        <button type="submit" id="searchBtn" value="search" name="searchBtn" class="btncss btnSearch" style="text-align:center;">検索</button>
+                        <button type="submit" id="clearBtn" value="clear" name="clearBtn" class="btncss btnClear" style="text-align:center;  ">クリア</button>
+                        <button type="submit" id="SaveBtn" value="save" name="SaveBtn" class="btncss btnSave" style="text-align:center; ">保存</button>
+                        <button type="submit" id="newBtn" value="create" name="newBtn" class="btncss btnCreate" style="text-align:center; " onclick="newFunction()">@btnName</button>
+
+                    </div>
+                </div>
+                <div class="row">
+
+                    <table align="center" style="width:430px">
+                        <tbody>
+                            <tr style="">
+                                <td align="left" style="">
+                                    @*@Html.Label(TempData["status"].ToString(), new { style = "color:black;font-weight: normal !important;" })*@
+                                    @Html.Label("kensuu", Model.kensuu, new { @class="lbl_kensuu"})
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin:10px 10px 10px 10px;overflow:auto" class="tab-content">
+                        <table id="bushotable" align="center" @*class="bushodtcss"*@>
+                            <thead>
+                                <tr style="height:30px;">
+                                    <th id="cBUSHO" style="width:70px;min-width:70px;" onclick="sortTable(0,this)">@Model.code_lbl</th>
+                                    <th id="sBUSHO" style="width:160px;min-width:160px;" onclick="sortTable(1,this)">@Model.name_lbl</th>
+                                    <th id="nJUNBAN" style="width:40px;min-width:40px;" onclick="sortTable(2,this)">順番</th>
+                                    <th style="width:30px;min-width:30px;"></th>
+                                    <th style="width:30px;min-width:30px;"></th>
+                                    <th style="width:50px;min-width:50px;"></th>
+                                    <th style="display:none;"></th>
+
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @for (int i = 0; i < Model.BushoList.Count; i++)
+                                {
+                                    var rowindx = i;
+                                    <tr>
+                                        <td style="width:70px;min-width:70px">@Html.TextBoxFor(model => Model.BushoList[i].cbusho, new { id = "cbusho", @tabindex = "-1", style = "background: transparent; border: none; width:70px;" }) </td>
+
+                                        <td> @Html.TextBoxFor(model => model.BushoList[i].sbusho, new { oninput = "if (this.value != '') this.style.borderColor= 'none';", maxlength = 10, onkeydown = "if (event.keyCode == 13) { return false;}", style = "width:170px;border:none;background-color:transparent;" })</td>
+                                        <td style="text-align: center;width:40px;min-width:40px">@Html.TextBoxFor(model => Model.BushoList[i].njunban, new { id = "njunban", @tabindex = "-1", style = "background: transparent; border: none; width:40px;text-align: center", @readonly = "readonly" }) </td>
+                                        <td style="text-align: center;width:30px;min-width:30px">
+                                            <button class="btn btn-link" id="up">
+                                                <span class="glyphicon glyphicon-arrow-up"></span>
+                                            </button>
+                                        </td>
+                                        <td style="text-align: center;width:30px;min-width:30px">
+                                            <button class="btn btn-link" id="down">
+                                                <span class="glyphicon glyphicon-arrow-down"></span>
+                                            </button>
+                                        </td>
+                                        <td style="text-align: center;width:50px;min-width:50px">
+                                            <button type="submit" class="btn btn-link" name="deleteBtn" onclick="dele(this)"><span class=" glyphicon glyphicon-trash "></span></button>
+                                        </td>
+                                        <td style="display:none;">@Html.HiddenFor(model => Model.BushoList[i].active, new { id = "cbusho" })</td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+           
+                
+
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true" align="center" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog mlgocss modalcss" style="margin-top:20px; ">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background-color: rgb(34, 148, 172);  ">
+                                <h4 class="modal-title" id="myModalLabel" style="color:white;">部署マスタ入力画面</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+
+                                <table class="data_tbl" id="datatbl" cellpadding="5">
+
+                                    <tbody>
+                                        <tr>
+                                            <td>@Html.Label("区分名", new { style = "color:black;font-weight: normal !important;" })</td>
+                                            <td> @Html.TextBoxFor(model => model.bushomei, new { @id = "bushomei", maxlength = 10, oninput = "if (this.value != '') this.style.borderColor= '';", onkeydown = "if (event.keyCode == 13) { return false;}", style = "width:160px" })</td>
+
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                            <div class="modal-footer" align="center">
+                                <button type="submit" id="save" class="btncss" name="save" value="hozon" style="width:60px; height:35px; text-align:center; margin-right:10px;">保存</button>
+                                <button type="submit" id="backBtn" class="btncss " name="backBtn" value="back" style="height:35px; width:60px;">戻る</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @Html.HiddenFor(m => m.deleCode, new { @id = "deleCode" })
+                <input type="hidden" id="rowindex" name="rowindex" value="" />
+
+                @*<input type="hidden" id="headername" name="headername" value="@TempData["headername"]" />
+        <input type="hidden" id="sortdir" name="sortdir" value="@TempData["sortdir"]" />*@
+                }
+            </div>
+
+    <script>
+        //$('#myModal').modal('hide');
+        function newFunction() {
+            event.preventDefault();
+            $('#bushomei').val("");
+            $(document.getElementById('bushomei')).css('borderColor', '');
+            $('#myModal').modal('show');
+            return false;
+        }
+
+        function dele(element) {
+            // var rowjQuery = this.closest('tr').rowIndex;
+            // var rowjQuery = $(this).rowIndex;
+            var id = element.parentNode.parentNode.rowIndex;
+            var delevalue = document.getElementById('bushotable').rows[id].cells[6].children[0].value;
+            var code = document.getElementById('bushotable').rows[id].cells[0].children[0].value;
+            //alert('code' + code);
+            if (delevalue == "1") {
+                alert("社員マスタに使用されているため、削除できません。")
+                event.preventDefault();
+            }
+            else {
+                document.getElementById('deleCode').value = code;
+
+                if (confirm("削除してもよろしいでしょうか？")) {
+
+                }
+                else {
+                    event.preventDefault();
+                }
+            }
+        }
+
+        function sortTable(n,e) {
+            var table;
+            var headcol = e.id;
+            //document.getElementById('headername').value = headcol;
+
+            table = document.getElementById("bushotable");
+            var rows, i, x, y, count = 0;
+            var switching = true;
+
+            // Order is set as ascending
+            var direction = "asc";
+
+            // Run loop until no switching is needed
+            while (switching) {
+                switching = false;
+                var rows = table.rows;
+                //Loop to go through all rows
+                for (i = 1; i < (rows.length - 1); i++) {
+                    var Switch = false;
+
+                    // Fetch 2 elements that need to be compared
+                    x = rows[i].getElementsByTagName("TD")[n].children[0].value;
+                    y = rows[i + 1].getElementsByTagName("TD")[n].children[0].value;
+                    //alert('x ;' + x + 'y :' + y)
+                    // Check the direction of order
+                    if (direction == "asc") {
+                        if (headcol == "nJUNBAN") {
+                            // Check if 2 rows need to be switched
+                            if (parseInt(x, 10) > parseInt(y, 10)) {
+                                // If yes, mark Switch as needed and break loop
+                                Switch = true;
+                                break;
+                            }
+                        }
+                        else {
+                            // Check if 2 rows need to be switched
+                            if (x.toLowerCase() > y.toLowerCase()) {
+                                // If yes, mark Switch as needed and break loop
+                                Switch = true;
+                                break;
+                            }
+                        }
+                    } else if (direction == "desc") {
+                        if (headcol == "nJUNBAN") {
+                            if (parseInt(x, 10) < parseInt(y, 10)) {
+                                // If yes, mark Switch as needed and break loop
+                                Switch = true;
+                                break;
+                            }
+                        }
+                        else {
+                            // Check direction
+                            if (x.toLowerCase() < y.toLowerCase()) {
+                                // If yes, mark Switch as needed and break loop
+                                Switch = true;
+                                break;
+                            }
+                        }
+
+                    }
+                }
+                if (Switch) {
+                    // Function to switch rows and mark switch as completed
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+
+                    // Increase count for each switch
+                    count++;
+                } else {
+                    // Run while loop again for descending order
+                    if (count == 0 && direction == "asc") {
+                        direction = "desc";
+                        switching = true;
+                    }
+                }
+            }
+
+            //after sorting
+                $('#bushotable > tbody  > tr').each(function (index, tr) {
+                    var rowindex = index + 1;
+                    //$(this.cells[2].children[0]).val(rowindex);
+                    $(this.cells[3].children[0]).prop('disabled', false);
+                    $(this.cells[4].children[0]).prop('disabled', false);
+                    if (index == 0) {
+                        $(this.cells[3].children[0]).prop('disabled', true);
+                    }
+                    else if ('@Model.BushoList.Count' == rowindex) {
+                        $(this.cells[4].children[0]).prop('disabled', true);
+                    }
+                });
+        }
+
+    </script>
+
+    <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+    <script>
+
+        $(document).ready(function () {
+
+            if ('@Model.BushoList.Count' >= 20) {
+                $('#newBtn').attr('disabled', 'disabled');
+                $('#newBtn').css("opacity", "0.6");
+                $('#newBtn').css("cursor", "not-allowed");
+            }
+
+             if ('@Model.BushoList.Count' == 1) {
+                 $(document.getElementById('bushotable').rows[1].cells[3].children[0]).prop('disabled', true);
+                 $(document.getElementById('bushotable').rows[1].cells[4].children[0]).prop('disabled', true);
+            }
+            if ('@Model.BushoList.Count' > 1) {
+                $(document.getElementById('bushotable').rows[1].cells[3].children[0]).prop('disabled', true);
+                $(document.getElementById('bushotable').rows['@Model.BushoList.Count'].cells[4].children[0]).prop('disabled', true);
+            }
+
+            $('#save').click(function (event) {
+                var kubunname = document.getElementById('bushomei').value;
+                if (kubunname.trim().length <= 0) {
+                    $("#bushomei").css("borderColor", "#f3172d");
+                    event.preventDefault();
+                }
+            });
+            $('#backBtn').click(function (event) {
+
+                event.preventDefault();
+                $('#myModal').modal('hide');
+            });
+
+
+            $("#up,#down").click(function () {
+                event.preventDefault();
+                var row = $(this).parents("tr:first");
+                //var n1 = document.getElementById("kubuntable").rows.length;
+                if ($(this).is("#up")) {
+                    row.insertBefore(row.prev());
+
+                } else {
+                    row.insertAfter(row.next());
+
+                }
+                //after sorting
+                $('#bushotable > tbody  > tr').each(function (index, tr) {
+                    var rowindex = index + 1;
+                    $(this.cells[2].children[0]).val(rowindex);
+                    $(this.cells[3].children[0]).prop('disabled', false);
+                    $(this.cells[4].children[0]).prop('disabled', false);
+                    if (index == 0) {
+                        $(this.cells[3].children[0]).prop('disabled', true);
+                    }
+                    else if ('@Model.BushoList.Count' == rowindex) {
+                        $(this.cells[4].children[0]).prop('disabled', true);
+                    }
+                });
+
+            });
+
+
+        });
+    </script>
+</body>
+</html>
+

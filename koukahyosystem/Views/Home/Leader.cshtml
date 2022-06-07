@@ -1,0 +1,89 @@
+﻿
+@{
+    ViewBag.Title = "Leader";
+}
+
+<head>
+    <style>
+        .AllShain {
+            /* border:none;
+        background-color:White;
+        color:Black;
+        font-weight:bold;*/
+            background: none !important;
+            border: none;
+            padding: 20px !important;
+            /*optional*/
+            font-family: arial, sans-serif;
+            /*input has OS specific font-family*/
+            color: black;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+        if (Session["cKUBUN"].ToString() == "02")
+        {
+            <div style="margin-top:20px;">
+
+                <a href='#' onclick='leader();'>データ出力</a>
+
+            </div>
+            <div id='leader' class='modal'>
+
+                <div class="modal-dialog" style="width:400px; height:200px; padding:50px;">
+
+                    <div class="modal-content" style=" padding:10px;">
+                        <div class="panel-heading" align="center" style="background-color: rgb(34, 148, 172); color: Black; margin-top:0px;">
+                            <h4 style="color:Black ; display: inline-block;">360度評価出力画面</h4>
+                        </div>
+                        <div id='contentLeader' style="width:400px; height:110px; padding:10px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</body>
+
+<script>
+    function leader() {
+        //alert("Leader");
+        var $buttonClicked = $(this);
+        var options = {
+            "backdrop": "static",
+            keyboard: true
+        };
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("LeaderExport", "LeaderExport")',
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#contentLeader').html(data);
+                $('#leader').modal(options);
+                $('#leader').modal('show');
+
+            },
+
+            error: function (xhr, ajaxOptions, thrownError) {
+
+                alert(xhr.responseText);
+
+            }
+
+        });
+        return false;
+    }
+</script>
+
+<script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+
+
+
+

@@ -1,0 +1,240 @@
+﻿@model koukahyosystem.Models.ShukeiHyouModel
+
+@{
+    ViewBag.Title = "ShukeiHyou";
+}
+<head>
+    <style>
+        button {
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+        }
+
+        .data_tbl thead, th {
+            border: solid 1px #cccccc;
+            text-align: center;
+        }
+
+        .data_tbl tobody, tr, td {
+            border: solid 1px #cccccc;
+            /*text-align: left;*/
+        }
+
+        .crossed {
+            background-image: linear-gradient(to bottom right, transparent calc(50% - 1px), black, transparent calc(50% + 1px));
+        }
+    </style>
+
+    <script src="@Url.Content("~/Scripts/jquery-1.12.4.min.js")"></script>
+    <script>
+        $(document).ready(function () {
+
+            //$('.jyouikoka').toggle();
+            //$('#koukaBtn').on('click', function () {
+            //    if ($('#fjyoicol').val() == '1') {
+            //        $('#fjyoicol').val('0');
+            //    }
+            //    else {
+            //        $('#fjyoicol').val('1');
+            //    }
+            //    $('.jyouikoka').toggle();
+            //});
+
+            if ('@Model.fjyoicol' == "1") {
+                $('.jyouikoka').toggle();
+            }
+
+            //$('#DataTable tbody tr td input').change(function () {
+            //    var col = $(this).parent().index();
+            //    var curkubun = $(this).closest("tr").find('td:eq(6) input').val();
+            //    var koukaval = $(this).closest("tr").find('td:eq(4) input').val();
+
+            //    if (col == 4) {
+
+            //        $("#DataTable tbody tr").find('td:eq(6)').each(function () {
+            //            var thiskubun = $(this).find("input").val();
+            //            if (curkubun == thiskubun) {
+            //                $(this).closest("tr").find('td:eq(4) input').val(koukaval);
+            //            }
+            //        });
+            //    }
+            //});
+            $("#hozonBtn").click(function (event) {
+                var showmsg;
+                //alert("OK");
+                $("#DataTable tbody tr").each(function (i, el) {
+                    var $tds = $(this).find('td'),
+
+                        p5_text1 = $tds.eq(5).find('input[type=text][id$="txt_getdata"]').val();
+                    p5_text2 = $tds.eq(5).find('input[type=text][id$="jyouikouka"]').val();
+                    var jyouka;
+                    var nhai;
+                    //alert(p5_text1)
+                    if (p5_text1 != "undefined") {
+                        jyouka = parseInt(p5_text1);
+                    }
+                    if (p5_text2 != "undefined") {
+                        nhai = parseInt(p5_text2);
+                    }
+                    if (jyouka > nhai) {
+                        showmsg = "yes";
+                        $tds.eq(5).find('input[type=text][id$="txt_getdata"]').css('border', '1px solid #f3172d');
+                        $tds.eq(5).find('input[type=text][id$="txt_getdata"]').css('border-radius', '5px');
+                        event.preventDefault();
+                    }
+                    else {
+                        $tds.eq(5).find('input[type=text][id$="txt_jyoudata"]').css('border', 'none');
+                    }
+                });
+                if (showmsg == "yes") {
+                    alert("決めた点数を超えています。調整してください。");
+                }
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        function SelectedIndexChanged() {
+            $('#Btn_display').click();
+        }
+
+        function isNumberKey(evt) {
+
+            var charCode = (evt.which) ? evt.which : evt.keyCode
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }
+        function isspecialEvent(event) {
+            alert("Hello");
+            var regex = new RegExp("^[1-5]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+
+                event.preventDefault();
+                return false;
+
+            }
+            else {
+
+                return true;
+
+            }
+        }
+       
+    </script>
+</head>
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+    <div id='div_main' class="panel panel-info" style="overflow:auto">
+        @using (Html.BeginForm("ShukeiHyou", "ShukeiHyou", FormMethod.Post))
+        {
+            <div class="panel-heading" style="background-color: rgb(34, 148, 172); width:100%">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12 " align="center">
+                            <h4 style="color:white ; display: inline-block;">集計表</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="container" class="row" style="margin: 10px;">
+                <div align="center">
+                    <input type="submit" value="display" id="Btn_display" name="year_btn" class="btncss" style="display:none" />
+                    @Html.Label("年度", new { style = "color:black;font-weight: normal !important;margin-right:5px;" })
+                    <button id="preBtn" name="year_btn" value="<" style="width:29px;height:29px;"><</button>
+                    @Html.DropDownListFor(m => m.cur_year, Model.YearList, new { @id = "year", style = "width:70px;Height:22px;margin-bottom:4px;", onchange = "SelectedIndexChanged()", autofocus = "autofocus" })
+                    <button id="nextBtn" name="year_btn" value=">" style="width:29px;height:29px;">></button>
+                    @*<button type="button" id="koukaBtn" value="jyouikouka" name="ShukeiBtn" style="width:auto; height:35px; text-align:center; margin-left:20px;">情意考課入力</button>*@
+                    <button type="submit" id="hozonBtn" value="hozon" name="ShukeiBtn" class="button" style="width:60px; height:35px; text-align:center; margin-left:20px;">保存</button>
+
+                </div>
+            </div>
+
+
+            <div id="shukeihyou" class="tab-content" style="margin:10px 10px 10px 10px;">
+
+                <table class="data_tbl chyouka" id="DataTable" cellpadding="7" align="center">
+                    <thead>
+                        <tr style="background-color:rgb(189, 233, 242)">
+                            <th>社員名</th>
+                            <th></th>
+                            <th>基礎評価</th>
+                            <th>目標評価</th>
+                            <th>360度評価</th>
+                            <th class="jyouikoka" style="width:115px;">情意考課</th>
+                            <th>合計</th>
+                            <th style="display:none;">区分</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @for (int i = 0; i < Model.ShukeiList.Count; i++)
+                        {
+                            if (i % 2 == 0)
+                            {
+                        <tr>
+                            <td style="display:none;">@Html.EditorFor(m => m.ShukeiList[i].cSHAIN)</td>
+                            <td rowspan="2">@Model.ShukeiList[i].sSHAIN</td>
+                            <td style="text-align:left">@Model.ShukeiList[i].description</td>
+                            <td style="text-align:center">@Model.ShukeiList[i].sandankaihyouka</td>
+                            <td style="text-align:center">@Model.ShukeiList[i].kokahyou</td>
+                            <td style="text-align:center">@Model.ShukeiList[i].hyouka360</td>
+                            <td style="text-align:center;width:115px;" class="jyouikoka crossed">@Model.ShukeiList[i].jyouikouka</td>
+                            <td style="text-align:center">@Model.ShukeiList[i].total</td>
+                            <td style="text-align:center;width:50px;display:none;">@Html.TextBoxFor(m => m.ShukeiList[i].cKUBUN)</td>
+                        </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td style="display:none;">@Html.EditorFor(m => m.ShukeiList[i].cSHAIN)</td>
+                                    <td style="text-align:left">@Model.ShukeiList[i].description</td>
+                                    <td style="text-align:center">@Model.ShukeiList[i].sandankaihyouka</td>
+                                    <td style="text-align:center">@Model.ShukeiList[i].kokahyou</td>
+                                    <td style="text-align:center">@Model.ShukeiList[i].hyouka360</td>
+
+                                    <td style="text-align:center;width:115px;" class="jyouikoka">
+                                        @Html.TextBoxFor(m => m.ShukeiList[i].txt_getdata, new
+                                   {
+                                       @onkeypress = "return isNumberKey(event)",
+                                       maxlength = 4,
+                                       @size = "4",
+                                       style = "margin:left:0px;width:50%;text-align:right;border:0.5px solid black;border-radius:4px;",
+                                       oninput = "value = value.replace(/[０-９]/g,s => String.fromCharCode(s.charCodeAt(0) - 65248)).replace(/\\D/g,'');"
+                                   }) /
+                                        @Html.TextBoxFor(m => m.ShukeiList[i].jyouikouka, new
+                                   {
+                                       @id= "jyouikouka",
+                                       @onkeypress = "return isNumberKey(event)",
+                                       maxlength = 4,
+                                       @size = "4",
+                                       style = "margin:left:0px;width:35%;text-align:right;border:none;",
+                                       oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);",
+                                       @readonly = "readonly"
+                                   })
+                                    </td>
+                                    <td style="text-align:center">@Model.ShukeiList[i].total</td>
+                                    <td style="text-align:center;width:50px;display:none;">@Html.TextBoxFor(m => m.ShukeiList[i].cKUBUN)</td>
+                                </tr>
+                            }
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @Html.HiddenFor(m => m.fjyoicol, new { id = "fjyoicol" })
+        }
+    </div>
+    }
+</body>
+
+    

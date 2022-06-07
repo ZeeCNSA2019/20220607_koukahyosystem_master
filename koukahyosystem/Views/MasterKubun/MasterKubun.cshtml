@@ -1,0 +1,756 @@
+﻿@*/*
+    * 作成者　:  ルインマー
+    * 日付：20201228
+    * 機能　：区分マスタ画面
+    * 作成したパラメータ：
+    *
+    */*@
+@model koukahyosystem.Models.MasterKubunModel
+@{
+    ViewBag.Title = "KubunMaster";
+}
+
+
+<head>
+    <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+
+    <style>
+
+        .button {
+            padding: 5px 10px;
+            text-align: center;
+            color: black;
+            border: none;
+            border-radius: 3px;
+            border: 0.5px solid #555555;
+            height: 35px;
+        }
+
+            .button:hover {
+                background-color: lightblue
+            }
+
+            .button:active {
+                background-color: lightblue;
+                transform: translateY(4px);
+            }
+
+        .kubuntable thead, th {
+            border: 1px solid white;
+            text-align: center;
+            background-color: #C1ECFA;
+        }
+
+        .kubuntable tbody, tr, td {
+            border: 1px solid white;
+        }
+
+        table#kubuntable tr:nth-child(even) {
+            background-color: #C1ECFA;
+        }
+
+
+
+        #ex1 {
+            border: 1px solid red;
+            align-content: flex-start;
+        }
+
+        .div_main {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -50px;
+            margin-left: -50px;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+            box-shadow: 5px 5px 10px rgb(34, 148, 172);
+        }
+
+        /*.div_textbox {
+            display: inline-block;
+        }*/
+       
+        .div_search {
+            margin-left: 20px;
+            display: inline-block;
+        }
+
+        .div_clear {
+            margin-left: 10px;
+            display: inline-block;
+        }
+
+        .div_save {
+            margin-left: 10px;
+            margin-right: 45px;
+            display: inline-block;
+        }
+
+        .div_new {
+            display: inline-block;
+        }
+        .div_textbox {
+            margin-left: 280px;
+        }
+        
+
+        @@media (min-height: 758px) {
+            .mycontent {
+                height: 69.8vh;
+                overflow: auto;
+            }
+        }
+        @@media (max-width: 1024px) {
+            .div_textbox {
+                margin-left: 10px;
+                padding-left: 10px;
+            }
+
+            .div_searh_cl_save {
+                padding-left: 0px;
+                margin-top: 7px;
+            }
+
+            .div_new {
+                margin-left: 10px;
+                padding-left: 10px;
+                margin-top: 7px;
+            }
+        }
+
+        
+    </style>
+</head>
+<body>
+
+    <div id='div_main' class="panel panel-info" style="overflow:auto;">
+
+
+
+        @using (Html.BeginForm("MasterKubun", "MasterKubun", FormMethod.Post))
+        {
+            <div class="panel-heading text-center" style="background-color: rgb(34, 148, 172); width:100%;">
+                <div class="container">
+                    <h4 style="color:white">区分マスタ</h4>
+                </div>
+            </div>
+            @*<div class="kubuncss" align="center">*@
+
+            <div  class="row" style="margin:10px; ">
+                <div style="display:none">
+                    @Html.DropDownListFor(m => m.selectjuban, Model.jubanList, new { @id = "selectjuban",
+                                                      style = "width:70px;Height:22px;",
+                                                     onchange = "return OnChangedjuban()"
+                                                 })
+                </div>
+                <div class="div_textbox" style="display:inline-block;">
+                    @Html.Label("検索", new { style = "color:black;font-weight: normal !important;" })
+
+                    @Html.TextBoxFor(Model => Model.kubunname, new
+               {
+                   @id = "kubunname",
+                   style = "width:160px;margin-left:5px;",
+                   maxlength = "10",
+                   onkeydown = "if (event.keyCode == 13) { return false;}",
+                   oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+               })
+                </div>
+                <div style="display:inline-block;margin-top:5px">
+                    <div class="div_search">
+                        <button type="submit" id="searchBtn" value="search" name="searchBtn" class="button" style="text-align:center;">検索</button>
+                    </div>
+                    <div class="div_clear">
+                        <button type="submit" id="clearBtn" value="clear" name="clearBtn" class="button" style="text-align:center;  ">クリア</button>
+                    </div>
+                    <div class="div_save">
+                        <button type="submit" id="SaveBtn" value="save" name="SaveBtn" class="button" style="text-align:center; ">保存</button>
+
+                    </div>
+                </div>
+                <div class="div_new">
+                    <button type="submit" id="newBtn" value="create" name="newBtn" class="button" style="text-align:center; " onclick="newFunction()">区分追加</button>
+
+                </div>
+
+            </div>
+                <div class="container" style="margin-top:10px;overflow:auto">
+                    <table align="center" style="width:430px">
+                        <tbody>
+                            <tr style="">
+                                <td align="left" style="">
+                                    @Html.Label(TempData["status"].ToString(), new { style = "color:black;font-weight: normal !important;" })
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table id="kubuntable" align="center" style="">
+                        <thead>
+                            <tr style="height:30px;">
+                                <th style="width:70px;min-width:70px;" onclick="sortTable(0)">区分番号</th>
+                                <th style="width:160px;min-width:160px;" onclick="sortTable1(1)">区分名</th>
+                                <th style="width:40px;min-width:40px;" onclick="sortTable2(2)">順番</th>
+                                <th style="width:30px;min-width:30px;"></th>
+                                <th style="width:30px;min-width:30px;"></th>
+                                <th style="width:50px;min-width:50px;"></th>
+                                <th style="visibility:hidden"></th>
+                                <th style="visibility:hidden"></th>
+                                <th style="visibility:hidden"></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @for (int i = 0; i < Model.KubunMasterList.Count; i++)
+                            {
+                                var rowid = i + 1;
+                                <tr>
+                                    <td style="width:70px;min-width:70px">@Model.KubunMasterList[i].kubun_code</td>
+                                    <td>
+                                        @Html.TextBoxFor(model => model.KubunMasterList[i].kubun_name, new { oninput = "if (this.value != '') this.style.border= 'none';",
+                                       maxlength = 10, onkeydown = "if (event.keyCode == 13) { return false;}", style = "width:160px;border:none;background-color:transparent;"
+                                   })
+                                    </td>
+
+                                    <td style="text-align: center;width:40px;min-width:40px">@Model.KubunMasterList[i].njubun</td>
+                                    <td style="text-align: center;width:30px;min-width:30px">
+                                        <button class="btn btn-link" id="up">
+                                            <span class="glyphicon glyphicon-arrow-up"></span>
+                                        </button>
+                                    </td>
+                                    <td style="text-align: center;width:30px;min-width:30px">
+                                        <button class="btn btn-link" id="down">
+                                            <span class="glyphicon glyphicon-arrow-down"></span>
+                                        </button>
+                                    </td>
+                                    <td style="text-align: center;width:50px;min-width:50px">
+                                        <button type="submit" onclick="dele(this)" class="btn btn-link" id=@rowid name="deleteBtn"><span class=" glyphicon glyphicon-trash "></span></button>
+                                    </td>
+                                    <td style="visibility:hidden"> @Html.HiddenFor(model => model.KubunMasterList[i].kubun_code, new { style = " " })</td>
+                                    <td style="visibility:hidden"> @Html.HiddenFor(model => model.KubunMasterList[i].alreadyuse, new { style = "" })</td>
+                                    <td style="visibility:hidden"> @Html.HiddenFor(model => model.KubunMasterList[i].njubun, new { style = "" })</td>
+
+                                </tr>
+                            }
+
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+                @*</div>*@
+
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true" align="center" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog mlgocss" style="margin-top:20px;width:30% ;width:400px">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background-color: rgb(34, 148, 172);  ">
+                                <h4 class="modal-title" id="myModalLabel" style="color:white;">区分マスタ入力画面</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+
+                                <table class="data_tbl" id="datatbl" cellpadding="5">
+
+                                    <tbody>
+                                        <tr>
+                                            <td>@Html.Label("区分名", new { style = "color:black;font-weight: normal !important;" })</td>
+                                            <td style="width:160px;">
+                                                @Html.TextBoxFor(model => model.selectkubunname, new { @id = "kubun",
+                                                  maxlength = 10,
+                                                  oninput = "if (this.value != '') this.style.borderColor= '';",
+                                                  onkeydown = "if (event.keyCode == 13) { return false;}",
+                                                  style = "width:160px;max-width:100%;"
+
+                                              })
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                            <div class="modal-footer" align="center">
+                                <button type="submit" id="save" class="button" name="save" value="hozon" style="width:60px; height:35px; text-align:center; margin-right:10px;">保存</button>
+                                <button type="submit" id="backBtn" class="button " name="backBtn" value="back" style="height:35px; width:60px;">戻る</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="rowindex" name="rowindex" value="" />
+                // <input type="text" id="searchkubuname" name="searchkubuname" value="@TempData["searchkubun"]" />
+                <input type="hidden" id="headername" name="headername" value="@TempData["headername"]" />
+                <input type="hidden" id="sortdir" name="sortdir" value="@TempData["sortdir"]" />
+                }
+            </div>
+    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+    <script src="@Url.Content("~/Scripts/jquery-1.12.4.min.js")"></script>
+    <script>
+        $(document).ready(function () {
+           @*if ('@Model.KubunMasterList.Count' >= 10) {*@
+            if ('@Session["kcount"]' >= 10) {
+                $('#newBtn').attr('disabled', 'disabled');
+                $('#newBtn').css("opacity", "0.6");
+                $('#newBtn').css("cursor", "not-allowed");
+            }
+             if ('@Model.KubunMasterList.Count' == 1) {
+                 $(document.getElementById('kubuntable').rows[1].cells[3].children[0]).prop('disabled', true);
+                 $(document.getElementById('kubuntable').rows[1].cells[4].children[0]).prop('disabled', true);
+            }
+            if ('@Model.KubunMasterList.Count' > 1) {
+                 $(document.getElementById('kubuntable').rows[1].cells[3].children[0]).prop('disabled', true);
+                 $(document.getElementById('kubuntable').rows['@Model.KubunMasterList.Count'].cells[4].children[0]).prop('disabled', true);
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#up,#down").click(function () {
+                var row = $(this).parents("tr:first");
+                var n1 = document.getElementById("kubuntable").rows.length;
+                if ($(this).is("#up")) {
+                    row.insertBefore(row.prev());
+
+                } else {
+                    row.insertAfter(row.next());
+
+                }
+                var n1 = document.getElementById("kubuntable").rows.length;
+                if (n1 > 2) {
+                    for (var i = 1; i < n1; i++) {
+                        $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                        $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                        if (i == 1) {
+                            //  $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).addClass('disabled');
+                            $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                            $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                        }
+                        else {
+                            if (i == n1 - 1) {
+                                $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+                            }
+                            else {
+                                $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                            }
+                            $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                        }
+                    }
+                }
+                else {
+                    $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                    $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+                }
+                var x = document.getElementById("selectjuban");
+                var i;
+                for (i = 0; i < x.length; i++) {
+                    document.getElementById('kubuntable').rows[i + 1].cells[2].innerHTML = x.options[i].value;
+                    document.getElementById('kubuntable').rows[i + 1].cells[8].children[0].value = x.options[i].value;
+                }
+                event.preventDefault();
+            });
+        });
+        function sortTable2(n) {
+            var table;
+
+            document.getElementById('headername').value = "nJUNBAN"
+
+            table = document.getElementById("kubuntable");
+            var rows, i, x, y, count = 0;
+            var switching = true;
+
+            // Order is set as ascending
+            var direction = "asc";
+
+            // Run loop until no switching is needed
+            while (switching) {
+                switching = false;
+                var rows = table.rows;
+                //Loop to go through all rows
+                for (i = 1; i < (rows.length - 1); i++) {
+                    var Switch = false;
+
+                    // Fetch 2 elements that need to be compared
+                    x = rows[i].getElementsByTagName("TD")[n].innerHTML;
+                    y = rows[i + 1].getElementsByTagName("TD")[n].innerHTML;
+                    // Check the direction of order
+                    if (direction == "asc") {
+
+                        // Check if 2 rows need to be switched
+                        if (parseInt(x, 10) > parseInt(y, 10)) {
+                            // If yes, mark Switch as needed and break loop
+                            Switch = true;
+                            break;
+                        }
+                    } else if (direction == "desc") {
+
+                        // Check direction
+                        if (parseInt(x, 10) < parseInt(y, 10)) {
+                            // If yes, mark Switch as needed and break loop
+                            Switch = true;
+                            break;
+                        }
+                    }
+                }
+                if (Switch) {
+                    // Function to switch rows and mark switch as completed
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+
+                    // Increase count for each switch
+                    count++;
+                } else {
+                    // Run while loop again for descending order
+                    if (count == 0 && direction == "asc") {
+                        direction = "desc";
+                        switching = true;
+                    }
+                }
+            }
+            document.getElementById('sortdir').value = direction;
+            removeOptions(document.getElementById('selectjuban'));
+            var ddl = document.getElementById("selectjuban");
+            var n1 = document.getElementById("kubuntable").rows.length;
+            var row_count = 0;
+            for (var i = 1; i < n1; i++) {
+
+
+                var option = document.createElement("OPTION");
+                option.innerHTML = document.getElementById('kubuntable').rows[i].cells[8].children[0].value;
+                option.value = document.getElementById('kubuntable').rows[i].cells[8].children[0].value;
+                ddl.options.add(option);
+            }
+            // var n1 = document.getElementById("kubuntable").rows.length;
+
+            if (n1 > 2) {
+                for (var i = 1; i < n1; i++) {
+                    $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                    $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                    if (i == 1) {
+                        //  $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).addClass('disabled');
+                        $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                        $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                    }
+                    else {
+                        if (i == n1 - 1) {
+                            $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+                        }
+                        else {
+                            $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                        }
+                        $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                    }
+                }
+            }
+            else {
+                $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+            }
+        }
+        function sortTable1(n) {
+            var table;
+
+            document.getElementById('headername').value = "sKUBUN";
+
+            table = document.getElementById("kubuntable");
+            var rows, i, x, y, count = 0;
+            var switching = true;
+
+            // Order is set as ascending
+            var direction = "asc";
+
+            // Run loop until no switching is needed
+            while (switching) {
+                switching = false;
+                var rows = table.rows;
+                //Loop to go through all rows
+                for (i = 1; i < (rows.length - 1); i++) {
+                    var Switch = false;
+
+                    // Fetch 2 elements that need to be compared
+                    x = rows[i].getElementsByTagName("TD")[n].children[0].value;
+                    y = rows[i + 1].getElementsByTagName("TD")[n].children[0].value;
+                    alert('x ;' + x + 'y :' + y)
+                    // Check the direction of order
+                    if (direction == "asc") {
+
+                        // Check if 2 rows need to be switched
+                        if (x.toLowerCase() > y.toLowerCase()) {
+                            // If yes, mark Switch as needed and break loop
+                            Switch = true;
+                            break;
+                        }
+                    } else if (direction == "desc") {
+
+                        // Check direction
+                        if (x.toLowerCase() < y.toLowerCase()) {
+                            // If yes, mark Switch as needed and break loop
+                            Switch = true;
+                            break;
+                        }
+                    }
+                }
+                if (Switch) {
+                    // Function to switch rows and mark switch as completed
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+
+                    // Increase count for each switch
+                    count++;
+                } else {
+                    // Run while loop again for descending order
+                    if (count == 0 && direction == "asc") {
+                        direction = "desc";
+                        switching = true;
+                    }
+                }
+            }
+            document.getElementById('sortdir').value = direction;
+            removeOptions(document.getElementById('selectjuban'));
+            var ddl = document.getElementById("selectjuban");
+            var n1 = document.getElementById("kubuntable").rows.length;
+            var row_count = 0;
+            for (var i = 1; i < n1; i++) {
+                var option = document.createElement("OPTION");
+                option.innerHTML = document.getElementById('kubuntable').rows[i].cells[8].children[0].value;
+                option.value = document.getElementById('kubuntable').rows[i].cells[8].children[0].value;
+                ddl.options.add(option);
+            }
+            if (n1 > 2) {
+                for (var i = 1; i < n1; i++) {
+                    $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                    $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                    if (i == 1) {
+                        //  $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).addClass('disabled');
+                        $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                        $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                    }
+                    else {
+                        if (i == n1 - 1) {
+                            $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+                        }
+                        else {
+                            $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                        }
+                        $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                    }
+                }
+            }
+            else {
+                $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+            }
+        }
+        function sortTable(n) {
+            var table,
+                rows,
+                switching,
+                i,
+                x,
+                y,
+                shouldSwitch,
+                dir,
+                switchcount = 0;
+
+            document.getElementById('headername').value = "cKUBUN";
+
+            table = document.getElementById("kubuntable");
+
+            switching = true;
+            //Set the sorting direction to ascending:
+            dir = "asc";
+            /*Make a loop that will continue until
+            no switching has been done:*/
+            while (switching) {
+                //start by saying: no switching is done:
+                switching = false;
+                rows = table.getElementsByTagName("TR");
+                /*Loop through all table rows (except the
+                first, which contains table headers):*/
+                for (i = 1; i < rows.length - 1; i++) { //Change i=0 if you have the header th a separate table.
+                    //start by saying there should be no switching:
+                    shouldSwitch = false;
+                    /*Get the two elements you want to compare,
+                    one from current row and one from the next:*/
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    /*check if the two rows should switch place,
+                    based on the direction, asc or desc:*/
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            //if so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            //if so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    /*If a switch has been marked, make the switch
+                    and mark that a switch has been done:*/
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    //Each time a switch is done, increase this count by 1:
+                    switchcount++;
+                } else {
+                    /*If no switching has been done AND the direction is "asc",
+                    set the direction to "desc" and run the while loop again.*/
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+            document.getElementById('sortdir').value = dir;
+            removeOptions(document.getElementById('selectjuban'));
+            var ddl = document.getElementById("selectjuban");
+            var n1 = document.getElementById("kubuntable").rows.length;
+            var row_count = 0;
+            for (var i = 1; i < n1; i++) {
+
+
+
+                var option = document.createElement("OPTION");
+                option.innerHTML = document.getElementById('kubuntable').rows[i].cells[8].children[0].value;
+                option.value = document.getElementById('kubuntable').rows[i].cells[8].children[0].value;
+                ddl.options.add(option);
+            }
+            if (n1 > 2) {
+                for (var i = 1; i < n1; i++) {
+
+                    $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                    $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                    if (i == 1) {
+                        //  $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).addClass('disabled');
+                        $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                        $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                    }
+                    else {
+                        if (i == n1 - 1) {
+                            $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+                        }
+                        else {
+                            $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', false);
+                        }
+                        $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', false);
+                    }
+                }
+            }
+            else {
+                $(document.getElementById('kubuntable').rows[i].cells[3].children[0]).prop('disabled', true);
+                $(document.getElementById('kubuntable').rows[i].cells[4].children[0]).prop('disabled', true);
+            }
+
+        }
+        function removeOptions(selectElement) {
+            var i, L = selectElement.options.length - 1;
+            for (i = L; i >= 0; i--) {
+                selectElement.remove(i);
+            }
+        }
+    </script>
+    <script>
+        function dele(element) {
+            // var rowjQuery = this.closest('tr').rowIndex;
+            // var rowjQuery = $(this).rowIndex;
+            var id = element.parentNode.parentNode.rowIndex;
+            var delevalue = document.getElementById('kubuntable').rows[id].cells[7].children[0].value;
+            var code = document.getElementById('kubuntable').rows[id].cells[6].children[0].value;
+
+            if (delevalue == "1") {
+                alert("社員マスタに使用されているため、削除できません。")
+                event.preventDefault();
+            }
+            else {
+                document.getElementById('rowindex').value = code;
+
+                if (confirm("削除してもよろしいでしょうか？")) {
+
+                }
+                else {
+                    event.preventDefault();
+
+                }
+
+            }
+            // event.preventDefault();
+
+        }
+    </script>
+
+
+    <script>
+        $('#myModal').modal('hide');
+        function newFunction() {
+            event.preventDefault();
+            document.getElementById('kubun').value = "";
+            $(document.getElementById('kubun')).css('borderColor', '');
+            $('#myModal').modal('show');
+            return false;
+        }
+    </script>
+    <script>
+        $('#save').click(function (event) {
+            var kubunname = document.getElementById('kubun').value;
+            if (kubunname.trim().length > 0) {
+
+            }
+            else {
+                $("#kubun").css("borderColor", "#f3172d");
+                event.preventDefault();
+            }
+        });
+        $('#backBtn').click(function (event) {
+
+            event.preventDefault();
+            $('#myModal').modal('hide');
+        });
+        $('#searchBtn').click(function (event) {
+            /* document.getElementById('searchkubuname').value = document.getElementById('kubunname').value;
+             event.preventDefault();*/
+        });
+        $('#clearBtn').click(function (event) {
+            document.getElementById('kubunname').value = "";
+        });
+        $('#SaveBtn').click(function (event) {
+            var n1 = document.getElementById("kubuntable").rows.length;
+            if (n1 > 1) {
+                var row_count = 0;
+                for (var i = 1; i < n1; i++) {
+                    var kubunname = document.getElementById('kubuntable').rows[i].cells[1].children[0].value;
+                    if (kubunname.trim().length) {
+                        row_count++;
+                    }
+                    if (kubunname.trim().length == 0) {
+                        // $(document.getElementById('kubuntable').rows[i].cells[1].children[0]).css('borderColor', '#f3172d');
+                        $(document.getElementById('kubuntable').rows[i].cells[1].children[0]).css('border', '1px solid #f3172d');
+                    }
+
+                    if (kubunname.trim().length > 0) {
+                        $(document.getElementById('kubuntable').rows[i].cells[1].children[0]).css('border', 'none');
+                    }
+                }
+
+                if (row_count == n1 - 1) {
+
+                }
+                else {
+                    event.preventDefault();
+                }
+            }
+            else {
+                event.preventDefault();
+            }
+        });
+
+
+
+    </script>
+
+</body>

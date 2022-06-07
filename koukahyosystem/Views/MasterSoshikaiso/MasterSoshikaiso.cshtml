@@ -1,0 +1,240 @@
+﻿@model koukahyosystem.Models.MasterSoshikaiso
+
+@{
+    ViewBag.Title = "MasterSoshikaiso";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <style>
+
+        button {
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+        }
+        label{
+            font-weight:normal;
+            margin-right:10px;
+            margin-top:10px;
+            margin-bottom:10px;
+        }
+        .table_div {
+            margin-top: 15px;
+            margin-bottom: 10px;
+            height: 67.5vh;
+            overflow: auto;
+        }
+        .btn_save {
+            width: 70px;
+            height: 35px;
+        }
+        
+        @@media (min-height: 758px) {
+            .table_div {
+                height: 75.8vh;
+                overflow: auto;
+            }
+        }
+    </style>
+    
+</head>
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+        <div id='divElement' class="panel panel-info">
+            @using (Html.BeginForm("MasterSoshikaiso", "MasterSoshikaiso", FormMethod.Post))
+            {
+                <div class="panel-heading" style="background-color: rgb(34, 148, 172); width:100%;text-align:center">
+                    <h4 style="color:white">組織階層名</h4>
+                </div>
+
+                <div class="table_div">
+                    <table align="center" id="kaiso_table">
+                        <tbody >
+                            <tr>
+                                <td>
+                                    <label>第1階層</label>
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(model => model.dai1kaiso,
+                                                  new
+                                                  {
+                                                      @class = "fullwidth_halfwidth",
+                                                      @type = "text",
+                                                      @id = "kaiso_txt1",
+                                                      style = "width:100%",
+                                                      onkeypress = "isSpecialKey(event)",
+                                                      onkeyup = "sum(this)",
+                                                      maxlength ="6"
+                                                  })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>第2階層</label>
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(model => model.dai2kaiso,
+                                                  new
+                                                  {
+                                                      @class = "fullwidth_halfwidth",
+                                                      @type = "text",
+                                                      @id = "kaiso_txt2",
+                                                      style = "width:100%",
+                                                      onkeypress = "isSpecialKey(event)",
+                                                      onkeyup = "sum(this)",
+                                                      maxlength ="6"
+                                                  })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td style="text-align:center">
+                                    <button type="submit" id="btn_hozone" name="btn_hozone" value="hozone" class="button btn_save" autofocus>保存</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    }
+
+    <script src="@Url.Content("~/Scripts/jquery-1.12.4.min.js")"></script>
+
+    <script>
+        
+        function isSpecialKey(event) {
+
+            var regex = new RegExp("^[a-zA-Z0-9_ ]+$");//20210301 18:24
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+
+            if (!regex.test(key)) {
+
+                event.preventDefault();
+                return false;
+            }
+            else {
+
+                return true;
+
+            }
+        }
+
+    </script>
+
+    <script>
+        function sum(e) {
+            var s = document.getElementById("kaiso_txt1").value;
+            
+            var sarray = Array.from(s);
+            
+            var tetlength = 0;
+            var textval = "";
+            var totallength = 0;
+            for (i = 0; i < sarray.length; i++) {
+                var val = sarray[i];
+                var m = encodeURIComponent(val).match(/%[89ABab]/g);
+                tetlength = val.length + (m ? m.length : 0);
+                if (tetlength == 3) {
+                    if (e.key === 'Enter') {
+                        var a_length = tetlength - 1;
+                        totallength = a_length + totallength;
+                    }                                        
+                }
+                else {
+                    totallength = tetlength + totallength;
+                }
+                /*alert('totallength <<' + totallength);*/
+                //var textval = textval.concat(val);
+                //if (totallength > 6) {
+                //    textval = textval.slice(0, -1);
+                //    document.getElementById("kaiso_txt1").value = textval;
+                //    break;
+                //}
+            }
+
+            var s = document.getElementById("kaiso_txt2").value;
+            var sarray = Array.from(s);
+            var tetlength = 0;
+            var textval = "";
+            var totallength = 0;
+            for (i = 0; i < sarray.length; i++) {
+                var val = sarray[i];
+                var m = encodeURIComponent(val).match(/%[89ABab]/g);
+                tetlength = val.length + (m ? m.length : 0);
+                if (tetlength == 3) {
+                    var a_length = tetlength - 1;
+                    totallength = a_length + totallength;
+                }
+                else {
+                    totallength = tetlength + totallength;
+                }
+                /*alert('totallength <<' + totallength);*/
+                //var textval = textval.concat(val);
+                //if (totallength > 6) {
+                //    textval = textval.slice(0, -1);
+                //    document.getElementById("kaiso_txt2").value = textval;
+                //    break;
+                //}
+            }
+        }
+
+        $("#btn_hozone").click(function () {
+            //var n1 = document.getElementById("kaiso_table").rows.length;
+            var save_que_val1 = document.getElementById("kaiso_txt1").value;
+            //save_que_val1 = save_que_val1.replace(/\r?\n?/g, '');
+            save_que_val1 = save_que_val1.replace(/\s+/g, ' ');
+            save_que_val1 = save_que_val1.trim();
+            if (save_que_val1 == "") {
+                document.getElementById("kaiso_txt1").style.border = "1px solid #f3172d";
+                event.preventDefault();
+            }
+            else {
+                    document.getElementById("kaiso_txt1").style.border = "2px solid black";
+            }
+            document.getElementById("kaiso_txt1").value = save_que_val1;
+            var save_que_val2 = document.getElementById("kaiso_txt2").value;
+            //save_que_val2 = save_que_val2.replace(/\r?\n?/g, '');
+            save_que_val2 = save_que_val2.replace(/\s+/g, ' ');
+            save_que_val2 = save_que_val2.trim();
+            if (save_que_val2 == "") {
+                document.getElementById("kaiso_txt2").style.border = "1px solid #f3172d";
+                event.preventDefault();
+            }
+            else {
+                    document.getElementById("kaiso_txt2").style.border = "2px solid black";
+            }
+            document.getElementById("kaiso_txt2").value = save_que_val2;
+        });//20210301 17:00PM
+           
+    </script>
+
+    @*@if (TempData["com_msg"] != null)
+    {
+        <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+        <script>
+            $(document).ready(function(){
+
+                alert('@TempData["com_msg"]');
+            });
+        </script>
+    }*@
+</body>
+</html>
+
+
+
+
+
+
+
+

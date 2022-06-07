@@ -1,0 +1,257 @@
+﻿
+@model koukahyosystem.Models.SaitenModel
+
+@using System.Data
+@{
+    ViewBag.Title = "SaitenkakuninTab";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+
+        .btncss {
+            width: 29px;
+            height: 29px;
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+            width: auto;
+            padding: 5px 10px 5px 10px;
+        }
+
+        .tab-content {
+            height: 76.5vh;
+            overflow: auto;
+        }
+
+        .scroll {
+            border-collapse: separate;
+            border-spacing: 0;
+            table-layout: fixed;
+            border: 0.5px solid #cccccc;
+            /*border: 1px solid black;*/
+        }
+
+            .scroll th, .scroll td {
+                height: 30px;
+                text-align: center;
+                /*border-collapse: separate;
+                border-spacing: 0;*/
+                border: 0.5px solid #cccccc;
+                /*border: 1px solid black;*/
+                /*padding: 0.5rem 1rem;*/
+            }
+
+            /*.scroll th {
+            height: 30px;
+        }*/
+
+
+            .scroll thead th {
+                background-color: rgb(189, 233, 242);
+                /*padding: 3px;*/
+                /*position: -webkit-sticky;*/
+                position: sticky;
+                top: 0;
+                z-index: 2;
+                /*border: 1px solid black;*/
+                /*background-clip: padding-box;*/
+            }
+
+        .first-col {
+            width: 20px;
+            position: sticky;
+            position: -webkit-sticky;
+            left: 0;
+            background-color: #fff;
+            /*border: 1px solid black;*/
+            background-clip: padding-box;
+        }
+
+        .second-col {
+            position: sticky;
+            position: -webkit-sticky;
+            width: auto;
+            min-width: 172px;
+            left: 20px;
+            background-color: #fff;
+            /*border: 1px solid black;*/
+            background-clip: padding-box;
+        }
+
+        .scroll thead th:nth-of-type(1) {
+            background-color: rgb(189, 233, 242);
+            left: 0;
+            z-index: 3;
+            /*border: 1px solid black;*/
+        }
+
+        .scroll thead th:nth-of-type(2) {
+            background-color: rgb(189, 233, 242);
+            left: 20px;
+            z-index: 3;
+            /*border: 1px solid black;*/
+        }
+
+        th {
+            text-align: center;
+        }
+
+        #no {
+            width: 25px;
+            text-align: center;
+        }
+
+        #que {
+            text-align: left;
+        }
+
+        #dai1, #dai2, #dai3, #dai4, #tot {
+            text-align: right;
+            width: 50px;
+        }
+
+        #avg {
+            text-align: right;
+        }
+
+        #que_last {
+            text-align: center;
+        }
+
+        .dp_year {
+            width: 70px;
+            Height: 22px;
+        }
+
+        @@media only screen and (max-width: 576px) {
+
+            .head {
+                text-align: center;
+            }
+        }
+
+        @@media only screen and (max-width: 376px) {
+
+            .head {
+                text-align: center;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+        <div id='divElement' class="panel panel-info">
+            @using (Html.BeginForm("SaitenkakuninTab", "SaitenkakuninTab"))
+            {
+                <div class="panel-heading" style="background-color: rgb(34, 148, 172); width:100%">
+
+                    <div class="row">
+                        <div class="col-sm-5">
+                            @Html.Label("年度", new { style = "color:white;font-weight: normal !important;margin-right:5px;margin-left:15px" })
+                            <button id="btnPrevious" name="btnPrevious" class="btncss" value=@Model.year> < </button>
+                            @Html.DropDownListFor(m => m.year, Model.year_list, new { @id = "year", @class = "dp_year", onchange = "return OnChanged()" })
+                            <button id="btnNext" name="btnNext" class="btncss" value=@Model.year> > </button>
+                            <button id="btnSearch" name="btnSearch" style="visibility:hidden" />
+                        </div>
+                        <div class="col-sm-7 head">
+                            <h4 style="color:white;">採点確認画面</h4>
+                        </div>
+                    </div>
+                </div>
+
+                if (Model.table_allow == true)
+                {
+                    if (Model.saiten_tableList.Count > 0)
+                    {
+                        <div style="margin:10px 10px 10px 10px;overflow:auto" class="tab-content">
+                            <table class="scroll" align="center">
+                                <thead>
+                                    <tr>
+                                        <th id="no" class="sticky-col first-col"></th>
+                                        <th class="sticky-col second-col">質問事項</th>
+                                        <th>第１</th>
+                                        <th>第２</th>
+                                        <th>第３</th>
+                                        <th>第４</th>
+                                        <th>合計</th>
+                                        <th>全社平均</th>
+                                    </tr>
+
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.saiten_tableList.Count - 1; i++)
+                                    {
+                                        <tr>
+                                            <td class="sticky-col first-col">@Model.saiten_tableList[i].no</td>
+                                            <td id="que" class="sticky-col second-col">@Model.saiten_tableList[i].question</td>
+                                            <td id="dai1">
+                                                <input type="text" value="@Model.saiten_tableList[i].jiki1" style="width:47px;border:none;outline:none;" readonly />
+                                                @*@Model.saiten_tableList[i].jiki1*@
+                                            </td>
+                                            <td id="dai2">
+                                                <input type="text" value="@Model.saiten_tableList[i].jiki2" style="width:47px;border:none;outline:none;" readonly />
+                                                @*@Model.saiten_tableList[i].jiki2*@
+                                            </td>
+                                            <td id="dai3">
+                                                <input type="text" value="@Model.saiten_tableList[i].jiki3" style="width:47px;border:none;outline:none;" readonly />
+                                                @*@Model.saiten_tableList[i].jiki3*@
+                                            </td>
+                                            <td id="dai4">
+                                                <input type="text" value="@Model.saiten_tableList[i].jiki4" style="width:47px;border:none;outline:none;" readonly />
+                                                @*@Model.saiten_tableList[i].jiki4*@
+                                            </td>
+                                            <td id="tot">
+                                                <input type="text" value="@Model.saiten_tableList[i].total" style="width:47px;border:none;outline:none;" readonly />
+                                                @*@Model.saiten_tableList[i].total*@
+                                            </td>
+                                            <td id="avg">
+                                                <input type="text" value="@Model.saiten_tableList[i].average" style="width:65px;border:none;outline:none;" readonly />
+                                                @*@Model.saiten_tableList[i].average*@
+                                            </td>
+                                        </tr>
+                                    }
+                                    <tr>
+                                        <td class="sticky-col first-col">@Model.saiten_tableList[Model.saiten_tableList.Count - 1].no</td>
+                                        <td id="que_last" class="sticky-col second-col">@Model.saiten_tableList[Model.saiten_tableList.Count - 1].question</td>
+                                        <td id="dai1">@Model.saiten_tableList[Model.saiten_tableList.Count - 1].jiki1</td>
+                                        <td id="dai2">@Model.saiten_tableList[Model.saiten_tableList.Count - 1].jiki2</td>
+                                        <td id="dai3">@Model.saiten_tableList[Model.saiten_tableList.Count - 1].jiki3</td>
+                                        <td id="dai4">@Model.saiten_tableList[Model.saiten_tableList.Count - 1].jiki4</td>
+                                        <td id="tot">@Model.saiten_tableList[Model.saiten_tableList.Count - 1].total</td>
+                                        <td id="avg">@Model.saiten_tableList[Model.saiten_tableList.Count - 1].average</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    }
+    <script src="@Url.Content("~/Scripts/jquery-1.12.4.min.js")"></script>
+    <script>
+        function myFunction() {
+            $('#btnSearch').click();
+        }
+
+        function OnChanged(evt) {
+            $('#btnSearch').click();
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+

@@ -1,0 +1,398 @@
+﻿@model koukahyosystem.Models.HomeModel
+@{
+    ViewBag.Title = "Home";
+}
+<head>
+    
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <style>
+        .bullet {
+            /*display: list-item;*/
+            list-style-type: disc;
+            list-style-position: inside;
+        }
+
+        .bullet {
+            font-size: 20px;
+        }
+
+        .bs-example {
+            margin: 5px;
+            width: 45%;
+        }
+
+        .rotate {
+            -webkit-transform: rotate(-180deg); /* Chrome, Safari, Opera */
+            -moz-transform: rotate(-180deg); /* Firefox */
+            -ms-transform: rotate(-180deg); /* IE 9 */
+            transform: rotate(-180deg); /* Standard syntax */
+        }
+
+        .button {
+            padding: 5px 5px;
+            text-align: center;
+            color: black;
+            border: none;
+            border-radius: 3px;
+            border: 0.5px solid #555555;
+        }
+
+        .data_tbl thead, th {
+            border: solid 1px;
+            text-align: center;
+        }
+
+        .data_tbl tr, td {
+            border: solid 1px LightSteelBlue;
+            /*text-align: center;*/
+        }
+
+
+        .data_tbl tbody td:first-child {
+            min-width: 70px;
+            max-width: 70px;
+            text-align: left;
+        }
+
+        .data_tbl tbody td:nth-child(2),
+        .data_tbl tbody td:nth-child(3),
+        .data_tbl tbody td:nth-child(4) {
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .data_tbl tbody td:nth-child(5) {
+            width: auto;
+            min-width: 80px;
+            text-align: center;
+        }
+
+
+        .data_tbl_sm td:first-child {
+            text-align: left;
+            background-color: lightblue;
+        }
+
+        .data_tbl_sm tbody td:nth-child(2),
+        .data_tbl_sm tbody td:nth-child(3) {
+            text-align: center;
+        }
+
+        .divtablecss {
+            margin-bottom: 17px;
+        }
+
+        #content-desktop {
+            display: block;
+        }
+
+        #content-mobile {
+            display: none;
+        }
+
+        .mycontent {
+            height: 76vh;
+            overflow: auto;
+        }
+
+        @@media (max-width: 768px) {
+            .bullet {
+                font-size: 13px;
+            }
+
+            #content-desktop {
+                display: none;
+            }
+
+            #content-mobile {
+                display: block;
+            }
+
+            .data_tbl_sm {
+                text-align: center;
+            }
+
+            .bs-example {
+                margin: 5px;
+                width: 90%;
+            }
+
+            .divtablecss {
+                margin: 20px;
+            }
+        }
+
+        @@media (min-height: 758px) {
+            .mycontent {
+                height: 82vh;
+                overflow: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+        <div class="mycontent" >
+            <h style="font-size:20px;font-weight:bold; font-style:normal;font-family:'Times New Roman';">Information</h>
+            <br /><br />
+            @using (Html.BeginForm("Home", "Home", FormMethod.Post))
+            {
+               <input type="submit" value="display" id="Btn_display" name="year_btn" class="button" style="display:none" />
+                @Html.Label("年度", new { style = "color:black;font-weight: normal !important;margin-right:5px;" })
+                <button class="btn btn-link" name="year_btn" value="<" style="width:20px;width:20px;padding-left:5px ;padding-right:20px ;">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </button>
+                @Html.DropDownListFor(m => m.cur_year, Model.YearList, new { @id = "year", style = "width:70px;Height:22px;margin-bottom:4px;", onchange = "SelectedIndexChanged()" })           
+                <button class="btn btn-link" name="year_btn" value=">" style="width:20px;padding-left:5px ;">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </button>
+            }
+
+            <div class="bs-example">
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading" style="background-color:rgb(34, 148, 172)">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" data-target="#collapseOne" id="shukeiBtn" class="bullet" style="color: white;">
+                                    <span class="glyphicon glyphicon-chevron-down" style="margin-right:7px;display:inline-block;color:white">
+                                    </span>集計表
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse" style="overflow:auto;">
+                            <div class="divtablecss">
+                                <div id="content-desktop">
+                                    @* class="modal-content"*@
+                                    <table class="data_tbl" id="DataTable" cellpadding="7" align="center" style="margin:15px;">
+                                        <thead style="background-color:rgb(189, 233, 242);">
+                                            <tr>
+
+                                                <td></td>
+                                                <td>基礎評価</td>
+                                                <td>目標評価</td>
+                                                <td>360度評価</td>
+                                                <td>合計</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.ShukeiList.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>@Model.ShukeiList[i].description</td>
+                                                    <td>@Model.ShukeiList[i].sandankaihyouka</td>
+                                                    <td>@Model.ShukeiList[i].kokahyou</td>
+                                                    <td>@Model.ShukeiList[i].hyouka360</td>
+                                                    <td>@Model.ShukeiList[i].total</td>
+
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div id="content-mobile" style="width: 330px; ">
+                                    @*class="modal-content"*@
+                                    <table class="data_tbl_sm bullet" id="DataTable" cellpadding="7">
+                                        <tbody>
+
+                                            <tr>
+                                                <td></td>
+                                                @for (int i = 0; i < Model.ShukeiList.Count; i++)
+                                                {
+                                                    <td>@Model.ShukeiList[i].description</td>
+                                                }
+                                            </tr>
+                                            <tr>
+                                                <td>基礎評価</td>
+                                                @for (int i = 0; i < Model.ShukeiList.Count; i++)
+                                                {
+                                                    <td>@Model.ShukeiList[i].sandankaihyouka</td>
+
+                                                }
+                                            </tr>
+                                            <tr>
+                                                <td>目標評価</td>
+                                                @for (int i = 0; i < Model.ShukeiList.Count; i++)
+                                                {
+                                                    <td>@Model.ShukeiList[i].kokahyou</td>
+                                                }
+                                            </tr>
+                                            <tr>
+                                                <td>360度評価</td>
+                                                @for (int i = 0; i < Model.ShukeiList.Count; i++)
+                                                {
+                                                    <td>@Model.ShukeiList[i].hyouka360</td>
+                                                }
+                                            </tr>
+                                            <tr>
+                                                <td>合計</td>
+                                                @for (int i = 0; i < Model.ShukeiList.Count; i++)
+                                                {
+                                                    <td>@Model.ShukeiList[i].total</td>
+                                                }
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+
+            @if (Model.tema_info != "" && Model.tema_info != null)
+            {
+                <h class='bullet' style=" font-style:normal;font-family:'Times New Roman';">
+                    <a href="#">
+                        <span class="glyphicon glyphicon-info-sign"></span>
+                    </a>
+                    @Model.tema_info@Html.ActionLink("ページへ", "TemaKakunin", "KoukaTema", new { id = "infolink" }, htmlAttributes: null)
+                </h>
+
+                <br />
+            }
+
+            @if (Model.jishi_info != "" && Model.jishi_info != null)
+            {
+                <h class='bullet' style=" font-style:normal;font-family:'Times New Roman';">
+                    <a href="#">
+                        <span class="glyphicon glyphicon-info-sign"></span>
+                    </a>
+                    @Model.jishi_info @Html.ActionLink("ページへ", "TaskKuakunin", "JyuyouTask", new { id = "infolink" }, htmlAttributes: null)
+
+                </h>
+
+                <br />
+            }
+            @if (Model.kiso_info != "" && Model.kiso_info != null)
+            {
+                <h class='bullet' style=" font-style:normal;font-family:'Times New Roman';">
+                    <a href="#">
+                        <span class="glyphicon glyphicon-info-sign"></span>
+                    </a>
+                    @Model.kiso_info@Html.ActionLink("ページへ", "KisohyoukaLeader", "Kisohyouka", new { id = "infolink" }, htmlAttributes: null)
+                </h>
+                <br />
+            }
+            @if (Model.hyouka360_info != "" && Model.hyouka360_info != null)
+            {
+                <h class='bullet' style=" font-style:normal;font-family:'Times New Roman';">
+                    <a href="#">
+                        <span class="glyphicon glyphicon-info-sign"></span>
+                    </a>
+                    @if (!Model.fhyouka)
+                    {
+                        @Model.hyouka360_info
+                    }
+                    else
+                    {
+                        @Model.hyouka360_info@Html.ActionLink("ページへ", "HyoukaSaitem", "HyoukaSaitem", new { id = "infolink" }, htmlAttributes: null)
+                    }
+                </h>
+                <br />
+            }
+
+            @if (Model.mazokudo_info != "" && Model.mazokudo_info != null)
+            {
+                <h class='bullet' style=" font-style:normal;font-family:'Times New Roman';">
+                    <a href="#">
+                        <span class="glyphicon glyphicon-info-sign"></span>
+                    </a>
+                    @Model.mazokudo_info@Html.ActionLink("ページへ", "Manzokudochousa", "Manzokudochousa", new { id = "infolink" }, htmlAttributes: null)
+                </h>
+
+                <br />
+            }
+            @if (Model.oneonone_info != "" && Model.oneonone_info != null)
+            {
+                <h class='bullet' style=" font-style:normal;font-family:'Times New Roman';">
+                    <a href="#">
+                        <span class="glyphicon glyphicon-info-sign"></span>
+                    </a>
+                    @Model.oneonone_info@Html.ActionLink("ページへ", "OneOnOneKakunin", "OneOnOne", new { id = "infolink" }, htmlAttributes: null)
+                </h>
+
+                <br />
+            }
+        </div>
+
+    }
+    <br />
+    <br />
+    <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+    <script>
+        $(document).ready(function () {
+            // Add minus icon for collapse element which is open by default
+            $(".collapse.in").each(function () {
+                $(this)
+                    .siblings(".panel-heading")
+                    .find(".glyphicon")
+                    .addClass("rotate");
+            });
+
+            // Toggle plus minus icon on show hide of collapse element
+            $(".collapse")
+                .on("show.bs.collapse", function () {
+                    $(this)
+                        .parent()
+                        .find(".glyphicon")
+                        .addClass("rotate");
+                })
+                .on("hide.bs.collapse", function () {
+                    $(this)
+                        .parent()
+                        .find(".glyphicon")
+                        .removeClass("rotate");
+                });
+        });
+
+    </script>
+    <script>
+            $(document).ready(function () {
+
+                var value = '@Session["fshukei"]';
+
+
+                if (value === "False") {
+                    $('.collapse').collapse("hide");
+                }
+                else {
+                    $('.collapse').collapse("show");
+                }
+
+                //set session value
+                $("#shukeiBtn").on("click", function () {
+
+                    var value = '@Session["fshukei"]';
+                    var shukeiVal = '';
+                    if (value === "False") {
+                        shukeiVal = true;
+                    }
+                    else {
+                        shukeiVal = false;
+                    }
+
+                    $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("ShukeiHyou", "Home")',
+                    data: '{fshukeival: ' + JSON.stringify(shukeiVal) + '}',
+                    async: false,
+                    contentType: 'application/json',
+                    success: function (res) {
+
+                    },
+                    error: function (msg) {
+                        alert(msg.responseText);
+                    }
+                });
+                });
+        });
+        function SelectedIndexChanged() {
+            $('#Btn_display').click();
+        }
+    </script>
+</body>

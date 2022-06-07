@@ -1,0 +1,376 @@
+﻿@*@model IEnumerable<koukahyosystem.Models.ChousIrai>
+
+    @{
+        ViewBag.Title = "ChousIrai";
+    }*@
+@model koukahyosystem.Models.ChousIrai
+@using System.Data
+@{
+    ViewBag.Title = "ChousIrai";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<html>
+<head>
+    <style>
+        .btncss {
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+        }
+        .mycontent {
+            height: 58.5vh;
+            overflow: auto;
+        }
+        .ajax-loader {
+            visibility: hidden;
+            width: 100%;
+            height: 100%;
+        }
+
+            .ajax-loader img {
+                position: relative;
+            }
+
+        .row {
+            text-align: center; /* for horizontal alignment */
+        }
+        .manzou_table {
+            border-collapse: separate;
+            border-spacing: 0;
+            table-layout: fixed;
+            width:210px;
+        }
+        .manzou_table thead th {
+            border: 1px solid white;
+            text-align: center;
+            background-color: #C1ECFA;
+        }
+
+        .manzou_table tbody tr td {
+            border: 1px solid white;
+        }
+        table.manzou_table tr:nth-child(even) th,
+        table.manzou_table tr:nth-child(even) td{
+            background-color: #C1ECFA;
+        }
+        @@media only screen and (max-width: 376px) {
+            .div2{
+                margin-left:0px;
+                margin-top:7px;
+            }
+        }
+    </style>
+</head>
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+        using (Html.BeginForm("ChousIrai", "ChousaIrai", FormMethod.Post))
+        {
+            <div id='divElement' class="panel panel-info" align="center">
+                <input type="hidden" id="newsaveflag" name="newsaveflag" value="@Model.checkquest" />
+                <input type="submit" value="display" name="year_btn" class="button" style="display:none" />
+                <div class="panel-heading" style="background-color: rgb(34, 148, 172); width:100%" align="center">
+                    <div class="row">
+                        @*<div class="col-sm-12 ">*@
+                        <h4 style="color:white ; display: inline-block;">社員満足度調査依頼</h4>
+                        @*</div>*@
+                    </div>
+                </div>
+                <div class="row" style="margin: 10px;" align="center">
+                    <div class="col-sm-6 div1">
+
+                        @Html.Label("年度", new { style = "color:black;font-weight: normal !important;margin-right:5px;" })
+
+                        @Html.TextBoxFor(model => model.RequestDate, new { @id = "txttoday", @tabindex = "-1", @type = "text", style = "width:55px;text-align:right;", @readonly = "readonly" })
+
+                        &nbsp; &nbsp;
+                        @Html.Label("回数", new { style = "color:black;font-weight: normal !important;margin-right:5px;" })
+
+                        @Html.TextBoxFor(model => model.jiki, new { @id = "txtjiki", @tabindex = "-1", @type = "text", style = "width:25px;text-align:right;", @readonly = "readonly" })
+
+                       
+                    </div>
+                    <div class="col-sm-12 div2">
+
+                        <button class="btncss" type='submit' id="show" name="show" value="依頼" style="text-align:center; width:60px; height:40px;margin-left:20px " autofocus>依頼</button>
+
+                    </div>
+                </div>
+                <div class="mycontent" style="margin-top:10px;overflow:auto;">
+                    <table id="manzou_table" cellpadding="7" class="manzou_table" align="center">
+                        @if (Model.ChousaList.Count > 0)
+                        {
+                            <thead>
+                                <tr>
+                                    <th class="th_no" style="width:auto;">No.</th>
+                                    <th class="th_mei" style="width:100px;">社員名</th>
+
+                                    <th class="th_blank2" style="width:auto;">
+                                        @Html.Label(Model.c_kaisu ?? "", new { @id = "txt_kaisu", @class = "", @readonly = "readonly", style = "width:100%;border:none!important;background-color:transparent;font-weight:bold;text-align:center;border:0px solid white;" })
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @for (int i = 0; i < Model.ChousaList.Count; i++)
+                                {
+                                    var idx = i + 1;
+                                    <tr>
+                                        <td style="text-align:center;">
+                                            @idx
+                                        </td>
+                                        <td class="" style="width:90px;max-width:80px;">
+                                            @Model.ChousaList[i].c_name
+                                            @*@Html.TextBoxFor(model => model.ChousaList[i].c_name, new { @id = "txt_name" + idx, @class = "number_textbox", @readonly = "readonly", style = "width:100%;border:none!important;background-color:transparent;overflow: hidden;word-wrap:break-word;" })*@
+                                        </td>
+
+                                        @if (Model.ChousaList[i].c_kanji == "済")
+                                        {
+                                            <td>
+                                                @Html.TextBoxFor(model => model.ChousaList[i].c_kanji, new { @id = "txt_kanji" + idx, @class = "", @readonly = "readonly", style = "width:100%;border:none!important;background-color:transparent;text-align:center;" })
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        }
+                        
+                    </table>
+                </div>
+            </div>
+
+            <div id='loader' style='display: none; ' align="center">
+                <img src="@Url.Content("~/Img/pic/tenor.gif")" class="img-responsive" />
+            </div>
+        }
+    }
+    @*<script src=@Url.Content("//code.jquery.com/jquery-1.12.4.js")></script>
+    <script src=@Url.Content("//code.jquery.com/ui/1.12.4/jquery-ui.js")></script>*@
+    <script src=@Url.Content("~/Scripts/jquery-1.12.4.js")></script>
+    <script src=@Url.Content("~/Scripts/jquery-ui-1.10.4.js")></script>
+    <script>
+        function isSpecialKey(event) {
+
+            var regex = new RegExp("^[0-9]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+
+                event.preventDefault();
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+
+
+    </script>
+    @if (TempData["com_msg"] != null)
+    {
+        <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+        <script>
+            $(document).ready(function () {
+                    var jikiname = document.getElementById('txtjiki').value;
+                    var year = document.getElementById('txttoday').value;
+                var flag = document.getElementById('newsaveflag').value;
+                var flag_kijun =@Model.checkkijun;
+                alert(flag_kijun)
+                if (flag_kijun == "1") {
+                     if (flag == "1") {
+                    var itemlist = JSON.stringify({ 'jikiname': jikiname, 'year': year });
+                    $.ajax({
+                    contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        type: "POST",
+                        url: '@Url.Action("save", "ChousaIrai")',
+                        data: itemlist
+                    }).done(function (result) {
+                        if (result == "yes") {
+                            if (confirm("前満足度調査をまだ評価してない社員があります。メールも送信できませんが、新しい依頼してよろしいでしょうか？")) {
+                                $.ajax({
+                                contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    type: "POST",
+                                    url: '@Url.Action("fsave", "ChousaIrai")',
+                                    data: itemlist,
+                                }).done(function (result) {
+                                    if (result == "yes") {
+                                        alert("依頼しました。")
+                                        var jcount = document.getElementById('txtjiki').value;
+                                        if (jcount != "4") {
+                                            jcount++
+                                            document.getElementById('txtjiki').value = jcount;
+                                            
+                                        }
+                                        window.location = '@Url.Action("ChousIrai", "ChousaIrai")';
+                                    }
+                                }).fail(function (response) {
+                                    alert('Error: ' + response);
+                                });
+                            }
+                            else {
+                                window.location = '@Url.Action("ChousIrai", "ChousaIrai")';
+                            }
+                        }
+
+                        if (result == "cancel") {
+                            if (confirm("メールは送信できませんが、新しい依頼してよろしいでしょうか？")) {
+                                $.ajax({
+                                contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    type: "POST",
+                                    url: '@Url.Action("fsave", "ChousaIrai")',
+                                    data: itemlist,
+                                }).done(function (result) {
+                                    if (result == "yes") {
+                                        alert("依頼しました。")
+                                        var jcount = document.getElementById('txtjiki').value;
+                                        if (jcount != "4") {
+                                            jcount++
+                                            document.getElementById('txtjiki').value = jcount;
+                                            
+                                        }
+                                          window.location = '@Url.Action("ChousIrai", "ChousaIrai")';
+                                    }
+                                }).fail(function (response) {
+                                    alert('Error: ' + response);
+                                });
+                            }
+                            else {
+                                window.location = '@Url.Action("ChousIrai", "ChousaIrai")';
+                            }
+                        }
+                    }).fail(function (response) {
+                        alert('Error: ' + response);
+                    });
+                }
+                else {
+                    alert("満足度調査設問マスタを入力してください。")
+                }
+                }
+                else {
+                    alert("満足度評価基準マスタを入力してください。")
+                }
+               
+            });
+        </script>
+
+    }
+
+    @if (TempData["check_msg"] != null)
+    {
+        <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+        <script>
+            $(document).ready(function () {
+                var jikiname = document.getElementById('txtjiki').value;
+                var year = document.getElementById('txttoday').value;
+                var flag = document.getElementById('newsaveflag').value;
+                var flag_kijun =@Model.checkkijun;
+                if (flag_kijun == "1") {
+                      if (flag == "1") {
+                    var itemlist = JSON.stringify({ 'jikiname': jikiname, 'year': year });
+                          $.ajax({
+                              contentType: "application/json; charset=utf-8",
+                              dataType: "json",
+                              type: "POST",
+                              url: '@Url.Action("save", "ChousaIrai")',
+                              data: itemlist
+                    }).done(function (result) {
+                        if (result == "yes") {
+                            $('#divElement').show();
+                            $("#loader").hide();
+                            if (confirm("前満足度調査をまだ評価してない社員がありますが、新しい依頼してよろしいでしょうか？")) {
+                                $.ajax({
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    type: "POST",
+                                    url: '@Url.Action("fsave", "ChousaIrai")',
+                                    data: itemlist,
+                                    beforeSend: function () {
+                                        $('#divElement').hide();
+                                        $("#loader").show();
+                                    },
+                                    complete: function (data) {
+                                        $('#divElement').show();
+                                        $("#loader").hide();
+                                        
+                                    }
+                                }).done(function (result) {
+                                    if (result == "yes") {
+                                        alert("依頼しました。")
+                                        var jcount = document.getElementById('txtjiki').value;
+                                        if (jcount != "4") {
+                                            jcount++
+                                            document.getElementById('txtjiki').value = jcount;
+                                            
+                                            //var n1 = document.getElementById("manzou_table").rows.length;
+                                        }
+                                            window.location = '@Url.Action("ChousIrai", "ChousaIrai")';
+                                    }
+                                }).fail(function (response) {
+                                    alert('Error: ' + response);
+                                });
+                            }
+                            else {
+                                window.location = '@Url.Action("ChousIrai", "ChousaIrai")';
+                            }
+                        }
+
+                        if (result == "cancel") {
+                            $('#divElement').show();
+                            $("#loader").hide();
+                            $.ajax({
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                type: "POST",
+                                url: '@Url.Action("fsave", "ChousaIrai")',
+                                data: itemlist,
+                                beforeSend: function () {
+                                    $('#divElement').hide();
+                                    $("#loader").show();
+                                },
+                                complete: function (data) {
+                                    $('#divElement').show();
+                                    $("#loader").hide();
+                                }
+                            }).done(function (result) {
+                                if (result == "yes") {
+                                    alert("依頼しました。")
+                                    var jcount = document.getElementById('txtjiki').value;
+                                    if (jcount != "4") {
+                                        jcount++
+                                        document.getElementById('txtjiki').value = jcount;
+                                        
+                                    }
+                                    window.location = '@Url.Action("ChousIrai", "ChousaIrai")';
+                                }
+                            }).fail(function (response) {
+                                alert('Error: ' + response);
+                            });
+                        }
+                    }).fail(function (response) {
+                        alert('Error: ' + response);
+                    });
+                }
+                else {
+                    alert("満足度調査設問マスタを入力してください。")
+                }
+                }
+                else {
+                    alert("満足度評価基準マスタを入力してください。")
+                }
+              
+            });
+        </script>
+    }
+</body>
+</html>
+

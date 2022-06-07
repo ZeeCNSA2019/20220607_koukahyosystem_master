@@ -1,0 +1,260 @@
+﻿@model koukahyosystem.Models.MasterManzokudoModel
+@{
+    ViewBag.Title = "MasterManzokudo_Copy";
+}
+
+<html>
+
+<head>
+    <style>
+        .button {
+            padding: 5px 10px;
+            text-align: center;
+            color: black;
+            border: none;
+            border-radius: 3px;
+            border: 0.5px solid #555555;
+            height: 35px;
+        }
+
+        #btn_cp_Next, #btn_cp_Previous, #btn_back_copied {
+            padding: 5px 10px;
+            text-align: center;
+            color: black;
+            border: none;
+            border-radius: 3px;
+            border: 0.5px solid #555555;
+            height: 35px;
+        }
+
+        .button:hover {
+            background-color: lightblue
+        }
+
+        .button:active {
+            background-color: lightblue;
+            transform: translateY(4px);
+        }
+
+
+        table#copy_dt tr:nth-child(even) {
+            background-color: #C1ECFA;
+        }
+
+       
+        .div_copy_back {
+            float: right;
+            margin-right: 5px;
+            display: inline-block;
+        }
+
+        .div_year {
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        
+
+      
+
+        .copy_dtcontent {
+            height: 58.5vh;
+            overflow: auto;
+        }
+
+        #copy_dt thead th {
+            text-align: center;
+            height: 30px;
+            background-color: #C1ECFA;
+        }
+
+        #copy_dt {
+            border-collapse: separate;
+            border: 0.5px solid #cccccc;
+        }
+
+            #copy_dt td {
+                border: 0.5px solid #cccccc;
+            }
+
+
+            #copy_dt thead th {
+                position: sticky;
+                top: 0;
+                z-index: 3;
+                background-color: rgb(189, 233, 242);
+                border: 1px solid #cccccc !important;
+            }
+
+        @@media only screen and (max-width: 768px) {
+        }
+
+        @@media (min-height: 758px) {
+            .mycontent {
+                height: 69.8vh;
+                overflow: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id='div_main' class="panel panel-info" style="overflow:auto;">
+        @using (Html.BeginForm("MasterManzokudo_Copy", "MasterManzokudo", FormMethod.Post))
+        {
+            <div class="panel-heading text-center" style="background-color: rgb(34, 148, 172); width:100%;">
+                <div class="container">
+                    <h4 style="color:white">満足度調査設問 コピー画面</h4>
+                </div>
+            </div>
+            <div class="row" style="margin:10px;" align="left">
+                <div class="div_year">
+                    @Html.Label("年度", new { style = "color:black;font-weight: normal !important;" })
+                    <button id="btn_cp_Previous" name="btn_cp_Previous" value=@Model.m_copy_Year style="width:29px;height:29px;"> < </button>
+                    @Html.DropDownListFor(m => m.m_copy_Year, Model.m_copy_yearList, new
+                    {
+                        @id = "selectyear",
+                        @autofocus = true,
+                        style = "width:60px;Height:22px;",
+                        onchange = "return OnChangedCopyYear()"
+                    })
+                    <button id="btn_cp_Next" name="btn_cp_Next" value=@Model.m_copy_Year style="width:29px;height:29px;margin-right:15px;"> > </button>
+                </div>
+                <div style="display:inline-block;" class="div_copy_back">
+                    <button type="submit" id="btn_copied" name="btn_copied" class="button">コピー</button>
+                    <button type="submit" id="btn_back_copied" name="btn_back_copied" style="margin-left:15px">戻る</button>
+                </div>
+              
+            </div>
+            <div class="container" style="margin-top:10px;">
+
+                <table align="center" style="width:690px">
+                    <tbody>
+                        <tr style="">
+                            <td align="left" style="">
+                                @Html.Label(Model.main_Year + "年度にコピーする", new { style = "color:black;font-weight: normal !important;" })
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="overflow:auto;" class="copy_dtcontent">
+                    <table id="copy_dt" cellpadding="5" align="center">
+                        <thead style="background-color: #C1ECFA;">
+                            <tr>
+                                <th style="text-align:center; width:35px;min-width:35px;">
+                                    <input id="headerchk" type="checkbox" name="headerchk" />
+                                </th>
+                                <th style="text-align:center; width:60px;min-width:60px;">コード</th>
+                                <th style="text-align:center; width:550px;min-width:170px;">設問</th>
+                                <th style="display:none"></th>
+                                <th style="display:none"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.manzo_copy_list.Count; i++)
+                            {
+                                var rowid = i + 1;
+                                <tr>
+                                    <td style="width:35px">
+                                        @Html.CheckBoxFor(model => model.manzo_copy_list[i].fcopy, new { style = "width:35px; " })
+                                    </td>
+                                    <td style="width:60px;max-width:100%;" class="first-col">@Model.manzo_copy_list[i].q_copy_code</td>
+                                    <td class="second-col" style="width:550px;min-width:170px;">
+                                        @Model.manzo_copy_list[i].q_copy_name
+                                    </td>
+                                    <td style="display:none"> @Html.HiddenFor(model => model.manzo_copy_list[i].q_copy_name, new { style = " " })</td>
+                                    <td style="display:none"> @Html.HiddenFor(model => model.manzo_copy_list[i].q_copy_nyuroku, new { style = " " })</td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <input type="hidden" id="rowindex" name="rowindex" value="" />
+                @Html.HiddenFor(model => Model.main_Year, new { style = " " })
+                @Html.HiddenFor(model => Model.sort, new { style = " " })
+                @Html.HiddenFor(model => Model.headername, new { style = " " })
+                @Html.HiddenFor(model => Model.manzo_searchname, new { style = " " })
+                @Html.HiddenFor(model => Model.qname, new { style = " " })
+                @Html.HiddenFor(model => Model.kaizenname, new { style = " " })
+                <button id="Copy_DropdownYear" name="Copy_DropdownYear" value="select" style="position: absolute; visibility:hidden">OK</button>
+            </div>
+        }
+    </div>
+    <script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+    <script src="@Url.Content("~/Scripts/jquery-1.12.4.min.js")"></script>
+    <script>
+        $(document).ready(function () {
+            $('#copy_dt > tbody').on('click', 'tr', function (event) {
+                var chk = $(this).closest("tr").find("input:checkbox").get(0);
+                if (event.target != chk) {
+                    chk.checked = !chk.checked;
+                }
+
+            });
+            $('#copy_dt > thead').on('click', 'tr:first', function (event) {
+                var table = document.getElementById("copy_dt");
+                var chk = $(this).closest("tr").find("input:checkbox").get(0);
+
+                if (event.target != chk) {
+                    chk.checked = !chk.checked;
+                }
+                var flagchk = document.getElementById('headerchk').checked;
+                if (flagchk == true) {
+
+                    for (var i = 1; i < table.rows.length; i++) {
+                        document.getElementById('copy_dt').rows[i].cells[0].children[0].checked = true;
+                    }
+                } else {
+                    for (var i = 1; i < table.rows.length; i++) {
+                        document.getElementById('copy_dt').rows[i].cells[0].children[0].checked = false;
+                    }
+                }
+
+
+            });
+        });
+    </script>
+    <script>
+         $('#btn_copied').click(function (event) {
+            var chk_count = 0;
+            var qcount = 0;
+           qcount = '@Session["kcount"]';
+
+            var table = document.getElementById("copy_dt");
+            var headerchk = document.getElementById('headerchk').checked;
+            for (var i = 1; i < table.rows.length; i++){
+                var result = document.getElementById('copy_dt').rows[i].cells[0].children[0].checked;
+                if (result == true) {
+                    chk_count++;
+                    qcount++;
+                }
+            }
+            if (chk_count > 0 || headerchk == true) {
+                if (qcount > 100) {
+                    if (confirm("設問100件以上になるため一部コピーできませんでした。コピーしてよろしいでしょうか？")) {
+
+                    }
+                    else {
+                        event.preventDefault();
+
+                    }
+
+                }
+                else {
+
+                }
+            }
+            else{
+
+                event.preventDefault();
+            }
+
+
+        });
+        function OnChangedCopyYear(evt) {
+            $('#Copy_DropdownYear').click();
+        }
+    </script>
+</body>
+</html>

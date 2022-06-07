@@ -1,0 +1,1322 @@
+﻿@*/*
+    * 作成者　: テテ
+    * 日付：20201215
+    * 機能　：考課テーマ画面,考課テーマ確定画面
+    * 作成したパラメータ：Session["LoginName"] ,TempData["com_msg"]
+    *変更　：　20201120　ナン
+    */*@
+@model koukahyosystem.Models.KoukaTemaModel
+@{
+    ViewBag.Title = "TemaNyuuryoku";
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+
+        .btncss {
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border: 0.5px solid #555555;
+            border-radius: 4px;
+            width: auto;
+            padding: 5px 10px 5px 10px;
+        }
+
+        .div_date {
+            display: inline-block;
+            margin-bottom:5px;
+        }
+
+        .div_haitentensuu {
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .div_buttons {
+            display: inline-block;
+            float: right;
+            margin-bottom: 5px;
+        }
+
+        .lbl_year {
+            margin-left: 25px;
+            margin-right: 5px;
+            font-weight: normal;
+        }
+
+        .btn_year {
+            width: 29px;
+            height: 29px;
+        }
+
+        .div_lbl_haiten {
+            font-weight: normal;
+            margin-left: 25px;
+            margin-right: 5px;
+        }
+
+        .div_lbl_tensuu {
+            font-weight: normal;
+            margin-left: 25px;
+            margin-right: 5px;
+        }
+
+        .lbl_leader_kakutei {
+            display: block;
+            font-size: 12px;
+            font-weight: normal;
+            text-align: right;
+        }
+
+        .lbl_haiten {
+            display: block;
+            font-weight: normal;
+            margin-bottom: 0px;
+            text-align: center;
+        }
+
+        .lbl_tensuu {
+            display: block;
+            font-weight: normal;
+            margin-bottom: 0px;
+            text-align: center;
+        }
+
+        .btn_hozone {
+            background-color: #9dccf1;
+            /*width: 70px;*/
+            height: 35px;
+            text-align: center;
+        }
+
+        .btn_kakutei {
+            height: 35px;
+            margin-left: 5px;
+            margin-right: 25px;
+            text-align: center;
+        }
+
+        .text_area1 {
+            width: 100%;
+            height: 36px;
+            max-width: 100%;
+            border-radius: 5px;
+            border-radius: 5px;
+            padding: 2px;
+            border-color: lightgray;
+            border-style: inset;
+            border-left-color: ghostwhite;
+            border-top-color: ghostwhite;
+        }
+
+        .text_area2 {
+            width: 100%;
+            height: 87px;
+            max-width: 100%;
+            border-radius: 5px;
+            border-radius: 5px;
+            padding: 2px;
+            border-color: lightgray;
+            border-style: inset;
+            border-left-color: ghostwhite;
+            border-top-color: ghostwhite;
+        }
+
+        .txtbox_haiten {
+            width: 60px;
+            text-align: right;
+            border-radius: 5px;
+            border-radius: 5px;
+            padding: 2px;
+            border-color: lightgray;
+            border-style: inset;
+            border-left-color: ghostwhite;
+            border-top-color: ghostwhite;
+        }
+
+        .txt_tasseiritsu {
+            width: 80px;
+            text-align: right;
+            border-radius: 5px;
+            border-radius: 5px;
+            padding: 2px;
+            border-color: lightgray;
+            border-style: inset;
+            border-left-color: ghostwhite;
+            border-top-color: ghostwhite;
+        }
+
+        .txtbox_tensuu {
+            width: 90px;
+            text-align: right;
+            border-radius: 5px;
+            border-radius: 5px;
+            padding: 2px;
+            border-color: lightgray;
+            border-style: inset;
+            border-left-color: ghostwhite;
+            border-top-color: ghostwhite;
+        }
+    </style>
+    <style>
+        @@media only screen and (max-width: 768px) {
+            /*.div_buttons {
+                float: unset;
+            }*/
+            .btn_hozone {
+                margin-left: 25px;
+            }
+
+            .lbl_leader_kakutei {
+                text-align: left;
+            }
+
+            .text_area1 {
+                height: auto;
+            }
+        }
+        @@media only screen and (max-width: 576px) {
+            /*.div_date {
+                display: block;
+            }*/
+            .div_buttons {
+                float: unset;
+            }
+
+            .btn_hozone {
+                margin-left: 25px;
+            }
+
+            .lbl_leader_kakutei {
+                text-align: left;
+            }
+
+            .text_area1 {
+                height: auto;
+            }
+            /*.div_lbl_haiten{
+                margin-left:10px;
+            }
+            .div_lbl_tensuu {
+                margin-left: 10px;
+            }*/
+        }
+        @@media only screen and (max-width: 376px) {
+            /*.div_date {
+                display: block;
+            }*/
+            .div_buttons {
+                float: unset;
+            }
+
+            .btn_hozone {
+                margin-left: 25px;
+            }
+
+            .lbl_leader_kakutei {
+                text-align: left;
+            }
+
+            .text_area1 {
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+
+        <div id='divElement' class="panel panel-info">
+
+            @using (Html.BeginForm("TemaNyuuryoku", "KoukaTema"))
+            {
+                <div class="panel-heading text-center" style="background-color: rgb(34, 148, 172); width:100%;">
+                    <div class="container">
+                        <h4 style="color:white">目標設定（100%の力で70%達成できる目標を作る。）</h4>
+                    </div>
+                </div>
+                <div style="margin-top:10px ">
+
+                    <div class="div_date">
+                        <label class="lbl_year">年度</label>
+                        <button id="btnPrevious" name="btnPrevious" value=@Model.year class="btncss btn_year"> < </button>
+                        @Html.DropDownListFor(m => m.year, Model.yearList, new { @id = "year", style = "width:70px;Height:22px;", onchange = "return OnChanged()" })
+                        <button id="btnNext" name="btnNext" value=@Model.year class="btncss btn_year"> > </button>
+                        <button id="btnSearch" name="btnSearch" value="add" style="position: absolute; visibility:hidden">add</button>
+
+                    </div>
+                    <div class="div_haitentensuu">
+
+                        <label class="div_lbl_haiten">配点</label>
+                        @Html.Label(TempData["master_haiten"].ToString(), new { id = "master_haiten", style = "color:black;font-weight: normal !important;margin-left:5px;" })
+
+                        @if (Model.tensuu_hide == false)
+                        {
+                            <label class="div_lbl_tensuu">点数</label>
+                            @Html.Label(TempData["tensuu"].ToString(), new { style = "color:black;font-weight: normal !important;margin-left:5px;" })
+                        }
+
+                        @*@Html.TextBoxFor(model => model.shain_name, new { @id = "txt_shainName", style = "width:0px;text-align:center;visibility:hidden" })*@
+
+                    </div>
+                    <div class="div_buttons">
+
+                        <button type="submit" id="btn_hozone" name="btn_hozone" value="hozone" class="btncss btn_hozone" autofocus>一時保存</button>
+
+                        <button type="submit" id="btn_kakutei" name="btn_kakutei" value="kakutei" class="btncss btn_kakutei"></button>
+
+                    </div>
+                </div>
+                <div class="container" style="margin-top:10px;overflow:auto">
+                    <div>
+                        <table id="tema_table" @*class="scroll"*@ style="width:800px" cellpadding="3" align="center">
+
+                            <tbody>
+                                <tr>
+                                    <td colspan="2"></td>
+                                    <td style="width:70px">
+                                        @if (Model.lbl_kakutei == true)
+                                        {
+                                            <label class="lbl_haiten">配点</label>
+                                        }
+                                        else
+                                        {
+                                            <label class="lbl_haiten">希望配点</label>
+                                        }
+                                    </td>
+                                    @if (Model.chk_saitenhouhou == "mokuhyou")
+                                    {
+                                        <td width="90px">
+                                            <label class="lbl_tensuu">達成率(％)</label>
+                                        </td>
+                                    }
+                                        <td width="90px">
+                                            <label class="lbl_tensuu">得点</label>
+                                        </td>
+                                    </tr>
+                                <tr class="no1">
+                                    @if (Model.tema_no1_enable == false)
+                                    {
+                                        <td rowspan="2">
+                                            <button type="submit" id="temaNumber_1" name="temaNumber_1" value="temaNumber_1" disabled style="border:none;background-color:white;color:#428bca" class="btncss">1</button>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td rowspan="2">
+                                            <button type="submit" id="temaNumber_1" name="temaNumber_1" value="temaNumber_1" style="border:none;background-color:white;color:#428bca" class="btncss">1</button>
+                                        </td>
+                                    }
+                                    <td>
+                                        @Html.TextAreaFor(model => model.tema_tableList[0].tema_name_value, new { @class = "text_area1", id = "1temaNameArea", placeholder = "目標１", rows = "5", cols = "30", maxlength = 30, style = "width: 100%;max-width: 100%;min-width: 120px;" })
+                                    </td>
+                                    <td>
+                                        @if (Model.haiten_disable_1 == true)
+                                        {
+                                            @Html.TextBoxFor(model => model.tema_tableList[0].haiten, new { @id = "1haiten", @onkeypress = "return isSpecialKey(event)", @class = "txtbox_haiten", placeholder = "配点", maxlength = 4, @readonly = "readonly" })
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBoxFor(model => model.tema_tableList[0].haiten, new { @id = "1haiten", @onkeypress = "return isSpecialKey(event)", oninput = "numberFunction_1()", @class = "txtbox_haiten", placeholder = "配点", maxlength = 4 })
+                                        }
+                                    </td>
+                                    
+                                    @if (Model.chk_saitenhouhou == "mokuhyou")
+                                    {
+                                        <td>
+                                            @Html.TextBoxFor(model => model.tema_tableList[0].taseritsu, new
+                                       {
+                                           @class = "txt_tasseiritsu",
+                                           @id = "1txt_tasseiritsu",
+                                           // @type = "number",
+                                           placeholder = "達成率(％)",
+                                           @readonly = "readonly",
+                                           //onkeyup = "edValueKeyPress(id)",
+                                           //onkeypress = "isSpecialKey(event)",
+                                           //maxlength = 4,
+                                           ////oninput = "if (this.value != '') this.style.borderColor= '';if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength)",
+                                           //oninput = "edValueKeyPress(id)"
+                                       })
+                                        </td>
+                                    }
+
+                                    <td>
+                                        @Html.TextBoxFor(model => model.tema_tableList[0].tokuten, new { @id = "1tensuu", @onkeypress = "return isSpecialKey(event)", @class = "txtbox_tensuu", placeholder = "得点", maxlength = 9, @readonly = "readonly", @tabindex = "-1" })
+
+                                    </td>
+                                </tr>
+                                <tr class="no1">
+                                    @if (Model.chk_saitenhouhou == "mokuhyou")
+                                    {
+                                        <td colspan="4">
+                                            @Html.TextAreaFor(model => model.tema_tableList[0].tema_value, new { @class = "text_area2", id = "1temaArea", placeholder = "目標１のメモ欄", rows = "5", cols = "150", maxlength = 1500, style = "width: 100%;max-width: 100%;" })
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td colspan="3">
+                                            @Html.TextAreaFor(model => model.tema_tableList[0].tema_value, new { @class = "text_area2", id = "1temaArea", placeholder = "目標１のメモ欄", rows = "5", cols = "150", maxlength = 1500, style = "width: 100%;max-width: 100%;" })
+                                        </td>
+                                    }
+                                </tr>
+                                <tr class="no2">
+                                    @if (Model.tema_no2_enable == false)
+                                    {
+                                        <td rowspan="2">
+                                            <button type="submit" id="temaNumber_2" name="temaNumber_2" value="temaNumber_2" disabled style="border:none;background-color:white;color:#428bca" class="btncss">2</button>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td rowspan="2">
+                                            <button type="submit" id="temaNumber_2" name="temaNumber_2" value="temaNumber_2" style="border:none;background-color:white;color:#428bca" class="btncss">2</button>
+                                        </td>
+                                    }
+                                    <td>
+                                        @Html.TextAreaFor(model => model.tema_tableList[1].tema_name_value, new { @class = "text_area1", id = "2temaNameArea", placeholder = "目標２", rows = "5", cols = "30", maxlength = 30, style = "width: 100%;max-width: 100%;min-width: 120px;" })
+                                    </td>
+                                    <td>
+                                        @if (Model.haiten_disable_2 == true)
+                                        {
+                                            @Html.TextBoxFor(model => model.tema_tableList[1].haiten, new { @id = "2haiten", @onkeypress = "return isSpecialKey(event)", @class = "txtbox_haiten", placeholder = "配点", maxlength = 4, @readonly = "readonly" })
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBoxFor(model => model.tema_tableList[1].haiten, new { @id = "2haiten", @onkeypress = "return isSpecialKey(event)", oninput = "numberFunction_2()", @class = "txtbox_haiten", placeholder = "配点", maxlength = 4 })
+                                        }
+                                    </td>
+
+                                    @if (Model.chk_saitenhouhou == "mokuhyou")
+                                    {
+                                        <td>
+                                            @Html.TextBoxFor(model => model.tema_tableList[1].taseritsu, new
+                                       {
+                                           @class = "txt_tasseiritsu",
+                                           @id = "2txt_tasseiritsu",
+                                           // @type = "number",
+                                           placeholder = "達成率(％)",
+                                           @readonly = "readonly",
+                                           //onkeyup = "edValueKeyPress(id)",
+                                           //onkeypress = "isSpecialKey(event)",
+                                           //maxlength = 4,
+                                           ////oninput = "if (this.value != '') this.style.borderColor= '';if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength)",
+                                           //oninput = "edValueKeyPress(id)"
+                                       })
+                                        </td>
+                                    }
+
+                                    <td>
+                                        @Html.TextBoxFor(model => model.tema_tableList[1].tokuten, new { @id = "2tensuu", @onkeypress = "return isSpecialKey(event)", @class = "txtbox_tensuu", placeholder = "得点", maxlength = 9, @readonly = "readonly", @tabindex = "-1" })
+
+                                    </td>
+                                </tr>
+                                <tr class="no2">
+                                    @if (Model.chk_saitenhouhou == "mokuhyou")
+                                    {
+                                        <td colspan="4">
+                                            @Html.TextAreaFor(model => model.tema_tableList[1].tema_value, new { @class = "text_area2", id = "2temaArea", placeholder = "目標２のメモ欄", rows = "5", cols = "150", maxlength = 1500, style = "width: 100%;max-width: 100%;" })
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td colspan="3">
+                                            @Html.TextAreaFor(model => model.tema_tableList[1].tema_value, new { @class = "text_area2", id = "2temaArea", placeholder = "目標２のメモ欄", rows = "5", cols = "150", maxlength = 1500, style = "width: 100%;max-width: 100%;" })
+                                        </td>
+                                    }
+
+                                </tr>
+                                <tr class="no3">
+                                    @if (Model.tema_no3_enable == false)
+                                    {
+                                        <td rowspan="2">
+                                            <button type="submit" id="temaNumber_3" name="temaNumber_3" value="temaNumber_3" disabled style="border:none;background-color:white;color:#428bca" class="btncss">3</button>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td rowspan="2">
+                                            <button type="submit" id="temaNumber_3" name="temaNumber_3" value="temaNumber_3" style="border:none;background-color:white;color:#428bca" class="btncss">3</button>
+                                        </td>
+                                    }
+                                    <td>
+                                        @Html.TextAreaFor(model => model.tema_tableList[2].tema_name_value, new { @class = "text_area1", id = "3temaNameArea", placeholder = "目標３", rows = "5", cols = "30", maxlength = 30, style = "width: 100%;max-width: 100%;min-width: 120px;" })
+                                    </td>
+                                    <td>
+                                        @if (Model.haiten_disable_3 == true)
+                                        {
+                                            @Html.TextBoxFor(model => model.tema_tableList[2].haiten, new { @id = "3haiten", @onkeypress = "return isSpecialKey(event)", @class = "txtbox_haiten", placeholder = "配点", maxlength = 4, @readonly = "readonly" })
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBoxFor(model => model.tema_tableList[2].haiten, new { @id = "3haiten", @onkeypress = "return isSpecialKey(event)", oninput = "numberFunction_3()", @class = "txtbox_haiten", placeholder = "配点", maxlength = 4 })
+                                        }
+                                    </td>
+
+                                    @if (Model.chk_saitenhouhou == "mokuhyou")
+                                    {
+                                        <td>
+                                            @Html.TextBoxFor(model => model.tema_tableList[2].taseritsu, new
+                                       {
+                                           @class = "txt_tasseiritsu",
+                                           @id = "3txt_tasseiritsu",
+                                           // @type = "number",
+                                           placeholder = "達成率(％)",
+                                           @readonly = "readonly",
+                                           //onkeyup = "edValueKeyPress(id)",
+                                           //onkeypress = "isSpecialKey(event)",
+                                           //maxlength = 4,
+                                           ////oninput = "if (this.value != '') this.style.borderColor= '';if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength)",
+                                           //oninput = "edValueKeyPress(id)"
+                                       })
+                                        </td>
+                                    }
+
+                                    <td>
+                                        @Html.TextBoxFor(model => model.tema_tableList[2].tokuten, new { @id = "3tensuu", @onkeypress = "return isSpecialKey(event)", @class = "txtbox_tensuu", placeholder = "得点", maxlength = 9, @readonly = "readonly", @tabindex = "-1" })
+
+                                    </td>
+                                </tr>
+                                <tr class="no3">
+                                    @if (Model.chk_saitenhouhou == "mokuhyou")
+                                    {
+                                        <td colspan="4">
+                                            @Html.TextAreaFor(model => model.tema_tableList[2].tema_value, new { @class = "text_area2", id = "3temaArea", placeholder = "目標３のメモ欄", rows = "5", cols = "150", maxlength = 1500, style = "width: 100%;max-width: 100%;" })
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td colspan="3">
+                                            @Html.TextAreaFor(model => model.tema_tableList[2].tema_value, new { @class = "text_area2", id = "3temaArea", placeholder = "目標３のメモ欄", rows = "5", cols = "150", maxlength = 1500, style = "width: 100%;max-width: 100%;" })
+                                        </td>
+                                    }
+
+                                </tr>
+                                <tr class="no4">
+                                    @if (Model.tema_no4_enable == false)
+                                    {
+                                        <td rowspan="2">
+                                            <button type="submit" id="temaNumber_4" name="temaNumber_4" value="temaNumber_4" disabled style="border:none;background-color:white;color:#428bca" class="btncss">4</button>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td rowspan="2">
+                                            <button type="submit" id="temaNumber_4" name="temaNumber_4" value="temaNumber_4" style="border:none;background-color:white;color:#428bca" class="btncss">4</button>
+                                        </td>
+                                    }
+                                    <td>
+                                        @Html.TextAreaFor(model => model.tema_tableList[3].tema_name_value, new { @class = "text_area1", id = "4temaNameArea", placeholder = "目標４", rows = "5", cols = "30", maxlength = 30, style = "width: 100%;max-width: 100%;" })
+                                    </td>
+                                    <td>
+                                        @if (Model.haiten_disable_4 == true)
+                                        {
+                                            @Html.TextBoxFor(model => model.tema_tableList[3].haiten, new { @id = "4haiten", @onkeypress = "return isSpecialKey(event)", @class = "txtbox_haiten", placeholder = "配点", maxlength = 4, @readonly = "readonly" })
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBoxFor(model => model.tema_tableList[3].haiten, new { @id = "4haiten", @onkeypress = "return isSpecialKey(event)", oninput = "numberFunction_4()", @class = "txtbox_haiten", placeholder = "配点", maxlength = 4 })
+                                        }
+                                    </td>
+
+                                    @if (Model.chk_saitenhouhou == "mokuhyou")
+                                    {
+                                        <td>
+                                            @Html.TextBoxFor(model => model.tema_tableList[3].taseritsu, new
+                                       {
+                                           @class = "txt_tasseiritsu",
+                                           @id = "4txt_tasseiritsu",
+                                           // @type = "number",
+                                           placeholder = "達成率(％)",
+                                           @readonly = "readonly",
+                                           //onkeyup = "edValueKeyPress(id)",
+                                           //onkeypress = "isSpecialKey(event)",
+                                           //maxlength = 4,
+                                           ////oninput = "if (this.value != '') this.style.borderColor= '';if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength)",
+                                           //oninput = "edValueKeyPress(id)"
+                                       })
+                                        </td>
+                                    }
+
+                                    <td>
+                                        @Html.TextBoxFor(model => model.tema_tableList[3].tokuten, new { @id = "4tensuu", @onkeypress = "return isSpecialKey(event)", @class = "txtbox_tensuu", placeholder = "得点", maxlength = 9, @readonly = "readonly", @tabindex = "-1" })
+
+                                    </td>
+                                </tr>
+                                <tr class="no4">
+                                    @if (Model.chk_saitenhouhou == "mokuhyou")
+                                    {
+                                        <td colspan="4">
+                                            @Html.TextAreaFor(model => model.tema_tableList[3].tema_value, new { @class = "text_area2", id = "4temaArea", placeholder = "目標４のメモ欄", rows = "5", cols = "150", maxlength = 1500, style = "width: 100%;max-width: 100%;" })
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td colspan="3">
+                                            @Html.TextAreaFor(model => model.tema_tableList[3].tema_value, new { @class = "text_area2", id = "4temaArea", placeholder = "目標４のメモ欄", rows = "5", cols = "150", maxlength = 1500, style = "width: 100%;max-width: 100%;" })
+                                        </td>
+                                    }
+                                </tr>
+                                <tr class="no5">
+                                    @if (Model.tema_no5_enable == false)
+                                    {
+                                        <td rowspan="2">
+                                            <button type="submit" id="temaNumber_5" name="temaNumber_5" value="temaNumber_5" disabled style="border:none;background-color:white;color:#428bca" class="btncss">5</button>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td rowspan="2">
+                                            <button type="submit" id="temaNumber_5" name="temaNumber_5" value="temaNumber_5" style="border:none;background-color:white;color:#428bca" class="btncss">5</button>
+                                        </td>
+                                    }
+                                    <td>
+                                        @Html.TextAreaFor(model => model.tema_tableList[4].tema_name_value, new { @class = "text_area1", id = "5temaNameArea", placeholder = "目標５", rows = "5", cols = "30", maxlength = 30, style = "width: 100%;max-width: 100%;min-width: 120px;" })
+                                    </td>
+                                    <td>
+                                        @if (Model.haiten_disable_5 == true)
+                                        {
+                                            @Html.TextBoxFor(model => model.tema_tableList[4].haiten, new { @id = "5haiten", @onkeypress = "return isSpecialKey(event)", @class = "txtbox_haiten", placeholder = "配点", maxlength = 4, @readonly = "readonly" })
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBoxFor(model => model.tema_tableList[4].haiten, new { @id = "5haiten", @onkeypress = "return isSpecialKey(event)", oninput = "numberFunction_5()", @class = "txtbox_haiten", placeholder = "配点", maxlength = 4 })
+                                        }
+                                    </td>
+
+                                    @if (Model.chk_saitenhouhou == "mokuhyou")
+                                    {
+                                        <td>
+                                            @Html.TextBoxFor(model => model.tema_tableList[4].taseritsu, new
+                                       {
+                                           @class = "txt_tasseiritsu",
+                                           @id = "5txt_tasseiritsu",
+                                           // @type = "number",
+                                           placeholder = "達成率(％)",
+                                           @readonly = "readonly",
+                                           //onkeyup = "edValueKeyPress(id)",
+                                           //onkeypress = "isSpecialKey(event)",
+                                           //maxlength = 4,
+                                           ////oninput = "if (this.value != '') this.style.borderColor= '';if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength)",
+                                           //oninput = "edValueKeyPress(id)"
+                                       })
+                                        </td>
+                                    }
+
+                                    <td>
+                                        @Html.TextBoxFor(model => model.tema_tableList[4].tokuten, new { @id = "5tensuu", @onkeypress = "return isSpecialKey(event)", @class = "txtbox_tensuu", placeholder = "得点", maxlength = 9, @readonly = "readonly", @tabindex = "-1" })
+
+                                    </td>
+                                </tr>
+                                <tr class="no5">
+                                    @if (Model.chk_saitenhouhou == "mokuhyou")
+                                    {
+                                        <td colspan="4">
+                                            @Html.TextAreaFor(model => model.tema_tableList[4].tema_value, new { @class = "text_area2", id = "5temaArea", placeholder = "目標５のメモ欄", rows = "5", cols = "150", maxlength = 1500, style = "width: 100%;max-width: 100%;" })
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td colspan="3">
+                                            @Html.TextAreaFor(model => model.tema_tableList[4].tema_value, new { @class = "text_area2", id = "5temaArea", placeholder = "目標５のメモ欄", rows = "5", cols = "150", maxlength = 1500, style = "width: 100%;max-width: 100%;" })
+                                        </td>
+                                    }
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                if (Model.kubun_code == "04" || Model.kubun_code == "05")
+                {
+                    if (Model.lbl_kakutei == false)
+                    {
+                        <label class="lbl_leader_kakutei">※希望配点はリーダー面談後、配点が確定します。</label>
+                    }
+                }
+                else if (Model.kubun_code == "01" || Model.kubun_code == "02" || Model.kubun_code == "03")
+                {
+                    if (Model.lbl_kakutei == false)
+                    {
+                        <label class="lbl_leader_kakutei">※希望配点は上長へ申請後、配点が確定します。</label>
+                    }
+                }
+            }
+        </div>
+    }
+    <script src="@Url.Content("~/Scripts/jquery-1.12.4.min.js")"></script>
+    <script>
+        $(document).ready(function () {
+            var btn_text;
+            var btn_width;
+
+            if ('@Model.leader_kakutei' == "kakutei") {
+                btn_text = "確定済";
+                btn_width = "70px";
+            }
+            else {
+                btn_text = "上長へ申請";
+                btn_width = "100px";
+                $("#btn_kakutei").css("background-color", "#C0E399");
+            }
+
+            $('#btn_kakutei').html(btn_text);
+            $('#btn_kakutei').css("width", btn_width);
+
+            if ('@Model.chk_saitenhouhou' == "") {
+                $('#btn_kakutei').attr('disabled', 'disabled');
+                $('#btn_kakutei').css("opacity", "0.6");
+                $('#btn_kakutei').css("cursor", "not-allowed");
+                $('#btn_hozone').attr('disabled', 'disabled');
+                $('#btn_hozone').css("opacity", "0.6");
+                $('#btn_hozone').css("cursor", "not-allowed");
+                $('#1temaNameArea').attr('readonly', 'readonly');
+                $('#2temaNameArea').attr('readonly', 'readonly');
+                $('#3temaNameArea').attr('readonly', 'readonly');
+                $('#4temaNameArea').attr('readonly', 'readonly');
+                $('#5temaNameArea').attr('readonly', 'readonly');
+                $('#1temaArea').attr('readonly', 'readonly');
+                $('#2temaArea').attr('readonly', 'readonly');
+                $('#3temaArea').attr('readonly', 'readonly');
+                $('#4temaArea').attr('readonly', 'readonly');
+                $('#5temaArea').attr('readonly', 'readonly');
+                $('#1haiten').attr('readonly', 'readonly');
+                $('#2haiten').attr('readonly', 'readonly');
+                $('#3haiten').attr('readonly', 'readonly');
+                $('#4haiten').attr('readonly', 'readonly');
+                $('#5haiten').attr('readonly', 'readonly');
+                $('#1tensuu').attr('readonly', 'readonly');
+                $('#2tensuu').attr('readonly', 'readonly');
+                $('#3tensuu').attr('readonly', 'readonly');
+                $('#4tensuu').attr('readonly', 'readonly');
+                $('#5tensuu').attr('readonly', 'readonly');
+            }
+            else {
+
+                if ('@Model.kakutei_disable' == "disable") {
+                    $('#btn_kakutei').attr('disabled', 'disabled');
+                    $('#btn_kakutei').css("opacity", "0.6");
+                    $('#btn_kakutei').css("cursor", "not-allowed");
+                }
+                else {
+                    $('#btn_kakutei').removeAttr('disabled');
+                }
+
+                if ('@Model.hozone_disable' == "disable") {
+                    $('#btn_hozone').attr('disabled', 'disabled');
+                    $('#btn_hozone').css("opacity", "0.6");
+                    $('#btn_hozone').css("cursor", "not-allowed");
+                }
+                else {
+                    $('#btn_hozone').removeAttr('disabled');
+                }
+
+                if ('@Model.disable_tema' == "disable") {
+
+                    $('textarea').attr('disabled', 'disabled');
+                    $('textarea').css("background-color", "whitesmoke");
+                    $('input').attr('disabled', 'disabled');
+                    $('input').css("background-color", "whitesmoke");
+                }
+                else {
+
+                    $('textarea').removeAttr('disabled');
+                    $('input').removeAttr('disabled');
+                }
+            }
+        });
+    </script>
+
+    <script>
+        $("#btn_kakutei").click(function (event) {
+            var ta1 = $('#1temaNameArea').val();
+            var h1 = $('#1haiten').val();
+            var ta2 = $('#2temaNameArea').val();
+            var h2 = $('#2haiten').val();
+            var ta3 = $('#3temaNameArea').val();
+            var h3 = $('#3haiten').val();
+            var ta4 = $('#4temaNameArea').val();
+            var h4 = $('#4haiten').val();
+            var ta5 = $('#5temaNameArea').val();
+            var h5 = $('#5haiten').val();
+
+            var button_name = $("#btn_kakutei").html();
+            var m_haiten = $("#master_haiten").html();
+            var count1 = 0;
+            var count2 = 0;
+            var count3 = 0;
+            var count4 = 0;
+            var count5 = 0;
+            var row_count = 0;
+            var all_null_count = 0;
+            var r1_null_count = 0;
+            var r2_null_count = 0;
+            var r3_null_count = 0;
+            var r4_null_count = 0;
+            var r5_null_count = 0;
+            var haiten_val = 0;
+
+            @*if ('@Model.chk_saitenhouhou' == "mokuhyou") {*@
+
+            $("#1temaNameArea").css("border", "");
+            $("#1haiten").css("border", "");
+            $("#2temaNameArea").css("border", "");
+            $("#2haiten").css("border", "");
+            $("#3temaNameArea").css("border", "");
+            $("#3haiten").css("border", "");
+            $("#4temaNameArea").css("border", "");
+            $("#4haiten").css("border", "");
+            $("#5temaNameArea").css("border", "");
+            $("#5haiten").css("border", "");
+
+            //ta1 = ta1.replace(/\r?\n?/g, '');
+            
+            if (ta1 == "" || h1 == "") {
+                if (ta1 == "" && h1 == "" ) {
+                    all_null_count++;
+                    r1_null_count++;
+                }
+                else {
+                    if (ta1 == "") {
+                        $("#1temaNameArea").css("border", "1px solid #f3172d");
+                        count1++;
+                    }
+                    else if (ta1 == null) {
+                        alert("ta1 :" + ta1);
+                    }
+                    else {
+                        
+                        $("#1temaNameArea").css("border", "");
+                    }
+                    if (h1 == "") {
+                        $("#1haiten").css("border", "1px solid #f3172d");
+                        count1++;
+                    }
+                    else {
+                        $("#1haiten").css("border", "");
+                    }
+                    if (count1 != 0) {
+                        row_count++;
+                    }
+                }
+            }//r1 null
+            else {
+                if (h1 != "") {
+                    haiten_val += parseInt(h1);
+                }
+            }
+            if (ta2 == "" || h2 == "") {
+                if (ta2 == "" && h2 == "") {
+                    all_null_count++;
+                    r2_null_count++;
+                }
+                else {
+                    if (ta2 == "") {
+                        $("#2temaNameArea").css("border", "1px solid #f3172d");
+                        count2++;
+                    }
+                    else {
+                        $("#2temaNameArea").css("border", "");
+                    }
+                    if (h2 == "") {
+                        $("#2haiten").css("border", "1px solid #f3172d");
+                        count2++;
+                    }
+                    else {
+                        $("#2haiten").css("border", "");
+                    }
+                    if (count2 != 0) {
+                        row_count++;
+                    }
+                }
+            }//r2 null
+            else {
+                if (h2 != "") {
+                    haiten_val += parseInt(h2);
+                }
+            }
+            if (ta3 == "" || h3 == "") {
+
+                if (ta3 == "" && h3 == "") {
+                    all_null_count++;
+                    r3_null_count++;
+                }
+                else {
+                    if (ta3 == "") {
+                        $("#3temaNameArea").css("border", "1px solid #f3172d");
+                        count3++;
+                    }
+                    else {
+                        $("#3temaNameArea").css("border", "");
+                    }
+                    if (h3 == "") {
+                        $("#3haiten").css("border", "1px solid #f3172d");
+                        count3++;
+                    }
+                    else {
+                        $("#3haiten").css("border", "");
+                    }
+                    if (count3 != 0) {
+                        row_count++;
+                    }
+                }
+            }//r3 null
+            else {
+                if (h3 != "") {
+                    haiten_val += parseInt(h3);
+                }
+            }
+            if (ta4 == "" || h4 == "") {
+
+                if (ta4 == "" && h4 == "") {
+                    all_null_count++;
+                    r4_null_count++;
+                }
+                else {
+                    if (ta4 == "") {
+                        $("#4temaNameArea").css("border", "1px solid #f3172d");
+                        count4++;
+                    }
+                    else {
+                        $("#4temaNameArea").css("border", "");
+                    }
+                    if (h4 == "") {
+                        $("#4haiten").css("border", "1px solid #f3172d");
+                        count4++;
+                    }
+                    else {
+                        $("#4haiten").css("border", "");
+                    }
+                    if (count4 != 0) {
+                        row_count++;
+                    }
+                }
+            }//r4 null
+            else {
+                if (h4 != "") {
+                    haiten_val += parseInt(h4);
+                }
+            }
+            if (ta5 == "" || h5 == "") {
+
+                if (ta5 == "" && h5 == "") {
+                    all_null_count++;
+                    r5_null_count++;
+                }
+                else {
+                    if (ta5 == "") {
+                        $("#5temaNameArea").css("border", "1px solid #f3172d");
+                        count5++;
+                    }
+                    else {
+                        $("#5temaNameArea").css("border", "");
+                    }
+                    if (h5 == "") {
+                        $("#5haiten").css("border", "1px solid #f3172d");
+                        count5++;
+                    }
+                    else {
+                        $("#5haiten").css("border", "");
+                    }
+                    if (count5 != 0) {
+                        row_count++;
+                    }
+                }
+            }//r5 null
+            else {
+                if (h5 != "") {
+                    haiten_val += parseInt(h5);
+                }
+            }
+            if (all_null_count == 5) {
+                $("#1temaNameArea").css("border", "1px solid #f3172d");
+                $("#1haiten").css("border", "1px solid #f3172d");
+                $("#2temaNameArea").css("border", "");
+                $("#2haiten").css("border", "");
+                $("#3temaNameArea").css("border", "");
+                $("#3haiten").css("border", "");
+                $("#4temaNameArea").css("border", "");
+                $("#4haiten").css("border", "");
+                $("#5temaNameArea").css("border", "");
+                $("#5haiten").css("border", "");
+                event.preventDefault();
+            }
+            else {
+                if (row_count != 0) {
+                    event.preventDefault();
+                }
+                else {
+                    if (haiten_val > m_haiten) {
+                        alert("テーマ配点「" + m_haiten + "」をオーバーしています。調整してください。");
+                        event.preventDefault();
+                    }
+                    else {
+                        var sn = "";
+
+                        if (r1_null_count != 0) {
+                            if ('@Model.tasuku1_exist' == "exist") {
+                                sn += '@Model.tema_name1' + ',';
+                            }
+                        }
+                        if (r2_null_count != 0) {
+                            if ('@Model.tasuku2_exist' == "exist") {
+                                sn += '@Model.tema_name2' + ',';
+                            }
+                        }
+                        if (r3_null_count != 0) {
+                            if ('@Model.tasuku3_exist' == "exist") {
+                                sn += '@Model.tema_name3' + ',';
+                            }
+                        }
+                        if (r4_null_count != 0) {
+                            if ('@Model.tasuku4_exist' == "exist") {
+                                sn += '@Model.tema_name4' + ',';
+                            }
+                        }
+                        if (r5_null_count != 0) {
+                            if ('@Model.tasuku5_exist' == "exist") {
+                                sn += '@Model.tema_name5' + ',';
+                            }
+                        }
+                        if (sn != "") {
+                            sn = sn.substring(0, sn.length - 1);
+                            if (confirm("「" + sn + "」成長目標に重要タスク情報が入力されたんですが、削除してよろしいでしょうか？")) {
+
+                            } else {
+                                event.preventDefault();
+                            }
+                        }
+                        else {
+                            if (confirm(button_name + "されます。以降は変更が出来なくなります。")) {
+
+                            } else {
+                                event.preventDefault();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    
+    <script>
+        $("#btn_hozone").click(function (event) {
+
+            var ta1 = $('#1temaNameArea').val();
+            var h1 = $('#1haiten').val();
+            var ta2 = $('#2temaNameArea').val();
+            var h2 = $('#2haiten').val();
+            var ta3 = $('#3temaNameArea').val();
+            var h3 = $('#3haiten').val();
+            var ta4 = $('#4temaNameArea').val();
+            var h4 = $('#4haiten').val();
+            var ta5 = $('#5temaNameArea').val();
+            var h5 = $('#5haiten').val();
+            var m_haiten = $("#master_haiten").html();
+            
+            var all_null_count = 0;
+            var r1_null_count = 0;
+            var r2_null_count = 0;
+            var r3_null_count = 0;
+            var r4_null_count = 0;
+            var r5_null_count = 0;
+            var haiten_val = 0;
+
+            $("#1temaNameArea").css("border", "");
+            $("#1haiten").css("border", "");
+            $("#2temaNameArea").css("border", "");
+            $("#2haiten").css("border", "");
+            $("#3temaNameArea").css("border", "");
+            $("#3haiten").css("border", "");
+            $("#4temaNameArea").css("border", "");
+            $("#4haiten").css("border", "");
+            $("#5temaNameArea").css("border", "");
+            $("#5haiten").css("border", "");
+
+            if (ta1 == "" || h1 == "") {
+                if (ta1 == "" && h1 == "") {
+                    all_null_count++;
+                    r1_null_count++;
+                }
+            }//r1 null
+            else {
+                if (h1 != "") {
+                    haiten_val += parseInt(h1);
+                }
+            }
+            if (ta2 == "" || h2 == "") {
+                if (ta2 == "" && h2 == "") {
+                    all_null_count++;
+                    r2_null_count++;
+                }
+            }//r2 null
+            else {
+                if (h2 != "") {
+                    haiten_val += parseInt(h2);
+                }
+            }
+            if (ta3 == "" || h3 == "") {
+
+                if (ta3 == "" && h3 == "") {
+                    all_null_count++;
+                    r3_null_count++;
+                }
+            }//r3 null
+            else {
+                if (h3 != "") {
+                    haiten_val += parseInt(h3);
+                }
+            }
+            if (ta4 == "" || h4 == "") {
+
+                if (ta4 == "" && h4 == "") {
+                    all_null_count++;
+                    r4_null_count++;
+                }
+            }//r4 null
+            else {
+                if (h4 != "") {
+                    haiten_val += parseInt(h4);
+                }
+            }
+            if (ta5 == "" || h5 == "") {
+
+                if (ta5 == "" && h5 == "") {
+                    all_null_count++;
+                    r5_null_count++;
+                }
+            }//r5 null
+            else {
+                if (h5 != "") {
+                    haiten_val += parseInt(h5);
+                }
+            }
+            if (all_null_count == 5) {
+
+                event.preventDefault();
+            }
+            else {
+                if (haiten_val > m_haiten) {
+                    alert("テーマ配点「" + m_haiten + "」をオーバーしています。調整してください。");
+                    event.preventDefault();
+                }
+                else {
+                    var sn = "";
+
+                    if (r1_null_count != 0) {
+                        if ('@Model.tasuku1_exist' == "exist") {
+                            sn += '@Model.tema_name1' + ',';
+                        }
+                    }
+                    if (r2_null_count != 0) {
+                        if ('@Model.tasuku2_exist' == "exist") {
+                            sn += '@Model.tema_name2' + ',';
+                        }
+                    }
+                    if (r3_null_count != 0) {
+                        if ('@Model.tasuku3_exist' == "exist") {
+                            sn += '@Model.tema_name3' + ',';
+                        }
+                    }
+                    if (r4_null_count != 0) {
+                        if ('@Model.tasuku4_exist' == "exist") {
+                            sn += '@Model.tema_name4' + ',';
+                        }
+                    }
+                    if (r5_null_count != 0) {
+                        if ('@Model.tasuku5_exist' == "exist") {
+                            sn += '@Model.tema_name5' + ',';
+                        }
+                    }
+                    if (sn != "") {
+                        sn = sn.substring(0, sn.length - 1);
+                        if (confirm("「" + sn + "」成長目標に重要タスク情報が入力されたんですが、削除してよろしいでしょうか？")) {
+
+                        } else {
+                            event.preventDefault();
+                        }
+                    }
+                    
+                }
+            }
+
+
+        });
+    </script>
+
+    <script>
+        $('#1temaNameArea').keydown(function (e) {
+
+            if (this.value.length >= 30)
+                if (e.which == '13') // enter
+                    e.preventDefault();
+        });
+        $('#1temaArea').keydown(function (e) {
+            if (this.value.length >= 1500)
+                if (e.which == '13') // enter
+                    e.preventDefault();
+        });
+        $('#2temaNameArea').keydown(function (e) {
+            if (this.value.length >= 30)
+                if (e.which == '13') // enter
+                    e.preventDefault();
+        });
+        $('#2temaArea').keydown(function (e) {
+            if (this.value.length >= 1500)
+                if (e.which == '13') //enter
+                    e.preventDefault();
+        });
+        $('#3temaNameArea').keydown(function (e) {
+            if (this.value.length >= 30)
+                if (e.which == '13') // enter
+                    e.preventDefault();
+        });
+        $('#3temaArea').keydown(function (e) {
+            if (this.value.length >= 1500)
+                if (e.which == '13') // enter
+                    e.preventDefault();
+        });
+        $('#4temaNameArea').keydown(function (e) {
+            if (this.value.length >= 30)
+                if (e.which == '13') // enter
+                    e.preventDefault();
+        });
+        $('#4temaArea').keydown(function (e) {
+            if (this.value.length >= 1500)
+                if (e.which == '13') // enter
+                    e.preventDefault();
+        });
+        $('#5temaNameArea').keydown(function (e) {
+            if (this.value.length >= 30)
+                if (e.which == '13') // enter
+                    e.preventDefault();
+        });
+        $('#5temaArea').keydown(function (e) {
+            if (this.value.length >= 1500)
+                if (e.which == '13') // enter
+                    e.preventDefault();
+        });
+    </script>
+
+    <script>
+        function myFunction() {
+            $('#btnSearch').click();
+        }
+
+        function OnChanged(evt) {
+            $('#btnSearch').click();
+        }
+
+        function myFunction() {
+            $('#btnSelect').click();
+        }
+
+        function OnChangedSelect(evt) {
+            $('#btnSelect').click();
+        }
+    </script>
+    
+    <script>
+        $('#leader_check').bind('change', function () {
+
+            $('#btnCheck').click();
+
+        });
+    </script>
+
+    <script>
+        function isSpecialKey(event) {
+
+            var regex = new RegExp("^[0-9]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+
+            if (!regex.test(key)) {
+
+                event.preventDefault();
+                return false;
+            }
+            else {
+
+                return true;
+
+            }
+        }
+
+        function numberFunction_1() {
+            var x = document.getElementById("1haiten").value;
+            if (x >= 0 && x <= 9999) {
+                document.getElementById("1haiten").value = x;
+            }
+            else {
+                document.getElementById("1haiten").value = '';
+            }
+
+        }
+
+        function numberFunction_2() {
+            var x = document.getElementById("2haiten").value;
+            if (x >= 0 && x <= 9999) {
+                document.getElementById("2haiten").value = x;
+            }
+            else {
+                document.getElementById("2haiten").value = '';
+            }
+
+        }
+
+        function numberFunction_3() {
+            var x = document.getElementById("3haiten").value;
+            if (x >= 0 && x <= 9999) {
+                document.getElementById("3haiten").value = x;
+            }
+            else {
+                document.getElementById("3haiten").value = '';
+            }
+
+        }
+
+        function numberFunction_4() {
+            var x = document.getElementById("4haiten").value;
+            if (x >= 0 && x <= 9999) {
+                document.getElementById("4haiten").value = x;
+            }
+            else {
+                document.getElementById("4haiten").value = '';
+            }
+
+        }
+
+        function numberFunction_5() {
+            var x = document.getElementById("5haiten").value;
+            if (x >= 0 && x <= 9999) {
+                document.getElementById("5haiten").value = x;
+            }
+            else {
+                document.getElementById("5haiten").value = '';
+            }
+
+        }
+    </script>
+
+    @if (TempData["com_msg"] != null)
+    {
+        <script type="text/javascript" src=@Url.Content("~/Scripts/jquery-1.12.4.min.js")></script>
+        <script>
+        $(document).ready(function(){
+
+            alert('@TempData["com_msg"]');
+        });
+        </script>
+    }
+    
+</body>
+</html>
+
+

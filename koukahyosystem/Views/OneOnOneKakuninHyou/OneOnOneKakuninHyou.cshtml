@@ -1,0 +1,50 @@
+﻿@*@model IEnumerable<koukahyosystem.Models.OneOnOneKakuninHyou>*@
+@model koukahyosystem.Models.OneOnOneKakuninHyou
+@{
+    ViewBag.Title = "OneOnOneKakuninHyou";
+}
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style></style>
+</head>
+<body>
+    @if (Session["isAuthenticated"] != null)
+    {
+    <div id='div_main' class="panel panel-info" style="overflow:auto">
+        @using (Html.BeginForm("OneOnOneKakuninHyou", "OneOnOneKakuninHyou", FormMethod.Post))
+        {
+            <div class="panel-heading" style="background-color: rgb(34, 148, 172); width:100%">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12 " align="center">
+                            <h4 style="color:white ; display: inline-block;">1on1確認表</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="container" class="row" style="margin: 10px;">
+                <div style="margin-top:5px" class="text-center" Align="center">
+                    <input type="submit" id="searchBtn" value="search" name="OneOnOneBtn" class="button" style="text-align:center; width:60px; height:35px;margin-left:50px ;margin-right:10px ;visibility:hidden;position:absolute" />
+                    @Html.Label("年度", new { @class = "lbl_year" })
+                    <button id="preBtn" name="year_btn" value="<" style="width:29px;height:29px;border:0.5px solid;border-radius:4px;"><</button>
+                    @Html.DropDownListFor(m => m.cur_year, Model.YearList, new { @id = "year", style = "width:70px;Height:22px;margin-bottom:4px;", onchange = "SelectedIndexChanged()", autofocus = "autofocus" })
+                    <button id="nextBtn" name="year_btn" value=">" style="width:29px;height:29px;border:0.5px solid;border-radius:4px;">></button>
+                </div>
+                <div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>先輩社員</th>
+                                <th>社員名</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+         }
+     </div>
+    }
+</body>
